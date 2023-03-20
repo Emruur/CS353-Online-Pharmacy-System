@@ -17,7 +17,7 @@ const RequireAuth = ({ children }) => {
 	let token = sessionStorage.getItem('token');
 	const [errorMessage, setErrorMessage] = useState('You need to login first!');
 
-	if (!token) {
+	if (token) {
 		return (
 			<>
 				{errorMessage && (
