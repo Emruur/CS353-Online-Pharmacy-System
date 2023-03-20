@@ -21,7 +21,7 @@ export const AccountPopover = (props) => {
 		localStorage.removeItem('department');
 		localStorage.removeItem('academicYear');
 
-		navigate('/splash');
+		navigate('/login');
 	};
 
 	return (
