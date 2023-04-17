@@ -37,6 +37,7 @@ CREATE TABLE Patient(
     weight INTEGER,
     birthday DATE,
     age INT GENERATED ALWAYS AS (DATEDIFF(CURRENT_DATE, birth_date) / 365) VIRTUAL
+    -- // birthday ve age mi?
 );
 
 -- // FIXME
