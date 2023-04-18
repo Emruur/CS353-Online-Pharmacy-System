@@ -157,15 +157,26 @@ CREATE TABLE PurchasedMedicine (
 );
 
 CREATE TABLE Wallet (
-    wallet_id VARCHAR(255) NOT NULL,
+    wallet_id VARCHAR(255) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     balance INTEGER NOT NULL,
     payment_id INTEGER NOT NULL,
-    PRIMARY KEY (user_id, wallet_id),
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (payment_id) REFERENCES PaymentMethod(payment_id)
 );
 
 CREATE TABLE PaymentMethod (
     payment_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE RequestedPrescription (
+    doctor_id INTEGER,
+    patient_id INTEGER,
+    pres_id INTEGER,
+    PRIMARY KEY (doctor_id, patient_id, pres_id)
+);
+
+CREATE TABLE EquivalentTo (
+    orig_id INTEGER,
+    eqv_id INTEGER,
+    PRIMARY KEY (orig_id, eqv_id)
 );
