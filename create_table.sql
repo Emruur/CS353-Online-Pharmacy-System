@@ -7,7 +7,7 @@ CREATE TABLE User (
     phone_number VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     address_id INTEGER,
-    FOREIGN KEY (address_id) REFERENCES Address(adress_id)
+    FOREIGN KEY (address_id) REFERENCES Address(adress_id) ON DELETE CASCADE
     user_type ENUM('patient', 'doctor', 'pharmacist')
 );
 
@@ -16,7 +16,7 @@ CREATE TABLE Doctor (
     speciality VARCHAR(255),
     title VARCHAR(255),
     hospital_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id)
 );
 
@@ -25,11 +25,10 @@ CREATE TABLE Pharmacist(
     user_id INTEGER PRIMARY KEY,
     education VARCHAR(255),
     pharmacy_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 
--- Doctors can not be pharmacists
 
 
 
@@ -43,7 +42,7 @@ CREATE TABLE Patient(
     user_id INTEGER PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     primary_doc_id INTEGER,
-    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id),
+    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id) ON DELETE CASCADE,
     height INTEGER,
     weight INTEGER,
     birthday DATE,
@@ -98,6 +97,8 @@ CREATE TABLE Report (
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 
+-- // TODO create trigger to delete medicinereport entities on report delete
+
 CREATE TABLE MedicineReport (
     report_id INTEGER,
     FOREIGN KEY (report_id) REFERENCES Report(report_id),
@@ -116,6 +117,7 @@ CREATE TABLE Prescription (
     type VARCHAR(255)
 );
 
+-- // TODO create trigger to delete prescribed medication entities on prescription delete
 CREATE TABLE PrescribedMedication (
     pres_id INTEGER,
     FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id),
@@ -130,6 +132,9 @@ CREATE TABLE Pharmacy (
     adress_id INTEGER,
     FOREIGN KEY (address_id) REFERENCES Address(adress_id)
 );
+
+-- //TODO create trigger to delete storage on pharmacy deletion
+-- //TODO create trigger to set Pharmacist(pharmacy_id) on Pharmcy deletion
 
 CREATE TABLE StoredIn (
     pharmacy_id INTEGER,
@@ -165,6 +170,8 @@ CREATE TABLE Wallet (
     FOREIGN KEY (payment_id) REFERENCES PaymentMethod(payment_id)
 );
 
+-- // create trigger to deduce balance on purchase
+
 CREATE TABLE PaymentMethod (
     payment_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
@@ -176,6 +183,7 @@ CREATE TABLE RequestedPrescription (
     pres_id INTEGER,
     status VARCHAR(255) NOT NULL,
     PRIMARY KEY (doctor_id, patient_id, pres_id)
+    status enum("pending","accepted","rejected")
 );
 
 CREATE TABLE EquivalentTo (
@@ -183,3 +191,76 @@ CREATE TABLE EquivalentTo (
     eqv_id INTEGER,
     PRIMARY KEY (orig_id, eqv_id)
 );
+
+    -- TRIGGERS
+
+-- Doctors can not be pharmacists
+
+CREATE TRIGGER doctor_not_pharmacists
+BEFORE INSERT
+ON Pharmacist FOR EACH ROW
+BEGIN
+    DECLARE is_doctor TINYINT(1);
+
+    SET is_doctor = (
+        SELECT EXISTS(
+            SELECT 1
+            FROM Doctors
+            WHERE doctor_id = NEW.pharmacist_id
+        )
+    );
+
+    IF is_doctor = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: A doctor can not be a pharmacist!';
+    END IF;
+END;
+
+-- Pharmacists can not be doctor
+
+CREATE TRIGGER pharmacist_not_doctor
+BEFORE INSERT
+ON Doctor FOR EACH ROW
+BEGIN
+    DECLARE is_pharmacist TINYINT(1);
+
+    SET is_pharmacist = (
+        SELECT EXISTS(
+            SELECT 1
+            FROM Pharmacist
+            WHERE pharmacist_id = NEW.doctor_id
+        )
+    );
+
+    IF is_pharmacist = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: A pharmacist can not be a doctor!';
+    END IF;
+END;
+
+-- Before insert into purchase check existence of an address
+
+CREATE TRIGGER address_before_purchase
+BEFORE INSERT
+ON Purchase FOR EACH ROW
+BEGIN
+    DECLARE address VARCHAR(50)
+
+    SET address = (
+        SELECT adress_id FROM User
+        WHERE User.user_id = (
+            SELECT user_id
+            FROM Wallet
+            WHERE wallet_id= Purchase.wallet_id
+        );
+    );
+    IF adress = NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: User needs an adress before placing a purchase!';
+    END IF;
+END;
+
+
+    -- Simplified patient view
+    -- 
+
