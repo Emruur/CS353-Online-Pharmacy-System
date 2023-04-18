@@ -5,7 +5,10 @@ CREATE TABLE User (
     middle_name VARCHAR(255),
     surname VARCHAR(255) NOT NULL,
     phone_number VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+
+    adress_id INTEGER,
+    FOREIGN KEY (address_id) REFERENCES Address(adress_id)
 );
 
 CREATE TABLE Doctor (
@@ -42,26 +45,20 @@ CREATE TABLE Patient(
     -- // birthday ve age mi?
 );
 
--- // FIXME
--- TODO Adresi usera bağlı weak entity mi yapsak?
+
 CREATE TABLE Adress(
     address_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    user_id INTEGER NOT NULL,
     country VARCHAR(255),
     city VARCHAR(255),
-    FOREIGN KEY (user_id) REFERENCES User(user_id)
+    description VARCHAR(255)
 );
 
-
--- //FIXME
--- Adres meselesini birdaha düşünelim, bunda adresin field olması normalizationa karşı
 CREATE TABLE Hospital(
     hospital_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255),
-    adress,
+    adress_id INTEGER,
+    FOREIGN KEY (address_id) REFERENCES Address(adress_id)
 );
-
-
 
 CREATE TABLE SpecialCondition(
     condition_id INTEGER NOT PRIMARY KEY,
