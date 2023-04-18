@@ -8,6 +8,7 @@ CREATE TABLE User (
     password VARCHAR(255) NOT NULL,
     address_id INTEGER,
     FOREIGN KEY (address_id) REFERENCES Address(adress_id)
+    user_type ENUM('patient', 'doctor', 'pharmacist')
 );
 
 CREATE TABLE Doctor (
@@ -19,6 +20,7 @@ CREATE TABLE Doctor (
     FOREIGN KEY (hospital_id) REFERENCES Hospital(hospital_id)
 );
 
+
 CREATE TABLE Pharmacist(
     user_id INTEGER PRIMARY KEY,
     education VARCHAR(255),
@@ -27,6 +29,11 @@ CREATE TABLE Pharmacist(
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 
+-- Doctors can not be pharmacists
+
+
+
+-- // FIXME 
 CREATE TABLE Admin(
     user_id INTEGER PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES User(user_id)
@@ -42,7 +49,6 @@ CREATE TABLE Patient(
     birthday DATE,
     age INT GENERATED ALWAYS AS (DATEDIFF(CURRENT_DATE, birth_date) / 365) VIRTUAL
 );
-
 
 CREATE TABLE Address(
     address_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -76,7 +82,6 @@ CREATE TABLE Medicine (
     med_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL UNIQUE,
     prescription_type VARCHAR(255) NOT NULL,
-    prospectus VARCHAR(255),
     used_for VARCHAR(255),
     dosages VARCHAR(255),
     side_effects VARCHAR(255),
