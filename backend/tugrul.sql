@@ -48,7 +48,9 @@ CREATE TABLE PrescribedMedication (
 CREATE TABLE Pharmacy (
     pharmacy_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     address VARCHAR(255),
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    adress_id INTEGER,
+    FOREIGN KEY (address_id) REFERENCES Address(adress_id)
 );
 
 CREATE TABLE StoredIn (
