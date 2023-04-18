@@ -20,7 +20,7 @@ CREATE TABLE Report (
 );
 
 CREATE TABLE MedicineReport (
-    report_id INTEGER PRIMARY KEY,
+    report_id INTEGER,
     FOREIGN KEY (report_id) REFERENCES Report(report_id),
     med_id INTEGER,
     FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
@@ -38,7 +38,7 @@ CREATE TABLE Prescription (
 );
 
 CREATE TABLE PrescribedMedication (
-    pres_id INTEGER PRIMARY KEY,
+    pres_id INTEGER,
     FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id),
     med_id INTEGER,
     FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
@@ -52,7 +52,7 @@ CREATE TABLE Pharmacy (
 );
 
 CREATE TABLE StoredIn (
-    pharmacy_id INTEGER PRIMARY KEY,
+    pharmacy_id INTEGER,
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id),
     med_id INTEGER,
     FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
@@ -65,13 +65,13 @@ CREATE TABLE Purchase (
     date DATE,
     deduction INTEGER NOT NULL,
     user_id INTEGER UNIQUE NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
-    wallet_type VARCHAR(255),
-    FOREIGN KEY (wallet_type) REFERENCES Wallet(wallet_type)
+    FOREIGN KEY (user_id) REFERENCES Patient(user_id),
+    wallet_id VARCHAR(255),
+    FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id)
 );
 
 CREATE TABLE PurchasedMedicine (
-    purchase_id INTEGER PRIMARY KEY,
+    purchase_id INTEGER,
     FOREIGN KEY (purchase_id) REFERENCES Purchase(purchase_id),
     med_id INTEGER,
     FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
@@ -79,10 +79,10 @@ CREATE TABLE PurchasedMedicine (
 );
 
 CREATE TABLE Wallet (
-    wallet_type VARCHAR(255) NOT NULL,
+    wallet_id VARCHAR(255) NOT NULL,
     balance INTEGER NOT NULL,
     payment_id INTEGER NOT NULL,
-    PRIMARY KEY (user_id, wallet_type),
+    PRIMARY KEY (user_id, wallet_id),
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (payment_id) REFERENCES PaymentMethod(payment_id)
 );
