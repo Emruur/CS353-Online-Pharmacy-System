@@ -62,13 +62,16 @@ CREATE TABLE Hospital(
 );
 
 
--- // FIXME
--- Special condition niye weak entity, birçok userın ortak conditionu olabilir
+
 CREATE TABLE SpecialCondition(
-    user_id INTEGER NOT NULL,
+    condition_id INTEGER NOT PRIMARY KEY,
     condition_name VARCHAR(255) NOT NULL,
-    condition_description VARCHAR(255),
-    PRIMARY KEY (user_id, condition_name)
+);
+
+CREATE TABLE user_condition(
+    condition_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    PRIMARY KEY (condition_id, user_id)
 );
 
 -- //TODO specialization trigerı ekle
