@@ -29,6 +29,10 @@ CREATE TABLE MedicineReport (
 
 CREATE TABLE Prescription (
     pres_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    prescribed_by INTEGER,
+    FOREIGN KEY (prescribed_by) REFERENCES Doctor(user_id),
+    prescribed_to INTEGER,
+    FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
     type VARCHAR(255)
 );
@@ -61,7 +65,9 @@ CREATE TABLE Purchase (
     date DATE,
     deduction INTEGER NOT NULL,
     user_id INTEGER UNIQUE NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(user_id)
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    wallet_type VARCHAR(255),
+    FOREIGN KEY (wallet_type) REFERENCES Wallet(wallet_type)
 );
 
 CREATE TABLE PurchasedMedicine (

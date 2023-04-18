@@ -33,6 +33,8 @@ CREATE TABLE Admin(
 CREATE TABLE Patient(
     user_id INTEGER PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES User(user_id),
+    primary_doc_id INTEGER,
+    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id),
     height INTEGER,
     weight INTEGER,
     birthday DATE,
