@@ -1,5 +1,5 @@
 CREATE TABLE User (
-    user_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    user_id INTEGER PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     first_name VARCHAR(255) NOT NULL,
     middle_name VARCHAR(255),
@@ -8,7 +8,7 @@ CREATE TABLE User (
     password VARCHAR(255) NOT NULL,
     address_id INTEGER,
     FOREIGN KEY (address_id) REFERENCES Address(adress_id) ON DELETE CASCADE
-    user_type ENUM('patient', 'doctor', 'pharmacist')
+    user_type ENUM('patient', 'doctor', 'pharmacist', 'admin')
 );
 
 CREATE TABLE Doctor (
@@ -65,7 +65,7 @@ CREATE TABLE Hospital(
 
 CREATE TABLE SpecialCondition(
     condition_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    condition_name VARCHAR(255) NOT NULL
+    condition_name VARCHAR(255) NOT NULL,
 );
 
 CREATE TABLE UserCondition(
