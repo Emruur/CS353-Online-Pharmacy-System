@@ -7,9 +7,10 @@ CREATE TABLE User (
     phone_number VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     address_id INTEGER,
-    FOREIGN KEY (address_id) REFERENCES Address(adress_id) ON DELETE CASCADE
-    user_type ENUM('patient', 'doctor', 'pharmacist', 'admin')
+    FOREIGN KEY (address_id) REFERENCES Address(address_id) ON DELETE CASCADE,
+    user_type ENUM('patient', 'doctor', 'pharmacist') NOT NULL
 );
+
 
 CREATE TABLE Doctor (
     user_id INTEGER PRIMARY KEY,
@@ -30,8 +31,10 @@ CREATE TABLE Pharmacist(
 );
 
 CREATE TABLE Admin(
-    user_id INTEGER PRIMARY KEY,
-    FOREIGN KEY (user_id) REFERENCES User(user_id)
+    admin_id INTEGER PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    nickname VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
 );
 
 CREATE TABLE Patient(
@@ -55,8 +58,8 @@ CREATE TABLE Address(
 CREATE TABLE Hospital(
     hospital_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255),
-    adress_id INTEGER NOT NULL,
-    FOREIGN KEY (address_id) REFERENCES Address(adress_id)
+    address_id INTEGER NOT NULL,
+    FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
 
 CREATE TABLE SpecialCondition(
@@ -79,9 +82,10 @@ CREATE TABLE Medicine (
     side_effects VARCHAR(255),
     risk_factors VARCHAR(255),
     preserve_conditions VARCHAR(255),
-    prod_firm VARCHAR(255)
-    price Numeric(10,2) NOT NULL;
+    prod_firm VARCHAR(255),
+    price Numeric(10,2) NOT NULL
 );
+
 
 CREATE TABLE Report (
     report_id INTEGER PRIMARY KEY AUTO_INCREMENT ,
@@ -107,7 +111,7 @@ CREATE TABLE Prescription (
     prescribed_to INTEGER,
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
-    type VARCHAR(255)
+    type VARCHAR(255),
     status enum("valid","used")
 );
 
@@ -122,11 +126,9 @@ CREATE TABLE PrescribedMedication (
 CREATE TABLE Pharmacy (
     pharmacy_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    adress_id INTEGER,
-    FOREIGN KEY (address_id) REFERENCES Address(adress_id)
+    address_id INTEGER,
+    FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
-
-
 
 CREATE TABLE StoredIn (
     pharmacy_id INTEGER,
@@ -173,8 +175,8 @@ CREATE TABLE RequestedPrescription (
     patient_id INTEGER,
     pres_id INTEGER,
     status VARCHAR(255) NOT NULL,
-    PRIMARY KEY (doctor_id, patient_id, pres_id)
-    status enum("pending","accepted","rejected")
+    PRIMARY KEY (doctor_id, patient_id, pres_id),
+    status ENUM ("pending","accepted","rejected") DEFAULT 'pending'
 );
 
 CREATE TABLE EquivalentTo (
