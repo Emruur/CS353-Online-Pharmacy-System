@@ -179,6 +179,7 @@ CREATE TABLE RequestedPrescription (
     doctor_id INTEGER,
     patient_id INTEGER,
     pres_id INTEGER,
+    status VARCHAR(255) NOT NULL,
     PRIMARY KEY (doctor_id, patient_id, pres_id)
     status enum("pending","accepted","rejected")
 );
