@@ -63,7 +63,7 @@ CREATE TABLE Hospital(
 
 CREATE TABLE SpecialCondition(
     condition_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    condition_name VARCHAR(255) NOT NULL,
+    condition_name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE UserCondition(
