@@ -29,8 +29,6 @@ CREATE TABLE Pharmacist(
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 
-
--- // FIXME 
 CREATE TABLE Admin(
     user_id INTEGER PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES User(user_id)
@@ -128,8 +126,7 @@ CREATE TABLE Pharmacy (
     FOREIGN KEY (address_id) REFERENCES Address(adress_id)
 );
 
--- //TODO create trigger to delete storage on pharmacy deletion
--- //TODO create trigger to set Pharmacist(pharmacy_id) on Pharmcy deletion
+
 
 CREATE TABLE StoredIn (
     pharmacy_id INTEGER,
@@ -281,6 +278,9 @@ END;
 
 
 -- //TODO change prescription status trigger
+
+
+-- //TODO create trigger to set Pharmacist(pharmacy_id) on Pharmcy deletion
 
 
 
