@@ -29,10 +29,6 @@ CREATE TABLE Pharmacist(
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 
-
-
-
--- // FIXME 
 CREATE TABLE Admin(
     user_id INTEGER PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES User(user_id)
@@ -73,8 +69,6 @@ CREATE TABLE UserCondition(
     user_id INTEGER NOT NULL,
     PRIMARY KEY (condition_id, user_id)
 );
-
-
 
 CREATE TABLE Medicine (
     med_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -132,8 +126,7 @@ CREATE TABLE Pharmacy (
     FOREIGN KEY (address_id) REFERENCES Address(adress_id)
 );
 
--- //TODO create trigger to delete storage on pharmacy deletion
--- //TODO create trigger to set Pharmacist(pharmacy_id) on Pharmcy deletion
+
 
 CREATE TABLE StoredIn (
     pharmacy_id INTEGER,
@@ -145,10 +138,9 @@ CREATE TABLE StoredIn (
 );
 
 CREATE TABLE Purchase (
-    purchase_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    purchase_id INTEGER PRIMARY KEY,
     date DATE,
-    deduction INTEGER NOT NULL,
-    user_id INTEGER UNIQUE NOT NULL,
+    deduction Numeric(10,2) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Patient(user_id),
     wallet_id VARCHAR(255),
     FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id)
@@ -165,7 +157,7 @@ CREATE TABLE PurchasedMedicine (
 
 CREATE TABLE Wallet (
     wallet_id VARCHAR(255) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    balance INTEGER NOT NULL,
+    balance Numeric(10,2) NOT NULL,
     payment_id INTEGER NOT NULL,
     FOREIGN KEY (payment_id) REFERENCES PaymentMethod(payment_id)
 );
@@ -260,32 +252,46 @@ BEGIN
 END;
 
 CREATE TRIGGER reduce_balance_on_purchase
-AFTER INSERT
+BEFORE INSERT
 ON Purchase FOR EACH ROW
 BEGIN
-    UPDATE Wallet
-    SET balance = balance - (
+    DECLARE total = Numeric(10,2)
+    DECLARE balance= Numeric(10,2)
+
+    SET total = (
         SELECT sum(price)
         FROM Medicine
         NATURAL JOIN PurchasedMedicine
-        WHERE PurchasedMedicine.purchase_id= NEW.purchase_id
-    );
+        WHERE PurchasedMedicine.purchase_id= NEW.purchase_id);
+
+    SET balance = (SELECT balance
+        FROM Wallet WHERE wallet_id= NEW.wallet_id)
+
+    IF balance < total
+        -- Remove all purchasedmedicine entities
+        DELETE FROM PurchasedMedicine
+        WHERE purchase_id= NEW.purchase_id
+
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: not enough money!';
+    END IF;
+
+    UPDATE Wallet
+    SET balance = balance - total;
     WHERE Wallet(wallet_id) = NEW.wallet_id;
 
     -- Update Purchase deduction
-    UPDATE Purchase
-    SET deduction = (
-        SELECT SUM(price)
-        FROM Medicine
-        NATURAL JOIN PurchasedMedicine
-        WHERE PurchasedMedicine.purchase_id = NEW.purchase_id
-    )
-    WHERE purchase_id = NEW.purchase_id;
+    SET NEW.deduction= total
 END;
 
 
 -- //TODO change prescription status trigger
-    -- Simplified patient view
+
+
+-- //TODO create trigger to set Pharmacist(pharmacy_id) on Pharmcy deletion
+
+
+
 
     -- Doctors patients view
 CREATE VIEW AssignedPatients AS
