@@ -267,6 +267,7 @@ BEGIN
         SELECT sum(price)
         FROM Medicine
         NATURAL JOIN PurchasedMedicine
+        WHERE PurchasedMedicine.purchase_id= NEW.purchase_id
     );
     WHERE Wallet(wallet_id) = NEW.wallet_id;
 END;
