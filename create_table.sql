@@ -30,8 +30,6 @@ CREATE TABLE Pharmacist(
 );
 
 
-
-
 -- // FIXME 
 CREATE TABLE Admin(
     user_id INTEGER PRIMARY KEY,
@@ -73,8 +71,6 @@ CREATE TABLE UserCondition(
     user_id INTEGER NOT NULL,
     PRIMARY KEY (condition_id, user_id)
 );
-
-
 
 CREATE TABLE Medicine (
     med_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -285,7 +281,9 @@ END;
 
 
 -- //TODO change prescription status trigger
-    -- Simplified patient view
+
+
+
 
     -- Doctors patients view
 CREATE VIEW AssignedPatients AS
