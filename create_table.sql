@@ -74,7 +74,6 @@ CREATE TABLE UserCondition(
     PRIMARY KEY (condition_id, user_id)
 );
 
--- //TODO specialization trigerı ekle
 
 
 CREATE TABLE Medicine (
@@ -87,6 +86,7 @@ CREATE TABLE Medicine (
     risk_factors VARCHAR(255),
     preserve_conditions VARCHAR(255),
     prod_firm VARCHAR(255)
+    price INTEGER NOT NULL;
 );
 
 CREATE TABLE Report (
@@ -97,7 +97,6 @@ CREATE TABLE Report (
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 
--- // TODO create trigger to delete medicinereport entities on report delete
 
 CREATE TABLE MedicineReport (
     report_id INTEGER,
@@ -117,7 +116,6 @@ CREATE TABLE Prescription (
     type VARCHAR(255)
 );
 
--- // TODO create trigger to delete prescribed medication entities on prescription delete
 CREATE TABLE PrescribedMedication (
     pres_id INTEGER,
     FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id),
@@ -257,6 +255,19 @@ BEGIN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Error: User needs an adress before placing a purchase!';
     END IF;
+END;
+
+CREATE TRIGGER reduce_balance_on_purchase
+AFTER INSERT
+ON Purchase FOR EACH ROW
+BEGIN
+    UPDATE Wallet
+    SET balance = balance - (
+        SELECT sum(price)
+        FROM Medicine
+        NATURAL JOIN PurchasedMedicine
+    );
+    WHERE Wallet(wallet_id) = NEW.wallet_id;
 END;
 
 
