@@ -138,7 +138,7 @@ CREATE TABLE StoredIn (
 );
 
 CREATE TABLE Purchase (
-    purchase_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    purchase_id INTEGER PRIMARY KEY,
     date DATE,
     deduction Numeric(10,2) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES Patient(user_id),
@@ -258,7 +258,8 @@ BEGIN
     DECLARE total = Numeric(10,2)
     DECLARE balance= Numeric(10,2)
 
-    SET total = (SELECT sum(price)
+    SET total = (
+        SELECT sum(price)
         FROM Medicine
         NATURAL JOIN PurchasedMedicine
         WHERE PurchasedMedicine.purchase_id= NEW.purchase_id);
@@ -267,6 +268,10 @@ BEGIN
         FROM Wallet WHERE wallet_id= NEW.wallet_id)
 
     IF balance < total
+        -- Remove all purchasedmedicine entities
+        DELETE FROM PurchasedMedicine
+        WHERE purchase_id= NEW.purchase_id
+
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Error: not enough money!';
     END IF;
