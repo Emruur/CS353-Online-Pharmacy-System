@@ -270,9 +270,24 @@ BEGIN
         WHERE PurchasedMedicine.purchase_id= NEW.purchase_id
     );
     WHERE Wallet(wallet_id) = NEW.wallet_id;
+
+    -- Update Purchase deduction
+    UPDATE Purchase
+    SET deduction = (
+        SELECT SUM(price)
+        FROM Medicine
+        NATURAL JOIN PurchasedMedicine
+        WHERE PurchasedMedicine.purchase_id = NEW.purchase_id
+    )
+    WHERE purchase_id = NEW.purchase_id;
 END;
 
-
     -- Simplified patient view
-    -- 
+
+    -- Doctors patients view
+CREATE VIEW AssignedPatients AS
+SELECT *
+FROM Patient NATURAL JOIN User
+WHERE primary_doc_id= @doctor_id
+
 
