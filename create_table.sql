@@ -114,6 +114,7 @@ CREATE TABLE Prescription (
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
     type VARCHAR(255)
+    status enum("valid","used")
 );
 
 CREATE TABLE PrescribedMedication (
@@ -151,6 +152,7 @@ CREATE TABLE Purchase (
     FOREIGN KEY (user_id) REFERENCES Patient(user_id),
     wallet_id VARCHAR(255),
     FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id)
+
 );
 
 CREATE TABLE PurchasedMedicine (
@@ -229,7 +231,6 @@ BEGIN
             WHERE pharmacist_id = NEW.doctor_id
         )
     );
-
     IF is_pharmacist = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Error: A pharmacist can not be a doctor!';
@@ -282,6 +283,8 @@ BEGIN
     WHERE purchase_id = NEW.purchase_id;
 END;
 
+
+-- //TODO change prescription status trigger
     -- Simplified patient view
 
     -- Doctors patients view
