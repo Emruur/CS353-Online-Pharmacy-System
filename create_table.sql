@@ -141,7 +141,6 @@ CREATE TABLE Purchase (
     purchase_id INTEGER PRIMARY KEY,
     date DATE,
     deduction Numeric(10,2) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES Patient(user_id),
     wallet_id VARCHAR(255),
     FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id)
 
