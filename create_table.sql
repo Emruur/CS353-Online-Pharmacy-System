@@ -86,7 +86,7 @@ CREATE TABLE Medicine (
     risk_factors VARCHAR(255),
     preserve_conditions VARCHAR(255),
     prod_firm VARCHAR(255)
-    price INTEGER NOT NULL;
+    price Numeric(10,2) NOT NULL;
 );
 
 CREATE TABLE Report (
