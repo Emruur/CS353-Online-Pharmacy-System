@@ -9,17 +9,20 @@ export const AccountPopover = (props) => {
 	const navigate = useNavigate();
 
 	const name =
-		localStorage.getItem('firstName') + ' ' + localStorage.getItem('lastName');
+		sessionStorage.getItem('firstName') +
+		' ' +
+		sessionStorage.getItem('lastName');
+	const balance = sessionStorage.getItem('balance');
 
 	const handleSignOut = async () => {
-		localStorage.removeItem('role');
-		localStorage.removeItem('jwtToken');
-		localStorage.removeItem('starsId');
-		localStorage.removeItem('semester');
-		localStorage.removeItem('firstName');
-		localStorage.removeItem('lastName');
-		localStorage.removeItem('department');
-		localStorage.removeItem('academicYear');
+		sessionStorage.removeItem('role');
+		sessionStorage.removeItem('jwtToken');
+		sessionStorage.removeItem('starsId');
+		sessionStorage.removeItem('semester');
+		sessionStorage.removeItem('firstName');
+		sessionStorage.removeItem('lastName');
+		sessionStorage.removeItem('department');
+		sessionStorage.removeItem('academicYear');
 
 		navigate('/login');
 	};
@@ -47,6 +50,9 @@ export const AccountPopover = (props) => {
 				<Typography variant="overline">Account</Typography>
 				<Typography color="text.secondary" variant="body2">
 					{name}
+				</Typography>
+				<Typography color="text.secondary" variant="body2">
+					{'Balance: ' + balance + ' TL'}
 				</Typography>
 			</Box>
 			<MenuList

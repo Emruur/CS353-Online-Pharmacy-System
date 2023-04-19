@@ -1,5 +1,578 @@
+import {
+	Alert,
+	AlertTitle,
+	Box,
+	Button,
+	Container,
+	Link,
+	MenuItem,
+	TextField,
+	Typography,
+} from '@mui/material';
+import axios from 'axios';
+import { useFormik } from 'formik';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+
+const hospitalList = [
+	{
+		name: 'Ankara Şehir Hastanesi',
+		location: 'Çankaya',
+	},
+	{
+		name: 'Ankara Etlik Şehir Hastanesi',
+		location: 'Keçiören',
+	},
+	{
+		name: 'Gülhane Eğitim ve Araştırma Hastanesi',
+		location: 'Keçiören',
+	},
+	{
+		name: 'Beytepe Murat Erdi Eker Devlet Hastanesi',
+		location: 'Çankaya',
+	},
+	{
+		name: 'Haymana Devlet Hastanesi',
+		location: 'Haymana',
+	},
+	{
+		name: 'Ankara Atatürk Sanatoryum Eğitim ve Araştırma Hastanesi',
+		location: 'Keçiören',
+	},
+	{
+		name: 'Gazi Üniversitesi Tıp Fakültesi Gazi Hastanesi',
+		location: 'Yenimahalle',
+	},
+	{
+		name: 'Hacettepe Üniversitesi İhsan Doğramacı Çocuk Hastanesi',
+		location: 'Çankaya',
+	},
+];
+
+const pharList = [
+	{
+		name: 'Beyazıt Eczanesi',
+		location: 'Akyurt',
+	},
+	{
+		name: 'Nur Eczanesi',
+		location: 'Akyurt',
+	},
+	{
+		name: 'Hayat Eczanesi',
+		location: 'Akyurt',
+	},
+	{
+		name: 'Bahar Eczanesi',
+		location: 'Altındağ ',
+	},
+	{
+		name: 'Kaçkar Eczanesi',
+		location: 'Akyurt',
+	},
+	{
+		name: 'Nimet Eczanesi',
+		location: 'Keçiören ',
+	},
+	{
+		name: 'Birsen Eczanesi',
+		location: 'Keçiören',
+	},
+	{
+		name: 'Hazar Eczanesi',
+		location: 'Sincan',
+	},
+];
+
 const Register = () => {
-	return <></>;
+	const navigate = useNavigate();
+
+	const [errorMessage, setErrorMessage] = useState('');
+
+	const [isCustomer, setIsCustomer] = useState(true);
+	const [isDoctor, setIsDoctor] = useState(false);
+	const [isPhar, setIsPhar] = useState(false);
+
+	const formik = useFormik({
+		initialValues: {
+			firstName: '',
+			lastName: '',
+			email: '',
+			tckn: '',
+			password: '',
+			hospital: '',
+			pharmacy: '',
+		},
+		validationSchema: Yup.object({
+			firstName: Yup.string().max(50).required('First name is required'),
+			lastName: Yup.string().max(50).required('Last name is required'),
+			email: Yup.string().max(50).required('Email is required'),
+			tckn: Yup.number('TCKN should only consist of digits')
+				.max(100000000000, 'TCKN cannot exceed 11 digits')
+				.required('TCKN is required'),
+			password: Yup.string()
+				.max(16, 'Password can be maximum 16 characters long')
+				.required('Password is required'),
+			hospital: Yup.string().required('Name of hospital required'),
+			pharmacy: Yup.string().required('Name of pharmacy is required'),
+		}),
+		onSubmit: async (values) => {
+			await axios
+				.post('/auth/login', values)
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data);
+						navigate('/dashboard');
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						if (err.response.status === 401) {
+							setErrorMessage('Invalid TCKN or password');
+						} else {
+							setErrorMessage('Invalid request');
+						}
+					} else {
+						setErrorMessage('Connection error');
+					}
+				});
+		},
+	});
+
+	return (
+		<>
+			<title>Register</title>
+			{errorMessage.trim().length !== 0 && (
+				<Alert
+					severity="error"
+					onClose={() => {
+						setErrorMessage('');
+					}}
+				>
+					<AlertTitle>Error</AlertTitle>
+					{errorMessage}
+				</Alert>
+			)}
+			<Box
+				component="main"
+				sx={{
+					alignItems: 'center',
+					display: 'flex',
+					flexGrow: 1,
+					minHeight: '100%',
+				}}
+			>
+				<Container maxWidth="sm">
+					<form onSubmit={formik.handleSubmit}>
+						<Box
+							sx={{
+								display: 'flex',
+								justifyContent: 'space-between',
+								my: 3,
+							}}
+						>
+							<Button
+								variant="contained"
+								color="primary"
+								disabled={isCustomer}
+								onClick={() => {
+									setIsCustomer(true);
+									setIsDoctor(false);
+									setIsPhar(false);
+								}}
+							>
+								Customer
+							</Button>
+							<Button
+								variant="contained"
+								color="primary"
+								disabled={isDoctor}
+								onClick={() => {
+									setIsCustomer(false);
+									setIsDoctor(true);
+									setIsPhar(false);
+								}}
+							>
+								Doctor
+							</Button>
+							<Button
+								variant="contained"
+								color="primary"
+								disabled={isPhar}
+								onClick={() => {
+									setIsCustomer(false);
+									setIsDoctor(false);
+									setIsPhar(true);
+								}}
+							>
+								Pharmacist
+							</Button>
+						</Box>
+						{isCustomer && (
+							<>
+								<Box sx={{ my: 3 }}>
+									<Typography color="textPrimary" variant="h4">
+										Customer Register
+									</Typography>
+									<Typography
+										gutterBottom
+										color="textSecondary"
+										variant="body2"
+									>
+										Create your account
+									</Typography>
+								</Box>
+								<Box>
+									<TextField
+										error={Boolean(
+											formik.touched.firstName && formik.errors.firstName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.firstName && formik.errors.firstName
+										}
+										label="First Name"
+										margin="normal"
+										name="firstName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.firstName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
+											formik.touched.lastName && formik.errors.lastName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.lastName && formik.errors.lastName
+										}
+										label="Last Name"
+										margin="normal"
+										name="lastName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.lastName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(formik.touched.email && formik.errors.email)}
+										fullWidth
+										helperText={formik.touched.email && formik.errors.email}
+										label="Email"
+										margin="normal"
+										name="email"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.email}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(formik.touched.tckn && formik.errors.tckn)}
+										fullWidth
+										helperText={formik.touched.tckn && formik.errors.tckn}
+										label="TCKN"
+										margin="normal"
+										name="tckn"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.tckn}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
+											formik.touched.password && formik.errors.password
+										)}
+										fullWidth
+										helperText={
+											formik.touched.password && formik.errors.password
+										}
+										label="Password"
+										margin="normal"
+										name="password"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="password"
+										value={formik.values.password}
+										variant="outlined"
+									/>
+								</Box>
+								<Box sx={{ py: 2 }}>
+									<Button
+										color="primary"
+										disabled={formik.isSubmitting}
+										fullWidth
+										size="large"
+										type="submit"
+										variant="contained"
+									>
+										Register
+									</Button>
+								</Box>
+							</>
+						)}
+						{isDoctor && (
+							<>
+								<Box sx={{ my: 3 }}>
+									<Typography color="textPrimary" variant="h4">
+										Doctor Register
+									</Typography>
+									<Typography
+										gutterBottom
+										color="textSecondary"
+										variant="body2"
+									>
+										Create your account
+									</Typography>
+								</Box>
+								<Box>
+									<TextField
+										error={Boolean(
+											formik.touched.firstName && formik.errors.firstName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.firstName && formik.errors.firstName
+										}
+										label="First Name"
+										margin="normal"
+										name="firstName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.firstName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
+											formik.touched.lastName && formik.errors.lastName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.lastName && formik.errors.lastName
+										}
+										label="Last Name"
+										margin="normal"
+										name="lastName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.lastName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(formik.touched.email && formik.errors.email)}
+										fullWidth
+										helperText={formik.touched.email && formik.errors.email}
+										label="Email"
+										margin="normal"
+										name="email"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.email}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(formik.touched.tckn && formik.errors.tckn)}
+										fullWidth
+										helperText={formik.touched.tckn && formik.errors.tckn}
+										label="TCKN"
+										margin="normal"
+										name="tckn"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.tckn}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
+											formik.touched.password && formik.errors.password
+										)}
+										fullWidth
+										helperText={
+											formik.touched.password && formik.errors.password
+										}
+										label="Password"
+										margin="normal"
+										name="password"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="password"
+										value={formik.values.password}
+										variant="outlined"
+									/>
+									<TextField
+										select
+										fullWidth
+										label="Hospital"
+										margin="normal"
+										name="hospital"
+										type="text"
+										variant="outlined"
+									>
+										{hospitalList.map((hospital, index) => (
+											<MenuItem key={index} value={hospital.name}>
+												{hospital.name}
+											</MenuItem>
+										))}
+									</TextField>
+								</Box>
+								<Box sx={{ py: 2 }}>
+									<Button
+										color="primary"
+										disabled={formik.isSubmitting}
+										fullWidth
+										size="large"
+										type="submit"
+										variant="contained"
+									>
+										Register
+									</Button>
+								</Box>
+							</>
+						)}
+						{isPhar && (
+							<>
+								<Box sx={{ my: 3 }}>
+									<Typography color="textPrimary" variant="h4">
+										Pharmacist Register
+									</Typography>
+									<Typography
+										gutterBottom
+										color="textSecondary"
+										variant="body2"
+									>
+										Create your account
+									</Typography>
+								</Box>
+								<Box>
+									<TextField
+										error={Boolean(
+											formik.touched.firstName && formik.errors.firstName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.firstName && formik.errors.firstName
+										}
+										label="First Name"
+										margin="normal"
+										name="firstName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.firstName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
+											formik.touched.lastName && formik.errors.lastName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.lastName && formik.errors.lastName
+										}
+										label="Last Name"
+										margin="normal"
+										name="lastName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.lastName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(formik.touched.email && formik.errors.email)}
+										fullWidth
+										helperText={formik.touched.email && formik.errors.email}
+										label="Email"
+										margin="normal"
+										name="email"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.email}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(formik.touched.tckn && formik.errors.tckn)}
+										fullWidth
+										helperText={formik.touched.tckn && formik.errors.tckn}
+										label="TCKN"
+										margin="normal"
+										name="tckn"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.tckn}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
+											formik.touched.password && formik.errors.password
+										)}
+										fullWidth
+										helperText={
+											formik.touched.password && formik.errors.password
+										}
+										label="Password"
+										margin="normal"
+										name="password"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="password"
+										value={formik.values.password}
+										variant="outlined"
+									/>
+									<TextField
+										select
+										fullWidth
+										label="Pharmacy"
+										margin="normal"
+										name="pharmacy"
+										type="text"
+										variant="outlined"
+									>
+										{pharList.map((pharmacy, index) => (
+											<MenuItem key={index} value={pharmacy.name}>
+												{pharmacy.name}
+											</MenuItem>
+										))}
+									</TextField>
+								</Box>
+								<Box sx={{ py: 2 }}>
+									<Button
+										color="primary"
+										disabled={formik.isSubmitting}
+										fullWidth
+										size="large"
+										type="submit"
+										variant="contained"
+									>
+										Register
+									</Button>
+								</Box>
+							</>
+						)}
+						<Box sx={{ py: 1 }}>
+							<Typography gutterBottom color="textSecondary" variant="body2">
+								{' Already having an account? Click '}
+								<Link href="/login">here</Link>
+								{' to login.'}
+							</Typography>
+							<Link></Link>
+						</Box>
+					</form>
+				</Container>
+			</Box>
+		</>
+	);
 };
 
 export default Register;

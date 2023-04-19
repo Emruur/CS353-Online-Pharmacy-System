@@ -1,8 +1,9 @@
-import { Alert, AlertTitle } from '@mui/material';
+import { Alert, AlertTitle, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import { Navbar } from './components/Navbar/Navbar';
 import { Sidebar } from './components/Sidebar/Sidebar';
+import Login from './pages/Login';
 import routes from './routes';
 
 const PageLayoutRoot = styled('div')(({ theme }) => ({
@@ -31,19 +32,32 @@ const RequireAuth = ({ children }) => {
 						{errorMessage}
 					</Alert>
 				)}
+				<Login />
 			</>
 		);
 	}
 	return (
 		<>
 			<PageLayoutRoot>
-				{children}
-				<Navbar onSidebarOpen={() => setSidebarOpen(true)} />
-				<Sidebar
-					routes={routes}
-					open={isSidebarOpen}
-					onClose={() => setSidebarOpen(false)}
-				/>
+				<Box
+					component="main"
+					sx={{
+						display: 'flex',
+						flex: '1 1 auto',
+						flexDirection: 'column',
+						width: '100%',
+						flexGrow: 1,
+						py: 8,
+					}}
+				>
+					{children}
+					<Navbar onSidebarOpen={() => setSidebarOpen(true)} />
+					<Sidebar
+						routes={routes}
+						open={isSidebarOpen}
+						onClose={() => setSidebarOpen(false)}
+					/>
+				</Box>
 			</PageLayoutRoot>
 		</>
 	);

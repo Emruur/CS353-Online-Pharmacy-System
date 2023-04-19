@@ -1,78 +1,94 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import {
+	Alert,
+	AlertTitle,
+	Box,
+	Button,
+	Container,
+	Link,
+	TextField,
+	Typography,
+} from '@mui/material';
+//import axios from 'axios';
 import { useFormik } from 'formik';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import {Alert, AlertTitle, Box, Button, Container, TextField, Typography} from '@mui/material';
-import axios from "axios";
 
 const Login = () => {
 	const navigate = useNavigate();
 
-	const [errorMessage, setErrorMessage] = useState("")
+	const [errorMessage, setErrorMessage] = useState('');
 
 	const formik = useFormik({
 		initialValues: {
-			tckn: "",
-			password: ""
+			tckn: '',
+			password: '',
 		},
 		validationSchema: Yup.object({
-			tckn: Yup
-				.number("TCKN should only consist of digits")
-				.max(100000000000, "TCKN cannot exceed 11 digits")
-				.required("TCKN is required"),
-			password: Yup
-				.string()
-				.max(16, "Password can be maximum 16 characters long")
-				.required("Password is required")
+			tckn: Yup.number('TCKN should only consist of digits')
+				.max(100000000000, 'TCKN cannot exceed 11 digits')
+				.required('TCKN is required'),
+			password: Yup.string()
+				.max(16, 'Password can be maximum 16 characters long')
+				.required('Password is required'),
 		}),
 		onSubmit: async (values) => {
-			await axios.post("/auth/login", values)
+			/*await axios
+				.post('/auth/login', values)
 				.then((res) => {
 					if (res && res.data) {
-						console.log(res.data)
-						navigate("/dashboard")
+						console.log(res.data);
+						navigate('/dashboard');
 					}
 				})
 				.catch((err) => {
 					if (err && err.response) {
 						if (err.response.status === 401) {
-							setErrorMessage("Invalid TCKN or password")
+							setErrorMessage('Invalid TCKN or password');
 						} else {
-							setErrorMessage("Invalid request")
+							setErrorMessage('Invalid request');
 						}
 					} else {
-						setErrorMessage("Connection error")
+						setErrorMessage('Connection error');
 					}
-				})
-		}
-	})
+				});*/
+			sessionStorage.setItem('firstName', 'Barış');
+			sessionStorage.setItem('lastName', 'Yıldırım');
+			sessionStorage.setItem('balance', '1200');
+			navigate('/dashboard');
+		},
+	});
 
-	return(
+	return (
 		<>
 			<title>Login</title>
+			{errorMessage.trim().length !== 0 && (
+				<Alert
+					severity="error"
+					onClose={() => {
+						setErrorMessage('');
+					}}
+				>
+					<AlertTitle>Error</AlertTitle>
+					{errorMessage}
+				</Alert>
+			)}
 			<Box
 				component="main"
 				sx={{
-					alignItems: "center",
-					display: "flex",
+					alignItems: 'center',
+					display: 'flex',
 					flexGrow: 1,
-					minHeight: "100%"
+					minHeight: '100%',
 				}}
 			>
 				<Container maxWidth="sm">
-					<form onSubmit={formik.handleSubmit}> 
+					<form onSubmit={formik.handleSubmit}>
 						<Box sx={{ my: 3 }}>
-							<Typography
-								color="textPrimary"
-								variant='h4'
-							>
+							<Typography color="textPrimary" variant="h4">
 								Login
 							</Typography>
-							<Typography
-								gutterBottom
-								color="textSecondary"
-								variant='body2'
-							>
+							<Typography gutterBottom color="textSecondary" variant="body2">
 								Sign in to your account
 							</Typography>
 						</Box>
@@ -91,7 +107,9 @@ const Login = () => {
 								variant="outlined"
 							/>
 							<TextField
-								error={Boolean(formik.touched.password && formik.errors.password)}
+								error={Boolean(
+									formik.touched.password && formik.errors.password
+								)}
 								fullWidth
 								helperText={formik.touched.password && formik.errors.password}
 								label="Password"
@@ -116,18 +134,16 @@ const Login = () => {
 								Sign In Now
 							</Button>
 						</Box>
-						{errorMessage.trim().length !== 0 &&
-							<Alert
-								severity="error"
-								onClose={() => {
-									setErrorMessage("")
-								}}>
-								<AlertTitle>Error</AlertTitle>
-								{errorMessage}
-							</Alert>
-						}
+						<Box sx={{ py: 1 }}>
+							<Typography gutterBottom color="textSecondary" variant="body2">
+								{" Don't you have an account? Click "}
+								<Link href="/register">here</Link>
+								{' to sign register.'}
+							</Typography>
+							<Link></Link>
+						</Box>
 					</form>
-				</Container>	
+				</Container>
 			</Box>
 		</>
 	);
