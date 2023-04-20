@@ -42,7 +42,8 @@ const ShoppingList = (props) => {
 					<Table>
 						<TableHead sx={{ display: 'table-header-group' }}>
 							<TableRow>
-								<TableCell>Medicine Name</TableCell>
+								<TableCell>Image</TableCell>
+								<TableCell align="center">Medicine Name</TableCell>
 								<TableCell align="right">Quantity</TableCell>
 								<TableCell align="right">Total</TableCell>
 							</TableRow>
@@ -55,6 +56,9 @@ const ShoppingList = (props) => {
 										border: 0,
 									}}
 								>
+									<TableCell>
+										<img src={item.image}/>
+									</TableCell>
 									<TableCell>{item.name}</TableCell>
 									<TableCell align="right">{item.quantity}</TableCell>
 									<TableCell align="right">{item.total + ' ₺'}</TableCell>

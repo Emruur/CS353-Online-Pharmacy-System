@@ -60,7 +60,7 @@ export const Visa = () => {
 
 	return (
 		<>
-			<title>Vısa</title>
+			<title>Visa</title>
 			<Card></Card>
 			<CardActions>
 				<Grid container>

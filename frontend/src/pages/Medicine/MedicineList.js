@@ -31,12 +31,12 @@ const MedicineList = (props) => {
 	const { medicines } = props;
 	console.log(medicines);
 
-	const [prescription, setPrescription] = useState('none');
+	const [type, setType] = useState('none');
 
 	const [filteredMedinices, setFilteredMedinices] = useState(medicines);
 
 	const handlePrescription = (event) => {
-		setPrescription(event.target.value);
+		setType(event.target.value);
 	};
 
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -50,10 +50,10 @@ const MedicineList = (props) => {
 	};
 
 	const applyFilters = () => {
-		if (prescription !== 'none') {
+		if (type !== 'none') {
 			setFilteredMedinices(
 				medicines.filter(
-					(medicine) => medicine.requiredProspectus === prescription
+					(medicine) => medicine.type === type
 				)
 			);
 		} else {
@@ -104,29 +104,28 @@ const MedicineList = (props) => {
 								aria-labelledby="demo-radio-buttons-group-label"
 								defaultValue="female"
 								name="radio-buttons-group"
-								value={prescription}
+								value={type}
 								onChange={handlePrescription}
 							>
 								<FormControlLabel
-									value="white"
+									value="Paracetamol"
 									control={<Radio />}
-									label="White"
-								/>
-								<FormControlLabel value="red" control={<Radio />} label="Red" />
-								<FormControlLabel
-									value="purple"
-									control={<Radio />}
-									label="Purple"
+									label="Paracetamol"
 								/>
 								<FormControlLabel
-									value="orange"
-									control={<Radio />}
-									label="Orange"
+									value="Nervous System Stimulant" 
+									control={<Radio />} 
+									label="Nervous System Stimulant" 
 								/>
 								<FormControlLabel
-									value="green"
+									value="Antibiotic"
 									control={<Radio />}
-									label="Green"
+									label="Antibiotic"
+								/>
+								<FormControlLabel
+									value="Anti-inflammatory"
+									control={<Radio />}
+									label="Anti-inflammatory"
 								/>
 								<FormControlLabel
 									value="none"
@@ -158,10 +157,12 @@ const MedicineList = (props) => {
 					<Table>
 						<TableHead sx={{ display: 'table-header-group' }}>
 							<TableRow>
-								<TableCell>Medicine Name</TableCell>
+								<TableCell>Image</TableCell>
+								<TableCell align="center">Medicine Name</TableCell>
 								<TableCell align="right">Requirement</TableCell>
+								<TableCell align="right">Usage Purpose</TableCell>
 								<TableCell align="right">Side Effects</TableCell>
-								<TableCell align="right">Prospectus</TableCell>
+								<TableCell align="right">Prescribed</TableCell>
 								<TableCell align="right">Operation</TableCell>
 							</TableRow>
 						</TableHead>
@@ -173,24 +174,27 @@ const MedicineList = (props) => {
 										border: 0,
 									}}
 								>
+									<TableCell>
+										<img src={medicine.image}/>
+									</TableCell>
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">
 										<SeverityPill color={`${medicine.requiredProspectus}`}>
 											{medicine.requiredProspectus}
 										</SeverityPill>
 									</TableCell>
+									<TableCell align="right">
+										{medicine.type}
+									</TableCell>
 									<TableCell align="right">{medicine.sideEffect}</TableCell>
 									<TableCell align="right">
-										<Link href={medicine.prospectusLink}>Link</Link>
+										{medicine.prescriptionStatus}
 									</TableCell>
 									<TableCell align="right">
 										<>
 											<Tooltip>
 												<IconButton
-													disabled={
-														medicine.requiredProspectus === 'red' ||
-														medicine.requiredProspectus === 'purple'
-													}
+													disabled={medicine.prescriptionStatus === 'Not Prescribed'}
 												>
 													<AddShoppingCartIcon />
 												</IconButton>
