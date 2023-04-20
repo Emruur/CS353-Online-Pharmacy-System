@@ -2,6 +2,8 @@ import Dashboard from './pages/Dashboard';
 import Medicine from './pages/Medicine/Medicine';
 import Payment from './pages/Payment/Payment';
 import Cart from './pages/ShoppingCart/Cart';
+import Prescription from './pages/Prescription/Prescription';
+import Purchase from './pages/PreviousPurchase/Purchase';
 
 const routes = [
 	{
@@ -35,6 +37,22 @@ const routes = [
 		route: '/cart',
 		label: 'Shopping Cart',
 		component: <Cart />,
+	},
+	{
+		type: 'collapse',
+		name: 'Prescription',
+		key: 'prescription',
+		route: '/prescription',
+		label: 'Prescription',
+		component: <Prescription />,
+	},
+	{
+		type: 'collapse',
+		name: 'Purchase',
+		key: 'purchase',
+		route: '/purchase',
+		label: 'Prescription',
+		component: <Purchase />,
 	},
 ];
 

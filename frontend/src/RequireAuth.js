@@ -48,6 +48,7 @@ const RequireAuth = ({ children }) => {
 						width: '100%',
 						flexGrow: 1,
 						py: 8,
+						pl: 26
 					}}
 				>
 					{children}
