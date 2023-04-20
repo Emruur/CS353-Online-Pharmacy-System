@@ -90,17 +90,9 @@ CREATE TABLE Report (
     report_id INTEGER PRIMARY KEY AUTO_INCREMENT ,
     start_date DATE,
     end_date DATE,
+    data TEXT,
     pharmacy_id INTEGER,
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
-);
-
-
-CREATE TABLE MedicineReport (
-    report_id INTEGER,
-    FOREIGN KEY (report_id) REFERENCES Report(report_id),
-    med_id INTEGER,
-    FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
-    PRIMARY KEY (report_id, med_id)
 );
 
 CREATE TABLE Prescription (
@@ -111,7 +103,7 @@ CREATE TABLE Prescription (
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
     type VARCHAR(255),
-    status enum("valid","used")
+    status enum("valid","used", "expired")
 );
 
 CREATE TABLE PrescribedMedication (
@@ -140,11 +132,12 @@ CREATE TABLE StoredIn (
 
 CREATE TABLE Purchase (
     purchase_id INTEGER PRIMARY KEY,
+    pharmacy_id INTEGER,
     date DATE,
     deduction Numeric(10,2) NOT NULL,
     wallet_id VARCHAR(255),
-    FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id)
-
+    FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id),
+    FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id),
 );
 
 CREATE TABLE PurchasedMedicine (
