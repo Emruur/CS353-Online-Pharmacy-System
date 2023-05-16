@@ -6,9 +6,9 @@ users_blueprint = Blueprint('users', __name__)
 
 db_config = {
     "host": "localhost",
-    "user": "your_username",
-    "password": "your_password",
-    "database": "your_database",
+    "user": "root",
+    "password": "",
+    "database": "cs353db",
 }
 
 # Initialize the MySQL connection pool
@@ -19,7 +19,7 @@ def get_conn():
         g.conn = pool.get_connection()
     return g.conn
 
-@users_blueprint.teardown_appcontext
+@users_blueprint.teardown_app_request
 def close_conn(e):
     conn = g.pop('conn', None)
     if conn is not None:
@@ -30,7 +30,7 @@ def add_user():
     data = request.get_json()
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (data['name'], data['email']))
+    cursor.execute("INSERT INTO User(id,email) VALUES (%s, %s)", (data['id'], data['email']))
     conn.commit()
     return jsonify({'message': 'User added successfully'}), 201
 
@@ -38,7 +38,7 @@ def add_user():
 def get_users():
     conn = get_conn()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM users")
+    cursor.execute("SELECT * FROM User")
     users = cursor.fetchall()
     return jsonify(users), 200
 
@@ -49,7 +49,3 @@ def delete_user(id):
     cursor.execute("DELETE FROM users WHERE id = %s", (id,))
     conn.commit()
     return jsonify({'message': 'User deleted successfully'}), 200
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
