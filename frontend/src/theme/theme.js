@@ -157,9 +157,9 @@ const theme = createTheme({
 		},
 		divider: '#E6E8F0',
 		primary: {
-			main: '#5048E5',
-			light: '#828DF8',
-			dark: '#3832A0',
+			main: '#088395',
+			light: '#05BFDB',
+			dark: '#0A4D68',
 			contrastText: '#FFFFFF',
 		},
 		secondary: {
@@ -191,6 +191,36 @@ const theme = createTheme({
 			light: '#DA6868',
 			dark: '#922E2E',
 			contrastText: '#FFFFFF',
+		},
+		red: {
+			main: '#FF0303',
+			light: '#DA6868',
+			dark: '#922E2E',
+			contrastText: '#FFFFFF',
+		},
+		orange: {
+			main: '#FAA005',
+			light: '#DA6868',
+			dark: '#922E2E',
+			contrastText: '#FFFFFF',
+		},
+		purple: {
+			main: '#A005FA',
+			light: '#DA6868',
+			dark: '#922E2E',
+			contrastText: '#FFFFFF',
+		},
+		green: {
+			main: '#25B82F',
+			light: '#DA6868',
+			dark: '#922E2E',
+			contrastText: '#FFFFFF',
+		},
+		white: {
+			main: '#F7F7F7',
+			light: '#DA6868',
+			dark: '#922E2E',
+			contrastText: '#000000',
 		},
 		text: {
 			primary: '#121828',

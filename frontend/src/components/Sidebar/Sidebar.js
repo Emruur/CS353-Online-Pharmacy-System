@@ -19,14 +19,14 @@ export const Sidebar = (props) => {
 		>
 			<div>
 				<Box sx={{ px: 2 }}>
-					<Typography sx={{ m: 1 }} variant="h4">
-						Sidebar Title
+					<Typography sx={{ m: 2 }} variant="h4">
+						Online Pharmacy
 					</Typography>
 				</Box>
 			</div>
 			<Divider
 				sx={{
-					borderColor: '#2D3748',
+					borderColor: '#088395',
 					my: 3,
 				}}
 			/>
@@ -40,7 +40,6 @@ export const Sidebar = (props) => {
 					/>
 				))}
 			</Box>
-			<Divider sx={{ borderColor: '#2D3748' }} />
 		</Box>
 	);
 	if (lgUp) {
@@ -50,7 +49,7 @@ export const Sidebar = (props) => {
 				open
 				PaperProps={{
 					sx: {
-						backgroundColor: 'neutral.900',
+						backgroundColor: '#0A4D68',
 						color: '#FFFFFF',
 						width: 280,
 					},
@@ -68,7 +67,7 @@ export const Sidebar = (props) => {
 			open={open}
 			PaperProps={{
 				sx: {
-					backgroundColor: 'neutral.900',
+					backgroundColor: '#0A4D68',
 					color: '#FFFFFF',
 					width: 280,
 				},
