@@ -290,9 +290,6 @@ END;
 
 -- //TODO create trigger to set Pharmacist(pharmacy_id) on Pharmcy deletion
 
-
-
-
     -- Doctors patients view
 CREATE VIEW AssignedPatients AS
 SELECT *
