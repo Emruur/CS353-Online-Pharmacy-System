@@ -49,3 +49,7 @@ def delete_user(id):
     cursor.execute("DELETE FROM users WHERE id = %s", (id,))
     conn.commit()
     return jsonify({'message': 'User deleted successfully'}), 200
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
