@@ -29,7 +29,7 @@ CREATE TABLE Address(
 );
 
 CREATE TABLE User (
-    user_id INTEGER PRIMARY KEY,
+    user_id VARCHAR(11) PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     first_name VARCHAR(255) NOT NULL,
     middle_name VARCHAR(255),
@@ -47,7 +47,7 @@ CREATE TABLE Hospital(
     FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
 CREATE TABLE Doctor (
-    user_id INTEGER PRIMARY KEY,
+    user_id VARCHAR(11) PRIMARY KEY,
     speciality VARCHAR(255),
     title VARCHAR(255),
     hospital_id INTEGER NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE Pharmacy (
     FOREIGN KEY (address_id) REFERENCES Address(address_id)
 );
 CREATE TABLE Pharmacist(
-    user_id INTEGER PRIMARY KEY,
+    user_id VARCHAR(11) PRIMARY KEY,
     education VARCHAR(255),
     pharmacy_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
@@ -73,9 +73,9 @@ CREATE TABLE Admin(
     password VARCHAR(255) NOT NULL
 );
 CREATE TABLE Patient(
-    user_id INTEGER PRIMARY KEY,
+    user_id VARCHAR(11) PRIMARY KEY,
     FOREIGN KEY (user_id) REFERENCES User(user_id),
-    primary_doc_id INTEGER,
+    primary_doc_id VARCHAR(11),
     FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id) ON DELETE CASCADE,
     height INTEGER,
     weight INTEGER,
@@ -108,9 +108,9 @@ CREATE TABLE Medicine (
 
 CREATE TABLE Prescription (
     pres_id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    prescribed_by INTEGER,
+    prescribed_by VARCHAR(11),
     FOREIGN KEY (prescribed_by) REFERENCES Doctor(user_id),
-    prescribed_to INTEGER,
+    prescribed_to VARCHAR(11),
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
     type VARCHAR(255),

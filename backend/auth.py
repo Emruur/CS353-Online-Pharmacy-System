@@ -7,8 +7,7 @@ import mysql.connector
 from mysql.connector import pooling
 import bcrypt
 
-users_blueprint = Blueprint('auth', __name__)
-jwt = JWTManager(current_app)
+auth_blueprint = Blueprint('auth', __name__)
 
 db_config = {
     "host": "localhost",
@@ -27,14 +26,14 @@ def get_conn():
     return g.conn
 
 
-@users_blueprint.teardown_app_request
+@auth_blueprint.teardown_app_request
 def close_conn(e):
     conn = g.pop('conn', None)
     if conn is not None:
         conn.close()
 
 
-@users_blueprint.route('/login', methods=['POST'])
+@auth_blueprint.route('/login', methods=['POST'])
 def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
@@ -59,13 +58,14 @@ def login():
     return jsonify(access_token=access_token), 200
 
 
-@users_blueprint.route('/signup', methods=['POST'])
+@auth_blueprint.route('/signup', methods=['POST'])
 def signup():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
     # get user data from request
     email = request.json.get('email', None)
+    user_id = request.json.get('user_id', None)
     password = request.json.get('password', None)
     first_name = request.json.get('first_name', None)
     middle_name = request.json.get('middle_name', None)
@@ -78,14 +78,14 @@ def signup():
 
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO User (email, password, first_name, middle_name, surname, phone_number, user_type) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                   (email, hashed_password, first_name, middle_name, surname, phone_number, user_type))
+    cursor.execute("INSERT INTO User (user_id,email, password, first_name, middle_name, surname, phone_number, user_type) VALUES (%s,%s, %s, %s, %s, %s, %s, %s)",
+                   (user_id,email, hashed_password, first_name, middle_name, surname, phone_number, user_type))
     conn.commit()
 
     return jsonify({"msg": "User created successfully"}), 201
 
 
-@users_blueprint.route('/protected', methods=['GET'])
+@auth_blueprint.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
     current_user = get_jwt_identity()
