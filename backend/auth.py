@@ -6,15 +6,10 @@ from flask_jwt_extended import (
 import mysql.connector
 from mysql.connector import pooling
 import bcrypt
-
+from config import db_config
 auth_blueprint = Blueprint('auth', __name__)
 
-db_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "",
-    "database": "cs353db",
-}
+db_config = db_config
 
 # Initialize the MySQL connection pool
 pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_config)

@@ -14,3 +14,4 @@
 
 Now your database should be initialized as defined in your `create_table.sql` script.
 
+4. **Modify Config File**: Modify the  `config.py` file according to your mysql settings. 

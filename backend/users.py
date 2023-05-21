@@ -1,15 +1,10 @@
 from flask import Blueprint, request, jsonify, g
 import mysql.connector
 from mysql.connector import pooling
-
+from config import db_config
 users_blueprint = Blueprint('users', __name__)
 
-db_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "",
-    "database": "cs353db",
-}
+db_config = db_config
 
 # Initialize the MySQL connection pool
 pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_config)
