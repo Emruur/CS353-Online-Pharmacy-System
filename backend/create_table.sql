@@ -114,6 +114,7 @@ CREATE TABLE Prescription (
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
     type VARCHAR(255),
+    notes TEXT,
     status ENUM("valid", "used", "expired")
 );
 CREATE TABLE PrescribedMedication (
