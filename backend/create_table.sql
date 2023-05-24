@@ -83,7 +83,6 @@ CREATE TABLE Patient(
     age INT
 );
 
-
 CREATE TABLE SpecialCondition(
     condition_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     condition_name VARCHAR(255) NOT NULL
@@ -103,7 +102,9 @@ CREATE TABLE Medicine (
     risk_factors VARCHAR(255),
     preserve_conditions VARCHAR(255),
     prod_firm VARCHAR(255),
-    price Numeric(10, 2) NOT NULL
+    price Numeric(10, 2) NOT NULL,
+    med_type VARCHAR(255),
+    min_age INTEGER
 );
 
 CREATE TABLE Prescription (
