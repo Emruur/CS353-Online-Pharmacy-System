@@ -8,7 +8,7 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import axios from "../axios/index";
+import axios from 'axios_config';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -41,7 +41,6 @@ const Login = () => {
 					if (res && res.data) {
 						var token = res.data.access_token
 						var decode = jwt_decode(token);
-						console.log(decode);
 						sessionStorage.setItem("token", token);
 						sessionStorage.setItem("firstName", decode.first_name);
 						sessionStorage.setItem("lastName", decode.last_name);

@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import RequireAuth from './RequireAuth';
-import routes from './routes';
+// Authentication Pages
+import Login from 'pages/Authentication/Login/Login';
+import Register from 'pages/Authentication/Register/Register';
+import RequireAuth from 'RequireAuth';
+import routes from 'routes';
 
 const App = () => {
 	const { pathname } = useLocation();

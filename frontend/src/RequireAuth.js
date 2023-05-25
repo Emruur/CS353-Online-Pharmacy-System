@@ -1,10 +1,10 @@
 import { Alert, AlertTitle, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
-import { Navbar } from './components/Navbar/Navbar';
-import { Sidebar } from './components/Sidebar/Sidebar';
-import Login from './pages/Login';
-import routes from './routes';
+import { Navbar } from 'components/Navbar/Navbar';
+import { Sidebar } from 'components/Sidebar/Sidebar';
+import Login from 'pages/Authentication/Login/Login';
+import routes from 'routes';
 
 const PageLayoutRoot = styled('div')(({ theme }) => ({
 	display: 'flex',

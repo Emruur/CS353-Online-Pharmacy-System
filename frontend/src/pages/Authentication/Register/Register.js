@@ -9,11 +9,12 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import axios from '../axios/index';
+import axios from 'axios_config/index';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MuiTelInput } from 'mui-tel-input';
+import { FormPatientRegister } from 'components/RegisterForms/form-patient-register';
+import { format } from 'date-fns';
 import * as Yup from 'yup';
 
 const hospitalList = [
@@ -95,12 +96,7 @@ const Register = () => {
 	const [isDoctor, setIsDoctor] = useState(false);
 	const [isPhar, setIsPhar] = useState(false);
 
-	const [phone, setPhone] = useState('');
-
-	const handleChange = (newPhone) => {
-		setPhone(newPhone);
-		formik.values.phone = newPhone;
-	}
+	const today = format(new Date(), "yyyy-MM-dd");
 
 	const formik = useFormik({
 		initialValues: {
@@ -109,16 +105,21 @@ const Register = () => {
 			lastName: '',
 			email: '',
 			tckn: '',
-			phone,
+			phone: '',
 			password: '',
 			hospital: '',
 			pharmacy: '',
+			typeSpecific: {
+				height: '180',
+				weight: '80',
+				birthday: today,
+			},
 		},
 		validationSchema: Yup.object({
 			firstName: Yup.string().max(50).required('First name is required'),
 			middleName: Yup.string().max(50),
 			lastName: Yup.string().max(50).required('Last name is required'),
-			email: Yup.string().max(50).required('Email is required'),
+			email: Yup.string().email().max(50).required('Email is required'),
 			tckn: Yup.number('TCKN should only consist of digits')
 				.max(100000000000, 'TCKN cannot exceed 11 digits')
 				.required('TCKN is required'),
@@ -126,27 +127,36 @@ const Register = () => {
 			password: Yup.string()
 				.max(16, 'Password can be maximum 16 characters long')
 				.required('Password is required'),
-			hospital: Yup.string().required('Name of hospital required'),
-			pharmacy: Yup.string().required('Name of pharmacy is required'),
+			hospital: Yup.string(),//.required('Name of hospital required'),
+			pharmacy: Yup.string(),//.required('Name of pharmacy is required'),
+			typeSpecific: Yup.object().shape({
+				height: Yup
+					.number(),
+				weight: Yup
+					.number(),
+				birthday: Yup
+					.date("Must consist of numbers")
+					.required("Birthday is required")
+			})
 		}),
 		onSubmit: async (values) => {
 			const newValues = {
+				user_id: values.tckn,
+				email: values.email,
+				password: values.password,
 				first_name:  values.firstName,
 				middle_name: values.middleName ? values.middleName : "",
 				surname: values.lastName,
-				password: values.password,
-				email: values.email,
 				phone_number: values.phone,
-				user_id: values.tckn,
-				user_type: isPhar ? "pharmacist" : (isDoctor ? "doctor" : "patient")
+				user_type: isPhar ? "pharmacist" : (isDoctor ? "doctor" : "patient"),
+				type_specific: values.typeSpecific
 			}
-			console.log(newValues)
 			await axios
-				.post('/auth/login', values)
+				.post('/auth/signup', newValues)
 				.then((res) => {
 					if (res && res.data) {
 						console.log(res.data);
-						navigate('/dashboard');
+						navigate('/login');
 					}
 				})
 				.catch((err) => {
@@ -233,140 +243,9 @@ const Register = () => {
 							</Button>
 						</Box>
 						{isCustomer && (
-							<>
-								<Box sx={{ my: 3 }}>
-									<Typography color="textPrimary" variant="h4">
-										Customer Register
-									</Typography>
-									<Typography
-										gutterBottom
-										color="textSecondary"
-										variant="body2"
-									>
-										Create your account
-									</Typography>
-								</Box>
-								<Box>
-									<TextField
-										error={Boolean(
-											formik.touched.firstName && formik.errors.firstName
-										)}
-										fullWidth
-										helperText={
-											formik.touched.firstName && formik.errors.firstName
-										}
-										label="First Name"
-										margin="normal"
-										name="firstName"
-										onBlur={formik.handleBlur}
-										onChange={formik.handleChange}
-										type="text"
-										value={formik.values.firstName}
-										variant="outlined"
-									/>
-									<TextField
-										error={Boolean(
-											formik.touched.middleName && formik.errors.middleName
-										)}
-										fullWidth
-										helperText={
-											formik.touched.middleName && formik.errors.middleName
-										}
-										label="Middle Name"
-										margin="normal"
-										name="middleName"
-										onBlur={formik.handleBlur}
-										onChange={formik.handleChange}
-										type="text"
-										value={formik.values.middleName}
-										variant="outlined"
-									/>
-									<TextField
-										error={Boolean(
-											formik.touched.lastName && formik.errors.lastName
-										)}
-										fullWidth
-										helperText={
-											formik.touched.lastName && formik.errors.lastName
-										}
-										label="Last Name"
-										margin="normal"
-										name="lastName"
-										onBlur={formik.handleBlur}
-										onChange={formik.handleChange}
-										type="text"
-										value={formik.values.lastName}
-										variant="outlined"
-									/>
-									<TextField
-										error={Boolean(formik.touched.email && formik.errors.email)}
-										fullWidth
-										helperText={formik.touched.email && formik.errors.email}
-										label="Email"
-										margin="normal"
-										name="email"
-										onBlur={formik.handleBlur}
-										onChange={formik.handleChange}
-										type="text"
-										value={formik.values.email}
-										variant="outlined"
-									/>
-									<TextField
-										error={Boolean(formik.touched.tckn && formik.errors.tckn)}
-										fullWidth
-										helperText={formik.touched.tckn && formik.errors.tckn}
-										label="TCKN"
-										margin="normal"
-										name="tckn"
-										onBlur={formik.handleBlur}
-										onChange={formik.handleChange}
-										type="text"
-										value={formik.values.tckn}
-										variant="outlined"
-									/>
-									<MuiTelInput
-										error={Boolean(formik.touched.phone && formik.errors.phone)}
-										fullWidth
-										helperText={formik.touched.phone && formik.errors.phone}
-										label="Phone Number"
-										margin="normal"
-										name="phone"
-										onBlur={formik.handleBlur}
-										onChange={handleChange}
-										value={phone}
-										variant="outlined"
-									/>
-									<TextField
-										error={Boolean(
-											formik.touched.password && formik.errors.password
-										)}
-										fullWidth
-										helperText={
-											formik.touched.password && formik.errors.password
-										}
-										label="Password"
-										margin="normal"
-										name="password"
-										onBlur={formik.handleBlur}
-										onChange={formik.handleChange}
-										type="password"
-										value={formik.values.password}
-										variant="outlined"
-									/>
-								</Box>
-								<Box sx={{ py: 2 }}>
-									<Button
-										color="primary"
-										disabled={formik.isSubmitting}
-										fullWidth
-										size="large"
-										type="submit"
-										variant="contained"
-									>
-										Register
-									</Button>
-								</Box>
-							</>
+							<FormPatientRegister
+								formik={formik}
+							/>	
 						)}
 						{isDoctor && (
 							<>
@@ -612,6 +491,18 @@ const Register = () => {
 								</Box>
 							</>
 						)}
+						<Box sx={{ py: 2 }}>
+							<Button
+								color="primary"
+								disabled={formik.isSubmitting}
+								fullWidth
+								size="large"
+								type="submit"
+								variant="contained"
+							>
+								Register
+							</Button>
+						</Box>
 						<Box sx={{ py: 1 }}>
 							<Typography gutterBottom color="textSecondary" variant="body2">
 								{' Already having an account? Click '}

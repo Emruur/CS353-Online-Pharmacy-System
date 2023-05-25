@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { SeverityPill } from '../../components/SeverityPill/SeverityPill';
+import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const Collapsable = (props) => {
     const {prescription} = props;
