@@ -1,11 +1,11 @@
 import { Box, Container, Typography } from '@mui/material';
 import { Collapsable } from './Collapsable';
-import Minoset from '../../assets/images/minoset.png'
-import Parol from '../../assets/images/parol.png'
-import Arveles from '../../assets/images/arveles.png'
-import Codeine from '../../assets/images/codeine.png'
-import Augmentin from '../../assets/images/augmentin.png'
-import Concerta from '../../assets/images/concerta.png'
+import Minoset from 'assets/images/minoset.png'
+import Parol from 'assets/images/parol.png'
+import Arveles from 'assets/images/arveles.png'
+import Codeine from 'assets/images/codeine.png'
+import Augmentin from 'assets/images/augmentin.png'
+import Concerta from 'assets/images/concerta.png'
 
 const prescriptions = [
     {

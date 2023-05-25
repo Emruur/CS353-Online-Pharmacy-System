@@ -9,7 +9,6 @@ import {
 	FormControlLabel,
 	FormLabel,
 	IconButton,
-	Link,
 	MenuItem,
 	MenuList,
 	Popover,
@@ -25,7 +24,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { SeverityPill } from '../../components/SeverityPill/SeverityPill';
+import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const MedicineList = (props) => {
 	const { medicines } = props;
@@ -175,7 +174,7 @@ const MedicineList = (props) => {
 									}}
 								>
 									<TableCell>
-										<img src={medicine.image}/>
+										<img alt={medicine.name} src={medicine.image}/>
 									</TableCell>
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">

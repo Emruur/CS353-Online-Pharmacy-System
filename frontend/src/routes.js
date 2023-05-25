@@ -1,9 +1,9 @@
-import Dashboard from './pages/Dashboard';
-import Medicine from './pages/Medicine/Medicine';
-import Payment from './pages/Payment/Payment';
-import Cart from './pages/ShoppingCart/Cart';
-import Prescription from './pages/Prescription/Prescription';
-import Purchase from './pages/PreviousPurchase/Purchase';
+import Dashboard from 'pages/Dashboard';
+import Medicine from 'pages/Medicine/Medicine';
+import Payment from 'pages/Payment/Payment';
+import Cart from 'pages/ShoppingCart/Cart';
+import Prescription from 'pages/Prescription/Prescription';
+import Purchase from 'pages/PreviousPurchase/Purchase';
 
 const routes = [
 	{

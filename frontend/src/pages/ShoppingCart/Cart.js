@@ -1,7 +1,7 @@
 import { Container, Grid } from '@mui/material';
 import { ShoppingList } from './ShoppingList';
-import Parol from '../../assets/images/parol.png'
-import Augmentin from '../../assets/images/augmentin.png'
+import Parol from 'assets/images/parol.png'
+import Augmentin from 'assets/images/augmentin.png'
 
 const shoppingList = [
 	{
