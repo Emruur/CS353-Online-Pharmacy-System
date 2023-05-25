@@ -8,10 +8,11 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-//import axios from 'axios';
+import axios from "../axios/index";
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import jwt_decode from "jwt-decode"
 import * as Yup from 'yup';
 
 const Login = () => {
@@ -21,41 +22,43 @@ const Login = () => {
 
 	const formik = useFormik({
 		initialValues: {
-			tckn: '',
+			email: '',
 			password: '',
 		},
 		validationSchema: Yup.object({
-			tckn: Yup.number('TCKN should only consist of digits')
-				.max(100000000000, 'TCKN cannot exceed 11 digits')
-				.required('TCKN is required'),
+			email: Yup.string()
+				.email('Invalid email')
+				.max(255, 'Email cannot exceed 255 chars')
+				.required('Email is required'),
 			password: Yup.string()
 				.max(16, 'Password can be maximum 16 characters long')
 				.required('Password is required'),
 		}),
 		onSubmit: async (values) => {
-			/*await axios
+			await axios
 				.post('/auth/login', values)
 				.then((res) => {
 					if (res && res.data) {
-						console.log(res.data);
+						var token = res.data.access_token
+						var decode = jwt_decode(token);
+						console.log(decode);
+						sessionStorage.setItem("token", token);
+						sessionStorage.setItem("firstName", decode.first_name);
+						sessionStorage.setItem("lastName", decode.last_name);
 						navigate('/dashboard');
 					}
 				})
 				.catch((err) => {
 					if (err && err.response) {
 						if (err.response.status === 401) {
-							setErrorMessage('Invalid TCKN or password');
+							setErrorMessage('err.response.data.msg');
 						} else {
 							setErrorMessage('Invalid request');
 						}
 					} else {
 						setErrorMessage('Connection error');
 					}
-				});*/
-			sessionStorage.setItem('firstName', 'Barış');
-			sessionStorage.setItem('lastName', 'Yıldırım');
-			sessionStorage.setItem('balance', '1200');
-			navigate('/dashboard');
+				});
 		},
 	});
 
@@ -94,16 +97,16 @@ const Login = () => {
 						</Box>
 						<Box>
 							<TextField
-								error={Boolean(formik.touched.tckn && formik.errors.tckn)}
+								error={Boolean(formik.touched.email && formik.errors.email)}
 								fullWidth
-								helperText={formik.touched.tckn && formik.errors.tckn}
-								label="TCKN"
+								helperText={formik.touched.email && formik.errors.email}
+								label="Email"
 								margin="normal"
-								name="tckn"
+								name="email"
 								onBlur={formik.handleBlur}
 								onChange={formik.handleChange}
 								type="text"
-								value={formik.values.tckn}
+								value={formik.values.email}
 								variant="outlined"
 							/>
 							<TextField
