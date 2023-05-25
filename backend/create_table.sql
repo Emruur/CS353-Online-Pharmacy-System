@@ -74,9 +74,9 @@ CREATE TABLE Admin(
 );
 CREATE TABLE Patient(
     user_id VARCHAR(11) PRIMARY KEY,
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
     primary_doc_id VARCHAR(11),
-    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id),
     height INTEGER,
     weight INTEGER,
     birthday DATE,
