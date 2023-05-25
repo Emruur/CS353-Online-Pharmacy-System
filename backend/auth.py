@@ -76,6 +76,23 @@ def signup():
     user_type = request.json.get('user_type', None)
     type_specific = request.json.get('type_specific', {})
 
+    ''' EXAMPLE JSON REQUEST
+    {
+    "user_id": "29256389766",
+    "email": "patient@test.com",
+    "password": "testpassword",
+    "first_name": "Pat",
+    "middle_name": "Doe",
+    "surname": "Smith",
+    "phone_number": "+1434567892",
+    "user_type": "patient",
+    "type_specific": {
+        "height": "178",
+        "weight": "77",
+        "birthday": "2002-03-28" (BIRTHDAY FORMAT:  yyyy-mm-dd)
+    }
+    '''
+
     if not email or not user_id or not password or not first_name or not surname or not phone_number or not user_type or not type_specific:
         return jsonify({"msg": "Missing required parameters"}), 400
     
