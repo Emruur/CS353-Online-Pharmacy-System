@@ -74,15 +74,14 @@ CREATE TABLE Admin(
 );
 CREATE TABLE Patient(
     user_id VARCHAR(11) PRIMARY KEY,
-    FOREIGN KEY (user_id) REFERENCES User(user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
     primary_doc_id VARCHAR(11),
-    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (primary_doc_id) REFERENCES Doctor(user_id),
     height INTEGER,
     weight INTEGER,
     birthday DATE,
     age INT
 );
-
 
 CREATE TABLE SpecialCondition(
     condition_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -103,7 +102,9 @@ CREATE TABLE Medicine (
     risk_factors VARCHAR(255),
     preserve_conditions VARCHAR(255),
     prod_firm VARCHAR(255),
-    price Numeric(10, 2) NOT NULL
+    price Numeric(10, 2) NOT NULL,
+    med_type VARCHAR(255),
+    min_age INTEGER
 );
 
 CREATE TABLE Prescription (
@@ -114,6 +115,7 @@ CREATE TABLE Prescription (
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
     type VARCHAR(255),
+    notes TEXT,
     status ENUM("valid", "used", "expired")
 );
 CREATE TABLE PrescribedMedication (
