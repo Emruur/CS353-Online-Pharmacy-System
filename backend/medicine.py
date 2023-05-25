@@ -44,8 +44,6 @@ If no query parameters are used, the route will return all medicines in the data
 
 "http://localhost:5000/medicine?producer_firm=Pfizer"
 "http://localhost:5000/medicine?risk_factors=Nausea"
-
-
 """
 
 @medicine_blueprint.route('/', methods=['GET'])
@@ -80,7 +78,7 @@ def get_medicines():
         sql += "AND prod_firm LIKE %s "
         query_parameters.append('%' + prod_firm + '%')
 
-    # filtering according to address (assuming you meant address_id)
+    # filtering according to address 
     address = request.args.get('address_id')
     if address:
         sql += "AND address_id = %s "
@@ -99,5 +97,22 @@ def get_medicines():
 
     return jsonify(medicines), 200
 
+
+@medicine_blueprint.route('/pharmacy_inventory/<int:pharmacy_id>', methods=['GET'])
+@jwt_required()
+def pharmacy_inventory():
+    p_id = request.args.get('pharmacy_id')
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    query = "SELECT EXISTS (SELECT 1 FROM Pharmacy WHERE pharmacy_id = %s) as exists"
+    cursor.execute(query, (p_id,))
+    
+    result = cursor.fetchone()
+    if not bool(result["exists"]):
+        return jsonify({"msg": "No pharmacy found with the id"}), 400
+
+
+    return jsonify({"msg": "Pharmacy fnd"}), 200
 
 
