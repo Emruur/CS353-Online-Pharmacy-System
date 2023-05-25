@@ -9,10 +9,11 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import axios from 'axios';
+import axios from '../axios/index';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MuiTelInput } from 'mui-tel-input';
 import * as Yup from 'yup';
 
 const hospitalList = [
@@ -94,23 +95,34 @@ const Register = () => {
 	const [isDoctor, setIsDoctor] = useState(false);
 	const [isPhar, setIsPhar] = useState(false);
 
+	const [phone, setPhone] = useState('');
+
+	const handleChange = (newPhone) => {
+		setPhone(newPhone);
+		formik.values.phone = newPhone;
+	}
+
 	const formik = useFormik({
 		initialValues: {
 			firstName: '',
+			middleName: '',
 			lastName: '',
 			email: '',
 			tckn: '',
+			phone,
 			password: '',
 			hospital: '',
 			pharmacy: '',
 		},
 		validationSchema: Yup.object({
 			firstName: Yup.string().max(50).required('First name is required'),
+			middleName: Yup.string().max(50),
 			lastName: Yup.string().max(50).required('Last name is required'),
 			email: Yup.string().max(50).required('Email is required'),
 			tckn: Yup.number('TCKN should only consist of digits')
 				.max(100000000000, 'TCKN cannot exceed 11 digits')
 				.required('TCKN is required'),
+			phone: Yup.string().max(17, 'Phone number cannot exeed 10 digits').required('Phone number is required'),
 			password: Yup.string()
 				.max(16, 'Password can be maximum 16 characters long')
 				.required('Password is required'),
@@ -118,6 +130,17 @@ const Register = () => {
 			pharmacy: Yup.string().required('Name of pharmacy is required'),
 		}),
 		onSubmit: async (values) => {
+			const newValues = {
+				first_name:  values.firstName,
+				middle_name: values.middleName ? values.middleName : "",
+				surname: values.lastName,
+				password: values.password,
+				email: values.email,
+				phone_number: values.phone,
+				user_id: values.tckn,
+				user_type: isPhar ? "pharmacist" : (isDoctor ? "doctor" : "patient")
+			}
+			console.log(newValues)
 			await axios
 				.post('/auth/login', values)
 				.then((res) => {
@@ -243,6 +266,23 @@ const Register = () => {
 									/>
 									<TextField
 										error={Boolean(
+											formik.touched.middleName && formik.errors.middleName
+										)}
+										fullWidth
+										helperText={
+											formik.touched.middleName && formik.errors.middleName
+										}
+										label="Middle Name"
+										margin="normal"
+										name="middleName"
+										onBlur={formik.handleBlur}
+										onChange={formik.handleChange}
+										type="text"
+										value={formik.values.middleName}
+										variant="outlined"
+									/>
+									<TextField
+										error={Boolean(
 											formik.touched.lastName && formik.errors.lastName
 										)}
 										fullWidth
@@ -282,6 +322,18 @@ const Register = () => {
 										onChange={formik.handleChange}
 										type="text"
 										value={formik.values.tckn}
+										variant="outlined"
+									/>
+									<MuiTelInput
+										error={Boolean(formik.touched.phone && formik.errors.phone)}
+										fullWidth
+										helperText={formik.touched.phone && formik.errors.phone}
+										label="Phone Number"
+										margin="normal"
+										name="phone"
+										onBlur={formik.handleBlur}
+										onChange={handleChange}
+										value={phone}
 										variant="outlined"
 									/>
 									<TextField
