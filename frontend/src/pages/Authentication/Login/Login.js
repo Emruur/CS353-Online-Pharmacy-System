@@ -44,7 +44,8 @@ const Login = () => {
 						sessionStorage.setItem("token", token);
 						sessionStorage.setItem("firstName", decode.first_name);
 						sessionStorage.setItem("lastName", decode.last_name);
-						navigate('/dashboard');
+						sessionStorage.setItem("role", decode.role);
+						navigate(decode.role==="pharmacist" ? '/pharmacist-dashboard' : (decode.role==="doctor" ? '/doctor-dashboard' : '/patient-dashboard'));
 					}
 				})
 				.catch((err) => {
