@@ -25,6 +25,7 @@ CREATE TABLE Address(
     address_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     country VARCHAR(255),
     city VARCHAR(255),
+    district VARCHAR(255),
     description VARCHAR(255)
 );
 
@@ -186,6 +187,31 @@ CREATE TABLE EquivalentTo (
     PRIMARY KEY (orig_id, eqv_id)
     -- FIXME no foreign key
 );
+
+-- FIXED TABLE VALUES (INITIALS)
+INSERT INTO Address (country, city, district, description)
+VALUES
+    ("Turkey", "Ankara", "Akyurt", "Beyazıt Mahallesi, 9 Mayıs 90. Caddesi No:6/B"),
+    ("Turkey", "Ankara", "Akyurt", "Yıldırım Mahallesi, Dr.Neslihan Özenli Caddesi, No:26/A"),
+    ("Turkey", "Ankara", "Akyurt", "Yıldırım Mahallesi, Cumhuriyet Meydanı No:13"),
+    ("Turkey", "Ankara", "Altındağ", "Feridun Çelik Mahallesi, 1669. Caddesi, No:18/A"),
+    ("Turkey", "Ankara", "Altındağ", "Şükriye Mahallesi, Ulucanlar Caddesi, Ses Sokak No:81/A Ulucanlar"),
+    ("Turkey", "Ankara", "Keçiören", "Karakaya Mahallesi, Bağlum Bulvarı No:107/B"),
+    ("Turkey", "Ankara", "Keçiören", "Aşağı Eğlence Mahallesi, Altınoluk Sokak No:4/B"),
+    ("Turkey", "Ankara", "Sincan", "Akşemsettin Mahallesi, Fecri Ebcioğlu Sokak No:7/A");
+
+INSERT INTO Pharmacy (name, address_id)
+VALUES
+    ("Beyazıt Eczanesi", 1),
+    ("Nur Eczanesi", 2),
+    ("Hayat Eczanesi", 3),
+    ("Bahar Eczanesi", 4),
+    ("Kaçkar Eczanesi", 5),
+    ("Nimet Eczanesi", 6),
+    ("Birsen Eczanesi", 7),
+    ("Hazar Eczanesi", 8);
+
+
 -- TRIGGERS
 
 -- Doctors can not be pharmacists
