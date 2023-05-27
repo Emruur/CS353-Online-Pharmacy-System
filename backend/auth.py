@@ -45,13 +45,13 @@ def login():
 
     conn = get_conn()
     cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT password, user_id, first_name, surname FROM User WHERE email = %s", (email,))
+    cursor.execute("SELECT password, user_id, first_name, surname, user_type FROM User WHERE email = %s", (email,))
     user = cursor.fetchone()
 
     if user is None or not bcrypt.checkpw(password.encode(), user['password'].encode()):
         return jsonify({"msg": "Bad email or password"}), 401
 
-    additional_info = {"first_name": user['first_name'], "last_name": user["surname"]}
+    additional_info = {"first_name": user['first_name'], "last_name": user["surname"], "role": user["user_type"]}
     access_token = create_access_token(identity=user['user_id'], additional_claims=additional_info)
     return jsonify(access_token=access_token), 200
 
