@@ -272,3 +272,22 @@ BEGIN
 END;//
 
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER check_doctor_insert
+BEFORE INSERT ON prescription
+FOR EACH ROW
+BEGIN
+    DECLARE is_doctor INT;
+
+    SELECT COUNT(*) INTO is_doctor
+    FROM doctor
+    WHERE user_id = NEW.prescribed_by;
+
+
+    IF is_doctor = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Only doctors can add prescriptions.!';
+    END IF;
+END; //
+DELIMITER ;

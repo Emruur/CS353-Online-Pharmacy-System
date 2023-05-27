@@ -49,9 +49,7 @@ def prescription():
     conn = get_conn()
     cursor = conn.cursor()
     if request.method == 'POST':
-        cursor.execute("select * from doctor where user_id = %s", (current_user,))
-        doctor = cursor.fetchone()
-        if doctor:
+        try:
             if not request.is_json:
                 return jsonify({"msg": "Missing JSON in request"}), 400
             try:
@@ -82,8 +80,8 @@ def prescription():
             finally:
                 conn.autocommit = True
 
-        else:
-            return jsonify({"msg": "Only doctors can create prescription"}), 405
+        except Exception as e:
+            return jsonify({"msg": str(e)}), 405
 
     elif request.method == 'GET':
         try:
@@ -145,7 +143,6 @@ def prescription_detail(id):
             return jsonify({"msg": str(e)}), 500
 
     if request.method == 'PUT':
-
         cursor.execute("select * from doctor where user_id = %s", (current_user,))
         doctor = cursor.fetchone()
         if doctor:
@@ -184,4 +181,4 @@ def prescription_detail(id):
                 conn.autocommit = True
 
         else:
-            return jsonify({"msg": "Only doctors can create prescription"}), 405
+            return jsonify({"msg": "Only doctors can edit prescription"}), 405
