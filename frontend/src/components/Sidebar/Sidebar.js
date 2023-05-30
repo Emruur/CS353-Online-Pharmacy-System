@@ -37,6 +37,7 @@ export const Sidebar = (props) => {
 			/>
 			<Box sx={{ flexGrow: 1 }}>
 				{routes.map((item) => (
+					item.type === "collapse" && 
 					<NavItem
 						key={item.key}
 						icon={item.icon}

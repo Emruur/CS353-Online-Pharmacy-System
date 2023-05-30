@@ -10,18 +10,18 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+
 const ShoppingList = (props) => {
-	const { items } = props;
-	const [total, setTotal] = useState(0);
+	const { items, total } = props;
 
 	useEffect(() => {
 		let tempTotal = 0;
 		for (let i = 0; i < items.length; i++) {
 			console.log(items[i].total);
 			tempTotal = items[i].total + tempTotal;
-			setTotal(tempTotal);
+			props.setTotal(tempTotal);
 		}
 	}, []);
 
@@ -50,20 +50,20 @@ const ShoppingList = (props) => {
 						</TableHead>
 						<TableBody>
 							{items.map((item, index) => (
-								<TableRow
+								item.quantity !== 0 && <TableRow
 									key={index}
 									sx={{
 										border: 0,
 									}}
 								>
 									<TableCell>
-										<img src={item.image}/>
+										<img src={item.medicine.image}/>
 									</TableCell>
-									<TableCell>{item.name}</TableCell>
+									<TableCell>{item.medicine.name}</TableCell>
 									<TableCell align="right">{item.quantity}</TableCell>
 									<TableCell align="right">{item.total + ' ₺'}</TableCell>
 								</TableRow>
-							))}
+								))}
 						</TableBody>
 					</Table>
 				</Box>
@@ -80,11 +80,25 @@ const ShoppingList = (props) => {
 			<Box
 				sx={{
 					display: 'flex',
-					justifyContent: 'flex-end',
+					justifyContent: 'space-between',
 					p: 2,
 				}}
 			>
-				<Button color="primary" size="large" variant="contained">
+				<Button 
+					color="primary" 
+					size="large" 
+					variant="contained"
+					onClick={props.goBackList}
+				>
+					Back to List
+				</Button>
+				<Button 
+					disabled={total === 0}
+					color="primary" 
+					size="large" 
+					variant="contained"
+					onClick={props.checkout}
+				>
 					Checkout
 				</Button>
 			</Box>

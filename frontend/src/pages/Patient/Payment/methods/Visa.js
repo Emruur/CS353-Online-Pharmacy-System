@@ -24,6 +24,8 @@ import {
 export const Visa = () => {
 	const [expand, setExpand] = useState(false);
 
+	const [amount, setAmount] = useState(0);
+
 	let arrow;
 
 	if (!expand) {
@@ -58,6 +60,21 @@ export const Visa = () => {
 		setState((prev) => ({ ...prev, focus: evt.target.name }));
 	};
 
+	const handleChange = (e) => {
+		setAmount(e.target.value)
+	}
+
+	const handleSubmit = () => {
+		if (amount !== 0) {
+			const balance = parseInt(sessionStorage.getItem("balance")) + parseInt(amount)
+			console.log(balance)
+			sessionStorage.setItem("balance", balance)
+		} else {
+			alert("sa")
+		}
+
+	}
+
 	return (
 		<>
 			<title>Visa</title>
@@ -85,6 +102,7 @@ export const Visa = () => {
 								focused={state.focus}
 							/>
 						</Box>
+						<form noValidate autoComplete='off'>
 						<Box sx={{ py: 2 }}>
 							<TextField
 								fullWidth
@@ -95,6 +113,7 @@ export const Visa = () => {
 								value={state.number}
 								onChange={handleInputChange}
 								onFocus={handleInputFocus}
+								required
 							/>
 							<TextField
 								fullWidth
@@ -105,6 +124,7 @@ export const Visa = () => {
 								value={state.name}
 								onChange={handleInputChange}
 								onFocus={handleInputFocus}
+								required
 							/>
 							<TextField
 								fullWidth
@@ -115,6 +135,7 @@ export const Visa = () => {
 								value={state.expiry}
 								onChange={handleInputChange}
 								onFocus={handleInputFocus}
+								required
 							/>
 							<TextField
 								fullWidth
@@ -125,6 +146,7 @@ export const Visa = () => {
 								value={state.cvc}
 								onChange={handleInputChange}
 								onFocus={handleInputFocus}
+								required
 							/>
 							<TextField
 								fullWidth
@@ -132,11 +154,14 @@ export const Visa = () => {
 								type="number"
 								name="amount"
 								placeholder="Amount"
+								onChange={handleChange}
+								value={amount}
 								InputProps={{
 									startAdornment: (
 										<InputAdornment position="start">₺</InputAdornment>
 									),
 								}}
+								required
 							/>
 						</Box>
 						<Box>
@@ -145,10 +170,12 @@ export const Visa = () => {
 								fullWidth
 								size="large"
 								variant="contained"
-							>
+								onClick={handleSubmit}
+								>
 								Deposit
 							</Button>
 						</Box>
+						</form>
 					</CardContent>
 				</Box>
 			</Collapse>
