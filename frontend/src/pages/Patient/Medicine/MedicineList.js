@@ -2,6 +2,7 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import {
 	Box,
+	Button,
 	Card,
 	CardHeader,
 	Divider,
@@ -28,7 +29,7 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const MedicineList = (props) => {
 	const { medicines } = props;
-	console.log(medicines);
+	//console.log(medicines);
 
 	const [type, setType] = useState('none');
 
@@ -193,6 +194,7 @@ const MedicineList = (props) => {
 										<>
 											<Tooltip>
 												<IconButton
+													onClick={() => {props.addToShoppingCart(medicine)}}
 													disabled={medicine.prescriptionStatus === 'Not Prescribed'}
 												>
 													<AddShoppingCartIcon />
@@ -204,6 +206,22 @@ const MedicineList = (props) => {
 							))}
 						</TableBody>
 					</Table>
+				</Box>
+				<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'flex-end',
+						p: 2,
+					}}
+				>
+						<Button
+							color="primary" 
+							size="large" 
+							variant="contained"
+							onClick={props.confirmOrder}
+						>
+							Confirm Order
+						</Button>
 				</Box>
 			</PerfectScrollbar>
 		</Card>

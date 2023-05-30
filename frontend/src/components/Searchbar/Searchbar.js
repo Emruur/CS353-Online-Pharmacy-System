@@ -4,11 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import routes from '../../routes';
 
 const SearchBar = (props) => {
-	const [options, setOptions] = useState([]);
-
-	useEffect(() => {
-		setOptions(routes);
-	}, []);
+	const [options, setOptions] = useState(routes);
 
 	const navigate = useNavigate();
 	return (

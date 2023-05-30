@@ -16,13 +16,9 @@ export const AccountPopover = (props) => {
 
 	const handleSignOut = async () => {
 		sessionStorage.removeItem('role');
-		sessionStorage.removeItem('jwtToken');
-		sessionStorage.removeItem('starsId');
-		sessionStorage.removeItem('semester');
+		sessionStorage.removeItem('token');
 		sessionStorage.removeItem('firstName');
 		sessionStorage.removeItem('lastName');
-		sessionStorage.removeItem('department');
-		sessionStorage.removeItem('academicYear');
 
 		navigate('/login');
 	};

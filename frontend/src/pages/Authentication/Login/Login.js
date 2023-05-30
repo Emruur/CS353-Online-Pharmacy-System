@@ -45,6 +45,7 @@ const Login = () => {
 						sessionStorage.setItem("firstName", decode.first_name);
 						sessionStorage.setItem("lastName", decode.last_name);
 						sessionStorage.setItem("role", decode.role);
+						sessionStorage.setItem("balance", 0);
 						navigate(decode.role==="pharmacist" ? '/pharmacist-dashboard' : (decode.role==="doctor" ? '/doctor-dashboard' : '/patient-dashboard'));
 					}
 				})
