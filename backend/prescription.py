@@ -24,7 +24,7 @@ def close_conn(e):
     conn = g.pop('conn', None)
     if conn is not None:
         conn.close()
-    
+
 @prescription_blueprint.route('/', methods=['POST', 'GET'])
 @jwt_required()
 def prescription():
@@ -229,7 +229,7 @@ def requested_prescription():
                 conn.autocommit = True
 
         except Exception as e:
-            return jsonify({"msg": str(e)}), 405
+            return jsonify({"msg": str(e)}), 400
 
     elif request.method == 'GET':
         try:
@@ -244,3 +244,75 @@ def requested_prescription():
         except Exception as e:
             print(e)
             return jsonify({"msg": "Couldn't get requested prescription"}), 500
+
+
+
+@prescription_blueprint.route('/request/<request_id>', methods=['POST'])
+@jwt_required()
+def requested_prescription_detail(request_id):
+    """
+    manage requestedprescriptions for doctor, view gets all requested prescriptions assigned to them, post
+    to accept or reject
+
+    http://localhost:5000/prescription/request/<request_id>
+    post request data format:
+    {
+        "status" : "rejected" or accepted
+    }
+    """
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    status = request.json.get("status")
+    if request.method == 'POST':
+        try:
+            if not request.is_json:
+                return jsonify({"msg": "Missing JSON in request"}), 400
+            try:
+                conn.autocommit = False
+                pres_id = request.json.get("pres_id")
+                cursor.execute(f"""
+                                UPDATE requestedprescription
+                                SET status = '{status}'
+                                WHERE request_id = {request_id} AND doctor_id = {current_user};
+                                """)
+
+                conn.commit()
+                return jsonify({"msg": "Prescription updated successfully"}), 200
+            except Exception as e:
+                conn.rollback()
+                return f'Transaction failed: {str(e)}', 500
+            finally:
+                conn.autocommit = True
+
+        except Exception as e:
+            return jsonify({"msg": str(e)}), 400
+
+
+@prescription_blueprint.route('/request/doctor', methods=['GET'])
+@jwt_required()
+def requested_prescription_doctor():
+    """
+    make a prescription request as a patient
+
+    http://localhost:5000/prescription/request
+    post request data format:
+    {
+        "pres_id":5
+    }
+    """
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    if request.method == 'GET':
+        try:
+            keys = ["prescribed_by", "prescribed_to", "status", "type", "notes", "pres_id", "date"]
+            cursor.execute(
+                "select prescribed_by,prescribed_to, rp.status, type, notes, p.pres_id, date "
+                "from requestedprescription rp join prescription p on rp.pres_id = p.pres_id where prescribed_by = %s",
+                (current_user,)
+            )
+            prescriptions = cursor.fetchall()
+            return [dict(zip(keys, row)) for row in prescriptions], 200
+        except Exception as e:
+            print(e)

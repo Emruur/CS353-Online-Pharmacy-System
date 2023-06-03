@@ -177,15 +177,16 @@ CREATE TABLE PurchasedMedicine (
 
 
 CREATE TABLE RequestedPrescription (
+    request_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     doctor_id varchar(11),
     patient_id varchar(11),
     pres_id INTEGER,
     status ENUM ("pending", "accepted", "rejected") DEFAULT 'pending',
     FOREIGN KEY (doctor_id) REFERENCES Doctor(user_id) ON DELETE CASCADE,
     FOREIGN KEY (patient_id) REFERENCES Patient(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id) ON DELETE CASCADE,
-    PRIMARY KEY (doctor_id, patient_id, pres_id)
+    FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id) ON DELETE CASCADE
 );
+
 CREATE TABLE EquivalentTo (
     orig_id INTEGER,
     eqv_id INTEGER,
@@ -372,6 +373,18 @@ FROM user u
     join prescription p on u.user_id = p.prescribed_to
     join prescribedmedication p2 on p.pres_id = p2.pres_id
 WHERE p.status='valid';
+
+
+-- events
+
+CREATE EVENT daily_check_event
+ON SCHEDULE EVERY 1 DAY
+DO
+BEGIN
+    UPDATE prescription p
+    SET p.status = 'expired'
+    WHERE DATEDIFF(NOW(), p.date) >= 4;
+END;
 
 
 DELIMITER //
