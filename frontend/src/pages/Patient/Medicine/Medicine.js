@@ -1,4 +1,4 @@
-import { Button, Container, Grid } from '@mui/material';
+import { Alert, AlertTitle,  Container, Grid } from '@mui/material';
 import { MedicineList } from './MedicineList';
 import Minoset from 'assets/images/minoset.png'
 import Parol from 'assets/images/parol.png'
@@ -8,7 +8,8 @@ import Augmentin from 'assets/images/augmentin.png'
 import Concerta from 'assets/images/concerta.png'
 import axios from 'axios_config';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import { useGlobalState } from 'GlobalCart';
 
 const medicineList = [
 	{
@@ -70,11 +71,11 @@ const Medicine = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 
-	const [cart, setCart] = useState([]);
+	const [list, setCartItems] = useGlobalState("cartItems");
+	
+	const [successMessage, setSuccessMessage] = useState('');
 
 	const navigate = useNavigate('');
-
-	const location = useLocation()
 
 	useEffect(() => {
 		const getAllMedicine = async () => {
@@ -85,15 +86,12 @@ const Medicine = () => {
 			})
 				.then((res) => {
 					if (res && res.data) {
-						if (location.state !== null) {
-							console.log(location.state)
-							setCart(location.state)
-						} else {
-							for (let i = 0; i < medicineList.length; i++) {
-								setCart((oldArray) => [...oldArray, {medicine: medicineList[i], quantity: 0, total: 0}])
-							}
+						let arr = []
+						for (let i = 0; i < medicineList.length; i++) {
+							arr.push({medicine: medicineList[i], quantity: 0, total: 0})
 						}
-						console.log(cart)
+						setCartItems(arr);
+						console.log(list)
 					}
 				})
 				.catch((err) => {
@@ -106,25 +104,40 @@ const Medicine = () => {
 	}, [])
 
 	const addToShoppingCart = (medicine) => {
-		for (let i = 0; i < cart.length; i++) {
-			if (cart[i].medicine.name === medicine.name) {
-				cart[i].quantity++;
+		for (let i = 0; i < list.length; i++) {
+			if (list[i].medicine.name === medicine.name) {
+				list[i].quantity++;
+				setSuccessMessage(`${medicine.name} added to the cart`);
 			}
 		}
-		console.log(cart);
 	}
 
 	const confirmOrder = () => {
-		for (let i = 0; i < cart.length; i++) {
-			cart[i].total = cart[i].medicine.price * cart[i].quantity
+		for (let i = 0; i < list.length; i++) {
+			list[i].total = list[i].medicine.price * list[i].quantity
 		}
-		navigate('/cart', {state: cart})
+		window.sessionStorage.setItem(
+			"literalcartting",
+			JSON.stringify(list)
+		);
+		navigate('/cart')
 	}
 
 	return (
 		<>
 			<title>Medicine</title>
 			<Container maxWidth="md">
+				{successMessage.trim().length !== 0 && (
+					<Alert
+						severity="success"
+						onClose={() => {
+							setSuccessMessage('');
+						}}
+					>
+						<AlertTitle>Success</AlertTitle>
+						{successMessage}
+					</Alert>
+				)}
 				<Grid container spacing={3}>
 					<Grid item lg={12} md={12} xl={15} xs={12}>
 						<MedicineList 
