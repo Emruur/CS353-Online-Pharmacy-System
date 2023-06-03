@@ -169,3 +169,62 @@ def avg_revenue():
         return jsonify({"msg": "error"}), 500
 
 
+@reports_blueprint.route('/max-purchased', methods=['GET'])
+@jwt_required()
+def max_purchased():
+    """
+    only pharmacists can view this report for their pharmacy. returns the yearly average revenue by producing firm
+    http://127.0.0.1:5000/reports/max-purchased
+    request form:
+    {
+        "type": "prod_firm" OR used_for ~ report generated on either prod_firm or drug_type not both! add a dropdown in UI
+    }
+
+    """
+    conn = get_conn()
+    cursor = conn.cursor()
+    current_user = get_jwt_identity()
+    type = request.json.get('type', None)
+
+    try:
+        if type:
+            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            pharmacist = cursor.fetchone()
+            if pharmacist is not None:
+                pharmacy_id = pharmacist[2]
+                query = f'''
+                        SELECT p.{type}, p.name, p.purchase_count
+                        FROM (
+                            SELECT m.name, m.{type}, SUM(pm.purchase_count) AS purchase_count
+                            FROM medicine m
+                            JOIN purchasedmedicine pm ON m.med_id = pm.med_id
+                            JOIN purchase pu ON pu.purchase_id = pm.purchase_id
+                            WHERE pu.pharmacy_id = {pharmacy_id}
+                            GROUP BY m.name, m.{type}
+                        ) AS p
+                        JOIN (
+                            SELECT {type}, MAX(purchase_count) AS max_count
+                            FROM (
+                                SELECT m.name, m.{type}, SUM(pm.purchase_count) AS purchase_count
+                                FROM medicine m
+                                JOIN purchasedmedicine pm ON m.med_id = pm.med_id
+                                JOIN purchase pu ON pu.purchase_id = pm.purchase_id
+                                GROUP BY m.name, m.{type}
+                            ) AS purchase_cnt
+                            GROUP BY {type}
+                        ) AS max_purchases ON p.{type} = max_purchases.{type} AND p.purchase_count = max_purchases.max_count;
+                        '''
+                cursor.execute(query)
+                result = cursor.fetchall()
+                keys = [type, "name", "count"]
+                result_with_keys = []
+
+                for res in result:
+                    result_with_keys.append(dict(zip(keys, res)))
+
+                return jsonify({"msg": "Report generated!", "result": result_with_keys}), 200
+        return jsonify({"msg": "Only pharmacists can view reports!"}), 401
+
+    except Exception as e:
+        print(e)
+        return jsonify({"msg": "error"}), 500
