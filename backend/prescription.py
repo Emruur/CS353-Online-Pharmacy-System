@@ -78,7 +78,7 @@ def prescription():
 
                 for med in medicine:
                     cursor.execute(
-                        "insert into prescribedmedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
+                        "insert into PrescribedMedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
                         (last_inserted_id, med.get("id"), med.get("quantity")))
                 conn.commit()
                 return jsonify({"msg": "Prescription created successfully"}), 200

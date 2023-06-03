@@ -1,5 +1,6 @@
 // Patient
 import PatientDashboard from 'pages/Patient/PatientDashboard';
+import Prescription from 'pages/Patient/Prescription/Prescription';
 
 // Doctor
 import DoctorDashboard from 'pages/Doctor/DoctorDashboard';
@@ -11,7 +12,6 @@ import PharmacistDashboard from 'pages/Pharmacist/PharmacistDashboard';
 import Medicine from 'pages/Patient/Medicine/Medicine';
 import Payment from 'pages/Patient/Payment/Payment';
 import Cart from 'pages/Patient/ShoppingCart/Cart';
-import Prescription from 'pages/Prescription/Prescription';
 import Purchase from 'pages/PreviousPurchase/Purchase';
 import { PharmacistStock } from 'pages/Pharmacist/PharmacistStock';
 

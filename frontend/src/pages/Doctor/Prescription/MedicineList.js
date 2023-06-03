@@ -178,12 +178,12 @@ const MedicineList = (props) => {
 								>
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">
-										<SeverityPill color={`${medicine.requiredProspectus}`}>
-											{medicine.requiredProspectus}
+										<SeverityPill color={`${medicine.prescription_type}`}>
+											{medicine.prescription_type}
 										</SeverityPill>
 									</TableCell>
 									<TableCell align="right">
-										{medicine.type}
+										{medicine.used_for}
 									</TableCell>
 									<TableCell align="right">
 										<>
@@ -207,12 +207,12 @@ const MedicineList = (props) => {
 								>
 									<TableCell>{medicine.medicine.name}</TableCell>
 									<TableCell align="right">
-										<SeverityPill color={`${medicine.medicine.requiredProspectus}`}>
-											{medicine.medicine.requiredProspectus}
+										<SeverityPill color={`${medicine.medicine.prescription_type}`}>
+											{medicine.medicine.prescription_type}
 										</SeverityPill>
 									</TableCell>
 									<TableCell align="right">
-										{medicine.medicine.type}
+										{medicine.medicine.used_for}
 									</TableCell>
 									<TableCell align="right">
 										<>
