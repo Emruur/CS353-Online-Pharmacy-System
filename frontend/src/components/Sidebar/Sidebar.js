@@ -9,6 +9,8 @@ export const Sidebar = (props) => {
 		noSsr: false,
 	});
 
+	const role = sessionStorage.getItem("role");
+
 	const content = (
 		<Box
 			sx={{
@@ -22,6 +24,9 @@ export const Sidebar = (props) => {
 					<Typography sx={{ m: 2 }} variant="h4">
 						Online Pharmacy
 					</Typography>
+					<Typography sx={{ m: 2 }} variant="b1">
+						{role==="pharmacist" ? 'Pharmacist' : (role==="doctor" ? 'Doctor' : 'Patient')}
+					</Typography>
 				</Box>
 			</div>
 			<Divider
@@ -32,6 +37,7 @@ export const Sidebar = (props) => {
 			/>
 			<Box sx={{ flexGrow: 1 }}>
 				{routes.map((item) => (
+					item.type === "collapse" && 
 					<NavItem
 						key={item.key}
 						icon={item.icon}

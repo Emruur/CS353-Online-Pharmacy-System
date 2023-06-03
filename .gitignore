@@ -3,3 +3,5 @@ __pycache__
 db_env
 .idea
 cs353venv
+backend/config.py
+package-lock.json
