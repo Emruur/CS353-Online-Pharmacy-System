@@ -25,7 +25,31 @@ def close_conn(e):
     if conn is not None:
         conn.close()
 
+# method to get all hospitals
+@prescription_blueprint.route('/allPharmacies', methods=['GET'])
+@jwt_required()
+def getAllPharmacies():
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    """ cursor.execute("SELECT * FROM Pharmacist WHERE user_id = %s", (current_user,))
+    pharmacist = cursor.fetchone() """
+    
+    #if pharmacist:
+    #if not request.is_json:
+    #    return jsonify({"msg": "Missing JSON in request"}), 400
+    try:
+        cursor.execute(
+            "SELECT * FROM Pharmacy"
+        )
+        pharmacies = cursor.fetchall()
 
+        return jsonify({"msg": "Pharmacies are listed"}), 200
+    
+    except Exception as e:
+        conn.rollback()
+        return f'Transaction failed: {str(e)}', 500
+    
 @prescription_blueprint.route('/', methods=['POST', 'GET'])
 @jwt_required()
 def prescription():
@@ -40,7 +64,16 @@ def prescription():
         "prescribed_to" : "11176269610",
         "type": "prescription type",
         "notes" : "prescription notes",
-        "medicine" : [1,3,4]
+        "medicine" : [
+                        {
+                        "id": 1,
+                         "quantity" : 5,
+                        },
+                        {
+                        "id": 3,
+                         "quantity" : 2,
+                        },
+                        ]
 
     }
     date is current time, status is valid by default.
@@ -70,8 +103,8 @@ def prescription():
 
                 for med in medicine:
                     cursor.execute(
-                        "insert into prescribedmedication (pres_id,med_id) VALUES (%s,%s)",
-                        (last_inserted_id, med))
+                        "insert into prescribedmedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
+                        (last_inserted_id, med.get("id"), med.get("quantity")))
                 conn.commit()
                 return jsonify({"msg": "Prescription created successfully"}), 200
             except Exception as e:
