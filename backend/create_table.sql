@@ -154,7 +154,7 @@ CREATE TABLE PaymentMethod (
 CREATE TABLE Wallet (
     wallet_id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
     balance Numeric(10, 2) NOT NULL,
-    payment_id INTEGER NOT NULL,
+    payment_id INTEGER NOT NULL default 1,
     FOREIGN KEY (payment_id) REFERENCES PaymentMethod(payment_id)
 );
 CREATE TABLE Purchase (
@@ -197,6 +197,12 @@ CREATE TABLE EquivalentTo (
 );
 
 -- FIXED TABLE VALUES (INITIALS)
+INSERT INTO PaymentMethod (name)
+VALUES
+    ("Credit Card"),
+    ("IBAN");
+
+
 INSERT INTO Address (country, city, district, description)
 VALUES
     ("Turkey", "Ankara", "Akyurt", "Beyazıt Mahallesi, 9 Mayıs 90. Caddesi No:6/B"),
@@ -363,6 +369,18 @@ BEGIN
      IF NEW.prescribed_by = NEW.prescribed_to THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Doctor cannot prescribe to themselves.';
+    END IF;
+END; //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER check_prescription_max
+BEFORE INSERT ON PrescribedMedication
+FOR EACH ROW
+BEGIN
+     IF NEW.med_count > 5 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Doctor cannot prescribe more than 5 of same medicine!';
     END IF;
 END; //
 DELIMITER ;
