@@ -121,6 +121,7 @@ CREATE TABLE Prescription (
 );
 CREATE TABLE PrescribedMedication (
     pres_id INTEGER,
+    med_count INTEGER,
     FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id),
     med_id INTEGER,
     FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
