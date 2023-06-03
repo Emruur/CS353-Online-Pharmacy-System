@@ -1,6 +1,7 @@
 import mysql
 from flask import Blueprint, g, request, jsonify
 from config import db_config
+from datetime import datetime
 
 from flask_jwt_extended import (
     jwt_required,
@@ -88,7 +89,37 @@ def purchase():
                     WHERE id = ((SELECT wallet_id FROM USER WHERE user_id = ?))
                     """, (total_price["total_price"], current_user))
                 
-                ##deduct medicines from the storage of pharmacies
+                #deduct medicines from the storage of pharmacies
+                for med in med_list:
+                    cursor.execute("""
+                    UPDATE StoredIn 
+                    SET amount = amount - ? 
+                    WHERE pharmacy_id = ? AND med_id = ?;
+                    """, (med["quantity",p_id,med["id"]]))
+
+                ## create a purchase object
+                cursor.execute("SELECT wallet_id FROM User WHERE user_id = %s",(current_user))
+                w_id= cursor.fetchone()
+                cursor.execute("""
+                    INSERT INTO Purchase (pharmacy_id, date, deduction, wallet_id, user_id) 
+                    VALUES (?, ?, ?, ?, ?);
+                    """,(p_id,datetime.now().date().strftime('%Y-%m-%d'),total_price["total_price"],w_id["wallet_id"],current_user))
+                
+                purchase_id = cursor.lastrowid
+                ## create purchased medicine objects
+                for med in med_list:
+                    
+                
+
+
+
+
+
+
+
+
+
+
                 
             
                 

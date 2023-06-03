@@ -371,3 +371,13 @@ BEGIN
    END IF;
 END;//
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER check_amount BEFORE UPDATE ON StoredIn
+FOR EACH ROW 
+BEGIN
+   IF NEW.amount < 0 THEN 
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Amount cannot be negative';
+   END IF;
+END;//
+DELIMITER ;
