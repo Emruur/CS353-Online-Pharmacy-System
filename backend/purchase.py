@@ -88,7 +88,7 @@ def purchase():
                 cursor.execute("""
                     UPDATE Wallet 
                     SET balance = balance - ?
-                    WHERE id = ((SELECT wallet_id FROM USER WHERE user_id = ?))
+                    WHERE id = ((SELECT wallet_id FROM Patient WHERE user_id = ?))
                     """, (total_price["total_price"], current_user))
                 
                 #deduct medicines from the storage of pharmacies
@@ -100,7 +100,7 @@ def purchase():
                     """, (med["quantity",p_id,med["id"]]))
 
                 ## create a purchase object
-                cursor.execute("SELECT wallet_id FROM User WHERE user_id = %s",(current_user))
+                cursor.execute("SELECT wallet_id FROM Patient WHERE user_id = %s",(current_user))
                 w_id= cursor.fetchone()
                 cursor.execute("""
                     INSERT INTO Purchase (pharmacy_id, date, deduction, wallet_id, user_id) 
