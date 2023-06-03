@@ -15,11 +15,7 @@ export const AccountPopover = (props) => {
 	const balance = sessionStorage.getItem('balance');
 
 	const handleSignOut = async () => {
-		sessionStorage.removeItem('role');
-		sessionStorage.removeItem('token');
-		sessionStorage.removeItem('firstName');
-		sessionStorage.removeItem('lastName');
-
+		sessionStorage.clear();
 		navigate('/login');
 	};
 
