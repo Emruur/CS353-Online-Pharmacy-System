@@ -29,7 +29,7 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const MedicineList = (props) => {
 	const { medicines } = props;
-	//console.log(medicines);
+	console.log(medicines);
 
 	const [type, setType] = useState('none');
 
@@ -167,7 +167,7 @@ const MedicineList = (props) => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{filteredMedinices.map((medicine, index) => (
+							{medicines.map((medicine, index) => (
 								<TableRow
 									key={index}
 									sx={{
@@ -179,14 +179,14 @@ const MedicineList = (props) => {
 									</TableCell>
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">
-										<SeverityPill color={`${medicine.requiredProspectus}`}>
-											{medicine.requiredProspectus}
+										<SeverityPill color={`${medicine.prescription_type}`}>
+											{medicine.prescription_type}
 										</SeverityPill>
 									</TableCell>
 									<TableCell align="right">
-										{medicine.type}
+										{medicine.used_for}
 									</TableCell>
-									<TableCell align="right">{medicine.sideEffect}</TableCell>
+									<TableCell align="right">{medicine.side_effects}</TableCell>
 									<TableCell align="right">
 										{medicine.prescriptionStatus}
 									</TableCell>
