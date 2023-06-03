@@ -228,3 +228,53 @@ def max_purchased():
     except Exception as e:
         print(e)
         return jsonify({"msg": "error"}), 500
+
+
+@reports_blueprint.route('/monthly-revenue', methods=['GET'])
+@jwt_required()
+def monthly_revenue():
+    """
+    only pharmacists can view this report for their pharmacy. returns the yearly average revenue by producing firm
+    http://127.0.0.1:5000/reports/monthly-revenue
+    request form:
+    {
+        "year": 2023
+    }
+
+    """
+    conn = get_conn()
+    cursor = conn.cursor()
+    current_user = get_jwt_identity()
+    year = request.json.get('year', None)
+
+    try:
+        if year:
+            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            pharmacist = cursor.fetchone()
+            if pharmacist is not None:
+                pharmacy_id = pharmacist[2]
+                query = f'''
+                            SELECT
+                            MONTH(p.date) AS month,
+                            SUM(p.deduction) AS monthly_revenue
+                        FROM
+                            Purchase p
+                        WHERE
+                            YEAR(p.date) = {year} AND pharmacy_id = {pharmacy_id}
+                        GROUP BY
+                            MONTH(p.date)
+                        '''
+                cursor.execute(query)
+                result = cursor.fetchall()
+                keys = ["month", "revenue"]
+                result_with_keys = []
+
+                for res in result:
+                    result_with_keys.append(dict(zip(keys, res)))
+
+                return jsonify({"msg": "Report generated!", "result": result_with_keys}), 200
+        return jsonify({"msg": "Only pharmacists can view reports!"}), 401
+
+    except Exception as e:
+        print(e)
+        return jsonify({"msg": "error"}), 500
