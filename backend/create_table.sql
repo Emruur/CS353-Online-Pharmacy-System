@@ -154,16 +154,14 @@ CREATE TABLE Wallet (
     FOREIGN KEY (payment_id) REFERENCES PaymentMethod(payment_id)
 );
 CREATE TABLE Purchase (
-    purchase_id INTEGER PRIMARY KEY,
+    purchase_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     pharmacy_id INTEGER,
     date DATE,
     deduction Numeric(10, 2) NOT NULL,
     wallet_id INTEGER,
-    address_id INTEGER,
     user_id varchar(11),
     FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id),
-    FOREIGN KEY (address_id) REFERENCES Address(address_id),
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
 );
 CREATE TABLE PurchasedMedicine (
@@ -353,3 +351,11 @@ BEGIN
     END IF;
 END; //
 DELIMITER ;
+
+-- views
+CREATE VIEW patient_prescription AS
+SELECT u.user_id, p.pres_id,p2.med_id
+FROM user u
+    join prescription p on u.user_id = p.prescribed_to
+    join prescribedmedication p2 on p.pres_id = p2.pres_id
+WHERE p.status='valid';
