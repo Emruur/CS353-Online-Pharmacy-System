@@ -99,34 +99,6 @@ export const FormDoctorRegister = (props) => {
                                 required
                             />
                         </Grid>
-                        <Grid item md={6} xs={12}>
-                          <TextField
-                                error={Boolean(
-                                    props.formik.touched.hospital && props.formik.errors.hospital
-                                )}
-                                helperText={
-                                    props.formik.touched.hospital && props.formik.errors.hospital
-                                }
-                                select
-                                fullWidth
-                                defaultValue={""}
-                                label="Hospital"
-                                margin="normal"
-                                name="hospital"
-                                onBlur={props.formik.handleBlur}
-                                onChange={props.formik.handleChange}
-                                type="text"
-                                variant="outlined"
-                                required
-                                value={props.formik.values.hospital}
-                            >
-                                {props.hospitalList.map((hospital, index) => (
-                                    <MenuItem key={index} value={hospital.name} disabled={hospital.disabled}>
-                                        {hospital.name}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
                     </Grid>
                 </CardContent>
                 <Divider/>
@@ -209,38 +181,54 @@ export const FormDoctorRegister = (props) => {
                 <CardContent>
                     <Grid container justifyContent="center" direction="row" spacing={3}>
                         <Grid item md={6} xs={12}>
-                            <TextField
+                          <TextField
+                                error={Boolean(
+                                    props.formik.touched.hospital && props.formik.errors.hospital
+                                )}
+                                helperText={
+                                    props.formik.touched.hospital && props.formik.errors.hospital
+                                }
+                                select
                                 fullWidth
-                                label="Height"
+                                defaultValue={""}
+                                label="Hospital"
                                 margin="normal"
-                                name="typeSpecific.height"
+                                name="typeSpecific.hospital_id"
                                 onBlur={props.formik.handleBlur}
                                 onChange={props.formik.handleChange}
-                                type="number"
-                                value={props.formik.values.typeSpecific.height}
+                                type="text"
                                 variant="outlined"
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">cm</InputAdornment>,
-                                }}
                                 required
-                            />
+                                value={props.formik.values.typeSpecific.hospital_id}
+                            >
+                                {props.hospitalList.map((hospital, index) => (
+                                    <MenuItem key={index} value={hospital.id} disabled={hospital.disabled}>
+                                        {hospital.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
-                        <Grid item md={6} xs={12}>     
-                            <TextField
+                        <Grid item md={6} xs={12}>
+                          <TextField
+                                select
                                 fullWidth
-                                label="Weight"
+                                defaultValue={""}
+                                label="Speciality"
                                 margin="normal"
-                                name="typeSpecific.weight"
+                                name="typeSpecific.speciality"
                                 onBlur={props.formik.handleBlur}
                                 onChange={props.formik.handleChange}
-                                type="number"
-                                value={props.formik.values.typeSpecific.weight}
+                                type="text"
                                 variant="outlined"
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">kg</InputAdornment>,
-                                }}
                                 required
-                            />
+                                value={props.formik.values.typeSpecific.speciality}
+                            >
+                                {props.specialityList.map((speciality, index) => (
+                                    <MenuItem key={index} value={speciality.name} disabled={speciality.disabled}>
+                                        {speciality.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
                     </Grid>
                 </CardContent>

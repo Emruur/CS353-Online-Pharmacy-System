@@ -3,6 +3,7 @@ import PatientDashboard from 'pages/Patient/PatientDashboard';
 
 // Doctor
 import DoctorDashboard from 'pages/Doctor/DoctorDashboard';
+import CreatePrescription from 'pages/Doctor/Prescription/CreatePrescription';
 
 // Pharmacist
 import PharmacistDashboard from 'pages/Pharmacist/PharmacistDashboard';
@@ -13,16 +14,33 @@ import Cart from 'pages/Patient/ShoppingCart/Cart';
 import Prescription from 'pages/Prescription/Prescription';
 import Purchase from 'pages/PreviousPurchase/Purchase';
 
-const role = sessionStorage.getItem("role");
-
 const routes = [
 	{
 		type: 'collapse',
-		name: 'Dashboard',
-		key: role==="pharmacist" ? 'pharmacist_dashboard' : (role==="doctor" ? 'doctor_dashboard' : 'patient_dashboard'),
-		route: role==="pharmacist" ? '/pharmacist-dashboard' : (role==="doctor" ? '/doctor-dashboard' : '/patient-dashboard'),
-		label: role==="pharmacist" ? 'PharmacistDashboard' : (role==="doctor" ? 'DoctorDashboard' : 'Patient Dashboard'),
-		component: role==="pharmacist" ? <PharmacistDashboard/> : (role==="doctor" ? <DoctorDashboard/> : <PatientDashboard/>),
+		name: 'Patient Dashboard',
+		key: 'patient_dashboard',
+		route: '/patient-dashboard',
+		label: 'Patient Dashboard',
+		user: "patient",
+		component: <PatientDashboard/>,
+	},
+	{
+		type: 'collapse',
+		name: 'Doctor Dashboard',
+		key: 'doctor_dashboard',
+		route: '/doctor-dashboard',
+		label: 'Doctor Dashboard',
+		user: "doctor",
+		component: <DoctorDashboard/>,
+	},
+	{
+		type: 'collapse',
+		name: 'Pharmacist Dashboard',
+		key: 'pharmacist_dashboard',
+		route: '/pharmacist-dashboard',
+		label: 'Pharmacist Dashboard',
+		user: "pharmacist",
+		component: <PharmacistDashboard/>,
 	},
 	{
 		type: 'collapse',
@@ -30,6 +48,7 @@ const routes = [
 		key: 'medication',
 		route: '/medication',
 		label: 'Medication',
+		user: "patient",
 		component: <Medicine />,
 	},
 	{
@@ -38,13 +57,16 @@ const routes = [
 		key: 'payment',
 		route: '/payment',
 		label: 'Payment',
+		user: "patient",
 		component: <Payment />,
 	},
 	{
+		type: 'collapse',
 		name: 'Shopping Cart',
 		key: 'cart',
 		route: '/cart',
 		label: 'Shopping Cart',
+		user: "patient",
 		component: <Cart />,
 	},
 	{
@@ -53,6 +75,7 @@ const routes = [
 		key: 'prescription',
 		route: '/prescription',
 		label: 'Prescription',
+		user: "patient",
 		component: <Prescription />,
 	},
 	{
@@ -61,7 +84,17 @@ const routes = [
 		key: 'purchase',
 		route: '/purchase',
 		label: 'Purchase',
+		user: "patient",
 		component: <Purchase />,
+	},
+	{
+		type: 'collapse',
+		name: 'Create Prescription',
+		key: 'create_prescription',
+		route: '/create-prescription',
+		label: 'Create Prescription',
+		user: "doctor",
+		component: <CreatePrescription/>,
 	},
 ];
 

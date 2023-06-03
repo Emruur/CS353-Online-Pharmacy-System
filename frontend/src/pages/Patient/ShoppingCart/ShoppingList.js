@@ -9,20 +9,19 @@ import {
 	TableHead,
 	TableRow,
 	Typography,
+	Tooltip,
+	IconButton
 } from '@mui/material';
 import { useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const ShoppingList = (props) => {
 	const { items, total } = props;
 
 	useEffect(() => {
-		let tempTotal = 0;
-		for (let i = 0; i < items.length; i++) {
-			console.log(items[i].total);
-			tempTotal = items[i].total + tempTotal;
-			props.setTotal(tempTotal);
-		}
+		props.calculateTotal();
 	}, []);
 
 	console.log(items);
@@ -59,11 +58,27 @@ const ShoppingList = (props) => {
 									<TableCell>
 										<img src={item.medicine.image}/>
 									</TableCell>
-									<TableCell>{item.medicine.name}</TableCell>
-									<TableCell align="right">{item.quantity}</TableCell>
+									<TableCell align='center'>{item.medicine.name}</TableCell>
+									<TableCell align='right'>
+										<Tooltip>
+											<IconButton
+												onClick={() => {props.decreaseAmount(item.medicine)}}
+											>
+												<RemoveIcon />
+											</IconButton>
+										</Tooltip>
+										{item.quantity}
+										<Tooltip>
+											<IconButton
+												onClick={() => {props.increaseAmount(item.medicine)}}
+											>
+												<AddIcon />
+											</IconButton>
+										</Tooltip>
+									</TableCell>
 									<TableCell align="right">{item.total + ' ₺'}</TableCell>
 								</TableRow>
-								))}
+							))}
 						</TableBody>
 					</Table>
 				</Box>
@@ -92,8 +107,7 @@ const ShoppingList = (props) => {
 				>
 					Back to List
 				</Button>
-				<Button 
-					disabled={total === 0}
+				<Button
 					color="primary" 
 					size="large" 
 					variant="contained"
