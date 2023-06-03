@@ -52,7 +52,7 @@ const Login = () => {
 				.catch((err) => {
 					if (err && err.response) {
 						if (err.response.status === 401) {
-							setErrorMessage('err.response.data.msg');
+							setErrorMessage(err.response.data.msg);
 						} else {
 							setErrorMessage('Invalid request');
 						}

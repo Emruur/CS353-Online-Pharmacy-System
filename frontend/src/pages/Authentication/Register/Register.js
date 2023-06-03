@@ -17,42 +17,118 @@ import { FormPharmacistRegister } from 'components/RegisterForms/form-pharmacist
 import { format } from 'date-fns';
 import * as Yup from 'yup';
 
+const specialityList = [
+	{
+		name : "Not chosen",
+		disabled: true
+	},
+	{
+		name: "Allergy and immunology"
+	},
+	{
+		name: "Anesthesiology"
+	},
+	{
+		name: "Dermatology"
+	},
+	{
+		name: "Diagnostic radiology"
+	},
+	{
+		name: "Emergency medicine"
+	},
+	{
+		name: "Family medicine"
+	},
+	{
+		name: "Internal medicine"
+	},
+	{
+		name: "Medical genetics"
+	},
+	{
+		name: "Neurology"
+	},
+	{
+		name: "Nuclear medicine"
+	},
+	{
+		name: "Obstetrics and gynecology"
+	},
+	{
+		name: "Ophthalmology"
+	},
+	{
+		name: "Pathology"
+	},
+	{
+		name: "Pediatrics"
+	},
+	{
+		name: "Physical medicine and rehabilitation"
+	},
+	{
+		name: "Preventive medicine"
+	},
+	{
+		name: "Psychiatry"
+	},
+	{
+		name: "Radiation oncology"
+	},
+	{
+		name: "Surgery"
+	},
+	{
+		name: "Urology"
+	}
+]
+
 const hospitalList = [
 	{
 		name: "Not chosen",
-		disabled: true
+		disabled: true,
+		id: -1
 	},
 	{
 		name: 'Ankara Şehir Hastanesi',
 		location: 'Çankaya',
+		id: 0
 	},
 	{
 		name: 'Ankara Etlik Şehir Hastanesi',
 		location: 'Keçiören',
+		id: 1
 	},
 	{
 		name: 'Gülhane Eğitim ve Araştırma Hastanesi',
 		location: 'Keçiören',
+		id: 2
 	},
 	{
 		name: 'Beytepe Murat Erdi Eker Devlet Hastanesi',
 		location: 'Çankaya',
+		id: 3
 	},
 	{
 		name: 'Haymana Devlet Hastanesi',
 		location: 'Haymana',
+		id: 4
 	},
 	{
 		name: 'Ankara Atatürk Sanatoryum Eğitim ve Araştırma Hastanesi',
 		location: 'Keçiören',
+		id: 5
 	},
 	{
 		name: 'Gazi Üniversitesi Tıp Fakültesi Gazi Hastanesi',
 		location: 'Yenimahalle',
+		id: 6
 	},
 	{
 		name: 'Hacettepe Üniversitesi İhsan Doğramacı Çocuk Hastanesi',
 		location: 'Çankaya',
+		id: 7
 	},
 ];
 
@@ -115,12 +191,13 @@ const Register = () => {
 			tckn: '',
 			phone: '',
 			password: '',
-			hospital: hospitalList[0].name,
 			pharmacy: pharList[0].name,
 			typeSpecific: {
 				height: '180',
 				weight: '80',
 				birthday: today,
+				hospital_id: hospitalList[0].id,
+				speciality: specialityList[0].name
 			},
 		},
 		validationSchema: Yup.object({
@@ -135,7 +212,6 @@ const Register = () => {
 			password: Yup.string()
 				.max(16, 'Password can be maximum 16 characters long')
 				.required('Password is required'),
-			hospital: Yup.string(),//.required('Name of hospital required'),
 			pharmacy: Yup.string(),//.required('Name of pharmacy is required'),
 			typeSpecific: Yup.object().shape({
 				height: Yup
@@ -143,8 +219,9 @@ const Register = () => {
 				weight: Yup
 					.number(),
 				birthday: Yup
-					.date("Must consist of numbers")
-					.required("Birthday is required")
+					.date(""),
+				hospital_id: Yup.string(),//.required('Name of hospital required'),
+				specialityList: Yup.string()
 			}).required()
 		}),
 		onSubmit: async (values) => {
@@ -159,6 +236,7 @@ const Register = () => {
 				user_type: isPhar ? "pharmacist" : (isDoctor ? "doctor" : "patient"),
 				type_specific: values.typeSpecific
 			}
+			console.log(newValues);
 			await axios
 				.post('/auth/signup', newValues)
 				.then((res) => {
@@ -169,10 +247,11 @@ const Register = () => {
 				})
 				.catch((err) => {
 					if (err && err.response) {
+						console.log("Error:", err.response.data);
 						if (err.response.status === 401) {
 							setErrorMessage('Invalid TCKN or password');
-						} else {
-							setErrorMessage('Invalid request');
+						} else if (err.response.status === 400) {
+							setErrorMessage(err.response.data.msg);
 						}
 					} else {
 						setErrorMessage('Connection error');
@@ -260,6 +339,7 @@ const Register = () => {
 							<FormDoctorRegister
 								formik={formik}
 								hospitalList={hospitalList}
+								specialityList={specialityList}
 							/>
 						)}
 						{isPhar && (
