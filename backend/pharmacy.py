@@ -136,7 +136,7 @@ def delete(id):
         return jsonify({"msg": "Only Pharmacists can remove drugs"}), 405
 
 
-@pharmacy_blueprint.route('/mypharmacy', methods=['GET'])
+@pharmacy_blueprint.route('/mypharmacy', methods=['GET', 'PUT'])
 @jwt_required()
 def getMedicines():
     current_user = get_jwt_identity()
@@ -146,28 +146,53 @@ def getMedicines():
     pharmacist = cursor.fetchone()
     
     if pharmacist:
-        if not request.is_json:
-            return jsonify({"msg": "Missing JSON in request"}), 400
-        try:
-            cursor.execute(
-                "SELECT pharmacy_id FROM Pharmacist WHERE user_id = %s",
-                (pharmacist[0],)
-            )
-            pharmacy_id = cursor.fetchone()[0]
+        if request.method == 'GET':
+            try:
+                cursor.execute(
+                    "SELECT pharmacy_id FROM Pharmacist WHERE user_id = %s",
+                    (pharmacist[0],)
+                )
+                pharmacy_id = cursor.fetchone()[0]
 
-            cursor.execute(
-                "SELECT * FROM StoredIn WHERE pharmacy_id = %s",
-                (pharmacy_id,)
-            )
-            medicines = cursor.fetchall()
-            for med in medicines:
-                print(med)
-            conn.commit()
+                cursor.execute(
+                    "SELECT * FROM StoredIn WHERE pharmacy_id = %s",
+                    (pharmacy_id,)
+                )
+                medicines = cursor.fetchall()
+                for med in medicines:
+                    print(med)
+                conn.commit()
 
-            return jsonify({"msg": "Medicine list is fetched"}), 200
-        except Exception as e:
-            conn.rollback()
-            return f'Transaction failed: {str(e)}', 500
+                return jsonify({"msg": "Medicine list is fetched"}), 200
+            except Exception as e:
+                conn.rollback()
+                return f'Transaction failed: {str(e)}', 500
+            
+        if request.method == 'PUT':
+            if not request.is_json:
+                return jsonify({"msg": "Missing JSON in request"}), 400
+            try:
+                med_id = request.json.get('med_id', None)
+                med_no = request.json.get('med_no', None)
+                cursor.execute(
+                    "SELECT pharmacy_id FROM Pharmacist WHERE user_id = %s",
+                    (pharmacist[0],)
+                )
+                pharmacy_id = cursor.fetchone()[0]
 
+                cursor.execute(
+                    "UPDATE StoredIn SET amount = %s WHERE pharmacy_id = %s AND med_id = %s",
+                    (med_no, pharmacy_id, med_id)
+                )
+                conn.commit()
+                updatedRows = cursor.rowcount
+
+                if updatedRows < 1:
+                    return jsonify({"msg": "Medicine is not found in the system!"}), 200
+                else:
+                    return jsonify({"msg": "Medicine is updated successfully"}), 200
+            except Exception as e:
+                conn.rollback()
+                return f'Transaction failed: {str(e)}', 500
     else:
         return jsonify({"msg": "Only Pharmacists can view the editing page"}), 405
