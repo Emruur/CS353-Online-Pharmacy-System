@@ -215,6 +215,17 @@ VALUES
     ("Birsen Eczanesi", 7),
     ("Hazar Eczanesi", 8);
 
+INSERT INTO Hospital (hospital_id, name, address_id)
+VALUES
+    (1, "Ankara Şehir Hastanesi", 1),
+    (2, "Ankara Etlik Şehir Hastanesi", 2),
+    (3, "Gülhane Eğitim ve Araştırma Hastanesi", 3),
+    (4, "Beytepe Murat Erdi Eker Devlet Hastanesi", 4),
+    (5, "Haymana Devlet Hastanesi", 5),
+    (6, "Ankara Atatürk Sanatoryum Eğitim ve Araştırma Hastanesi", 6),
+    (7, "Gazi Üniversitesi Tıp Fakültesi Gazi Hastanesi", 7),
+    (8, "Hacettepe Üniversitesi İhsan Doğramacı Çocuk Hastanesi", 8);
+
 
 -- TRIGGERS
 
