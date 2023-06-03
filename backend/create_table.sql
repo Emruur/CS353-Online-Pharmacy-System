@@ -228,17 +228,6 @@ VALUES
     (7, "Gazi Üniversitesi Tıp Fakültesi Gazi Hastanesi", 7),
     (8, "Hacettepe Üniversitesi İhsan Doğramacı Çocuk Hastanesi", 8);
 
-INSERT INTO Medicine (country, city, district, description)
-VALUES
-    ("Turkey", "Ankara", "Akyurt", "Beyazıt Mahallesi, 9 Mayıs 90. Caddesi No:6/B"),
-    ("Turkey", "Ankara", "Akyurt", "Yıldırım Mahallesi, Dr.Neslihan Özenli Caddesi, No:26/A"),
-    ("Turkey", "Ankara", "Akyurt", "Yıldırım Mahallesi, Cumhuriyet Meydanı No:13"),
-    ("Turkey", "Ankara", "Altındağ", "Feridun Çelik Mahallesi, 1669. Caddesi, No:18/A"),
-    ("Turkey", "Ankara", "Altındağ", "Şükriye Mahallesi, Ulucanlar Caddesi, Ses Sokak No:81/A Ulucanlar"),
-    ("Turkey", "Ankara", "Keçiören", "Karakaya Mahallesi, Bağlum Bulvarı No:107/B"),
-    ("Turkey", "Ankara", "Keçiören", "Aşağı Eğlence Mahallesi, Altınoluk Sokak No:4/B"),
-    ("Turkey", "Ankara", "Sincan", "Akşemsettin Mahallesi, Fecri Ebcioğlu Sokak No:7/A");
-
 -- Insert mock data
 INSERT INTO Medicine (name, prescription_type, used_for, dosages, side_effects, risk_factors, preserve_conditions, prod_firm, price, med_type, min_age)
 VALUES
