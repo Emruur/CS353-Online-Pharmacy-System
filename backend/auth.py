@@ -130,10 +130,9 @@ def signup():
 
     # insert into the respective user_type table
     try:
-        if user_type == 'patient':
-            cursor.execute("INSERT INTO Patient (user_id, height, weight, birthday) VALUES (%s, %s, %s,%s)",
-                            (user_id, type_specific.get('height'), type_specific.get('weight'), type_specific.get("birthday")))
-        elif user_type == 'doctor':
+        cursor.execute("INSERT INTO Patient (user_id, height, weight, birthday) VALUES (%s, %s, %s,%s)",
+                        (user_id, type_specific.get('height'), type_specific.get('weight'), type_specific.get("birthday")))
+        if user_type == 'doctor':
             cursor.execute("INSERT INTO Doctor (user_id, speciality, hospital_id) VALUES (%s, %s, %s)",
                         (user_id, type_specific.get('speciality'),type_specific.get('hospital_id')))
             print(cursor)
