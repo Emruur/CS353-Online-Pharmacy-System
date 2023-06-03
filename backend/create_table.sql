@@ -81,6 +81,7 @@ CREATE TABLE Patient(
     height INTEGER,
     weight INTEGER,
     birthday DATE,
+    wallet_id INTEGER NOT NULL,
     age INT
 );
 
@@ -113,7 +114,7 @@ CREATE TABLE Prescription (
     prescribed_by VARCHAR(11),
     FOREIGN KEY (prescribed_by) REFERENCES Doctor(user_id),
     prescribed_to VARCHAR(11),
-    FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
+    FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id), 
     date DATE,
     type ENUM('white', 'red', 'green', 'orange', 'purple') NOT NULL,
     notes TEXT,
