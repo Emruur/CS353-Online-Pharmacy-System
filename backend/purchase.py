@@ -71,11 +71,11 @@ def purchase():
                 
                 ##check if medicine can be purchased(prescription check)
                 med_list= request.json.get("medicine")
-
+                print(med_list)
                 medid_list= [str(med["id"]) for med in med_list]
-                for med in med_list:
-                    print(med)
+                med_dict = {item['id']: item['quantity'] for item in med_list}
 
+                for med in med_list:
                     query = "SELECT * FROM patient_prescription WHERE med_id = %s"
                     cursor.execute(query, (med.get("id"),))
                     result = cursor.fetchone()
@@ -83,9 +83,8 @@ def purchase():
                         return jsonify({"msg": "Cant buy medicine not allowed"}), 400
                 
                 ##balance deduction
-                query = "SELECT SUM(price) as total_price FROM Medicine WHERE med_id in (select med_id from patient_prescription where" \
-                        " user_id = %s)"
-                cursor.execute(query, (current_user,))
+                query = f"SELECT SUM(price) as total_price  FROM Medicine  WHERE med_id in {tuple(medid_list)}"
+                cursor.execute(query)
                 total_price = cursor.fetchone()
                 total_price = float(total_price[0])
                 print(total_price)
@@ -118,8 +117,8 @@ def purchase():
                 for med in med_list:
                     cursor.execute("""
                         INSERT INTO PurchasedMedicine (purchase_id, purchase_count, med_id)
-                        VALUES (?, ?, ?);
-                    """,(purchase_id,med["quentity"],med["id"]))
+                        VALUES (%s, %s, %s);
+                    """,(purchase_id,med["quantity"],med["id"]))
 
                 conn.commit()
                 return jsonify({"msg": "Purchase created successfully"}), 200
