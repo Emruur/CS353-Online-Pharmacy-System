@@ -6,6 +6,7 @@ from prescription import prescription_blueprint
 from medicine import medicine_blueprint
 from reports import reports_blueprint
 from pharmacy import pharmacy_blueprint
+from hospital import hospital_blueprint
 from flask_jwt_extended import JWTManager
 
 # Configuration for Flask-JWT-Extended
@@ -22,6 +23,8 @@ app.register_blueprint(prescription_blueprint, url_prefix='/prescription')
 app.register_blueprint(medicine_blueprint, url_prefix='/medicine')
 app.register_blueprint(reports_blueprint, url_prefix='/reports')
 app.register_blueprint(pharmacy_blueprint, url_prefix='/pharmacy')
+app.register_blueprint(hospital_blueprint, url_prefix='/hospital')
+
 
 
 if __name__ == '__main__':
