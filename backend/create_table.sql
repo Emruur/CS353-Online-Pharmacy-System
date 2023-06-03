@@ -394,6 +394,15 @@ FROM user u
     join prescribedmedication p2 on p.pres_id = p2.pres_id
 WHERE p.status='valid';
 
+
+CREATE VIEW patient_prescription_all AS
+SELECT u.user_id, p.pres_id, p2.med_id, p2.med_count, name,prescription_type,used_for,side_effects
+FROM user u
+    join prescription p on u.user_id = p.prescribed_to
+    join prescribedmedication p2 on p.pres_id = p2.pres_id
+    join medicine on p2.med_id = medicine.med_id;
+
+
 DELIMITER //
 CREATE TRIGGER balance_check BEFORE UPDATE ON Wallet
 FOR EACH ROW 

@@ -11,73 +11,41 @@ import { useEffect, useState } from 'react';
 import { useNavigate} from 'react-router-dom';
 import { useGlobalState } from 'GlobalCart';
 
-const medicineList = [
-	{
-		name: 'Parol',
-		type: 'Paracetamol',
-		requiredProspectus: 'white',
-		sideEffect: 'Dryness in mouth, Dizziness, Tremors, Insomnia',
-		prescriptionStatus: 'Over the Counter',
-		image: Parol,
-		price: 10
-	},
-	{
-		name: 'Augmentin',
-		type: 'Antibiotic',
-		requiredProspectus: 'white',
-		sideEffect: 'Nausea, Vomiting, Headache, Diarrhea',
-		prescriptionStatus: 'Not Prescribed',
-		image: Augmentin,
-		price: 30
-	},
-	{
-		name: 'Minoset Plus',
-		type: 'Paracetamol',
-		requiredProspectus: 'white',
-		sideEffect: 'Severe nausea, Vomiting, Stomach pain',
-		prescriptionStatus: 'Over the Counter',
-		image: Minoset,
-		price: 15
-	},
-	{
-		name: 'Arveles',
-		type: 'Anti-inflammatory',
-		requiredProspectus: 'white',
-		sideEffect: 'Heartburn, Nausea and vomiting, Diarrhea',
-		prescriptionStatus: 'Over the Counter',
-		image: Arveles,
-		price: 40
-	},
-	{
-		name: 'Concerta',
-		type: 'Nervous System Stimulant',
-		requiredProspectus: 'red',
-		sideEffect: 'Nervousness, Trouble sleeping, Loss of appetite, Weight loss',
-		prescriptionStatus: 'Not Prescribed',
-		image: Concerta,
-		price: 100
-	},
-	{
-		name: 'Codeine Phosphate',
-		type: 'Pain Killer',
-		requiredProspectus: 'red',
-		sideEffect: 'Constipation, Nausea and Stomach cramps, Mood changes, Dizziness',
-		prescriptionStatus: 'Prescribed',
-		image: Codeine,
-		price: 1000
-	},
-];
 const Medicine = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 
 	const [list, setCartItems] = useGlobalState("cartItems");
+	const [medicineList, setMedicineList] = useState([]);
+	const [prescribedMeds, setPrescribedMeds] = useState([])
 	
 	const [successMessage, setSuccessMessage] = useState('');
 
 	const navigate = useNavigate('');
 
 	useEffect(() => {
+		const getAllPrescription = async () => {
+            await axios.get('/prescription/', {
+                headers: {
+                    "Authorization": token
+                }
+            })
+                .then((res) => {
+                    if (res && res.data) {
+						let arr = []
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push(res.data[i])
+						}
+						setPrescribedMeds(arr)
+                    }
+                })
+                .catch((err) => {
+                    if (err && err.response) {
+                        console.log(err.response.data)
+                    }
+                })
+        }
+        getAllPrescription();
 		const getAllMedicine = async () => {
 			await axios.get('/medicine/', {
 				headers: {
@@ -87,11 +55,14 @@ const Medicine = () => {
 				.then((res) => {
 					if (res && res.data) {
 						let arr = []
-						for (let i = 0; i < medicineList.length; i++) {
-							arr.push({medicine: medicineList[i], quantity: 0, total: 0})
+						let arr1 = []
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push({medicine: res.data[i], quantity: 0, total: 0})
+							arr1.push(res.data[i])
 						}
 						setCartItems(arr);
-						console.log(list)
+						setMedicineList(arr1);
+						//console.log(list)
 					}
 				})
 				.catch((err) => {

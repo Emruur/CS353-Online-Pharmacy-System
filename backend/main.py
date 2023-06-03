@@ -12,7 +12,8 @@ from flask_jwt_extended import JWTManager
 
 # Configuration for Flask-JWT-Extended
 app = Flask(__name__)
-cors = CORS(app)
+cors = CORS(app, origins=['*'], methods=['GET', 'POST', 'PUT', 'OPTIONS'], allow_headers=['Content-Type'], supports_credentials=True)
+
 app.config['JWT_SECRET_KEY'] = 'cs353pharmacy'  # replace 'your-secret-key' with your actual secret key
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = 86400  # the number of seconds until the token expires, you can adjust this as needed
 

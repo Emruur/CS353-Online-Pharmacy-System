@@ -42,12 +42,12 @@ def purchase():
         "medicine" : [
                         {
                         "id": 1,
-                         "quantity" : 5,
+                         "quantity" : 5
                         },
                         {
                         "id": 3,
-                         "quantity" : 2,
-                        },
+                         "quantity" : 2
+                        }
                         ]
     }
     date is current time, status is valid by default.
@@ -63,7 +63,7 @@ def purchase():
                 conn.autocommit = False
                 ## check if pharmacy exists
                 p_id = request.json.get("pharmacy_id")
-                query = "SELECT FROM Pharmacy WHERE pharmacy_id = %s"
+                query = "SELECT * FROM Pharmacy WHERE pharmacy_id = %s"
                 cursor.execute(query, (p_id,))
                 result = cursor.fetchone()
                 if not result:
@@ -81,8 +81,8 @@ def purchase():
                         return jsonify({"msg": "Cant buy medicine not allowed"}), 400
                 
                 ##balance deduction
-                query = "SELECT SUM(price) as total_price FROM Medicine WHERE med_id in (%s)"
-                cursor.execute(query, (p_id,",".join(medid_list)))
+                query = "SELECT SUM(price) as total_price FROM Medicine WHERE med_id in %s"
+                cursor.execute(query, (tuple(medid_list)),)
                 total_price = cursor.fetchone()
 
                 cursor.execute("""
@@ -97,7 +97,7 @@ def purchase():
                     UPDATE StoredIn 
                     SET amount = amount - ? 
                     WHERE pharmacy_id = ? AND med_id = ?;
-                    """, (med["quantity",p_id,med["id"]]))
+                    """, (med["quantity"],p_id,med["id"]))
 
                 ## create a purchase object
                 cursor.execute("SELECT wallet_id FROM Patient WHERE user_id = %s",(current_user))

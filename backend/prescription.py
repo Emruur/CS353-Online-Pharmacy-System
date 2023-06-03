@@ -37,17 +37,17 @@ def prescription():
     post request data format:
     {
         "prescribed_to" : "11176269610",
-        "type": "prescription type",
+        "type": "red",
         "notes" : "prescription notes",
         "medicine" : [
                         {
                         "id": 1,
-                         "quantity" : 5,
+                         "quantity" : 5
                         },
                         {
                         "id": 3,
-                         "quantity" : 2,
-                        },
+                         "quantity" : 2
+                        }
                         ]
 
     }
@@ -78,7 +78,7 @@ def prescription():
 
                 for med in medicine:
                     cursor.execute(
-                        "insert into prescribedmedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
+                        "insert into PrescribedMedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
                         (last_inserted_id, med.get("id"), med.get("quantity")))
                 conn.commit()
                 return jsonify({"msg": "Prescription created successfully"}), 200
@@ -93,12 +93,13 @@ def prescription():
 
     elif request.method == 'GET':
         try:
-            keys = ["id", "prescribed_by", "prescribed_to", "date", "type", "notes", "status"]
+            keys = ["user_id", "pres_id", "med_id", "med_count", "name", "prescription_type", "used_for", "side_effects"]
             cursor.execute(
-                "select * from Prescription where prescribed_to = %s",
+                "select * from patient_prescription_all where user_id = %s",
                 (current_user,)
             )
             prescriptions = cursor.fetchall()
+
             return [dict(zip(keys, row)) for row in prescriptions], 200
         except Exception as e:
             print(e)

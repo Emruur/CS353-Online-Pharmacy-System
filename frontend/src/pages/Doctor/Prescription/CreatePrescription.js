@@ -16,7 +16,7 @@ import jwt_decode from "jwt-decode"
 import { FormCreatePrescription } from 'components/PrescriptionForms/form-create-prescription';
 import * as Yup from 'yup';
 
-const medicineList = [
+/*const medicineList = [
 	{
 		name: 'Parol',
 		type: 'Paracetamol',
@@ -66,16 +66,17 @@ const medicineList = [
 		prescriptionStatus: 'Prescribed',
 		price: 1000
 	},
-];
+];*/
 
 
 const CreatePrescription = () => {
-    const navigate = useNavigate();
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 
 	const [errorMessage, setErrorMessage] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
+
+	const [medicineList, setMedicineList] = useState([]);
     const [medicines, setMedicines] = useState([]);
 
     const formik = useFormik({
@@ -111,7 +112,7 @@ const CreatePrescription = () => {
 				.then((res) => {
 					if (res && res.data) {
                         console.log(res.data)
-                        setSuccessMessage(res.data);
+                        setSuccessMessage(res.data.msg);
 					}
 				})
 				.catch((err) => {
@@ -139,10 +140,14 @@ const CreatePrescription = () => {
 				.then((res) => {
 					if (res && res.data) {
 						let arr = []
-						for (let i = 0; i < medicineList.length; i++) {
-							arr.push({medicine: medicineList[i], quantity: 0, id: i})
+						let arr1 = []
+						console.log(res.data)
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push({medicine: res.data[i], quantity: 0, id: res.data[i].med_id})
+							arr1.push(res.data[i]);
 						}
 						setMedicines(arr);
+						setMedicineList(arr1)
 					}
 				})
 				.catch((err) => {
@@ -171,7 +176,7 @@ const CreatePrescription = () => {
 		for (let i = 0; i < copy.length; i++) {
 			if (copy[i].medicine.name === medicine.name) {
 				copy[i].quantity--;
-				setSuccessMessage(`${medicine.name} remover from the cart`);
+				setSuccessMessage(`${medicine.name} removed from the cart`);
 			}
 		}
         setMedicines(copy);

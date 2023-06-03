@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, g, current_app
+from flask import Blueprint, request, jsonify, g, current_app, Response
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity
@@ -15,7 +15,6 @@ db_config = db_config
 
 # Initialize the MySQL connection pool
 pool = mysql.connector.pooling.MySQLConnectionPool(pool_name="mypool", pool_size=5, **db_config)
-
 
 def get_conn():
     if 'conn' not in g:
