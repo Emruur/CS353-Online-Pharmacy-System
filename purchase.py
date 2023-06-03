@@ -36,8 +36,16 @@ def purchase():
     post request is atomic
     post request data format:
     {
-        "medicine" : [1,3,4]
-        "pharmacy id"
+        "medicine" : [
+                        {
+                        "id": 1,
+                         "quantity" : 5,
+                        },
+                        {
+                        "id": 3,
+                         "quantity" : 2,
+                        },
+                        ]
     }
     date is current time, status is valid by default.
     """
@@ -58,15 +66,32 @@ def purchase():
                 if not result:
                     return jsonify({"msg": "No pharmacy"}), 400
                 
-                ##fetch available reguested medicines from the pharmacy
+                ##check if medicine can be purchased(prescription check)
+                med_list= request.json.get("medicine")
+
+                medid_list= [str(med["id"]) for med in med_list]
+                for med in med_list:
+                    query = "SELECT * FROM patient_prescription WHERE med_id = %s"
+                    cursor.execute(query, (p_id,))
+                    result = cursor.fetchone()
+                    if not result:
+                        return jsonify({"msg": "Cant buy medicine not allowed"}), 400
                 
-                query = "SELECT FROM StoredIn WHERE pharmacy_id = %s and med_id IN (%s)"
-                cursor.execute(query, (p_id,))
-                result = cursor.fetchone()
-                 
+                ##balance deduction
+                query = "SELECT SUM(price) as total_price FROM Medicine WHERE med_id in (%s)"
+                cursor.execute(query, (p_id,",".join(medid_list)))
+                total_price = cursor.fetchone()
 
-
-   
+                cursor.execute("""
+                    UPDATE Wallet 
+                    SET balance = balance - ?
+                    WHERE id = ((SELECT wallet_id FROM USER WHERE user_id = ?))
+                    """, (total_price["total_price"], current_user))
+                
+                ##deduct medicines from the storage of pharmacies
+                
+            
+                
                 conn.commit()
                 return jsonify({"msg": "Purchase created successfully"}), 200
             except Exception as e:

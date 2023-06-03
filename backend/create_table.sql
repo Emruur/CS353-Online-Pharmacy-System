@@ -360,3 +360,14 @@ FROM user u
     join prescription p on u.user_id = p.prescribed_to
     join prescribedmedication p2 on p.pres_id = p2.pres_id
 WHERE p.status='valid';
+
+
+DELIMITER //
+CREATE TRIGGER balance_check BEFORE UPDATE ON Wallet
+FOR EACH ROW 
+BEGIN
+   IF NEW.balance < 0 THEN 
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Balance cannot be negative';
+   END IF;
+END;//
+DELIMITER ;
