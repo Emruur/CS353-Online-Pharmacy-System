@@ -159,6 +159,8 @@ CREATE TABLE Purchase (
     deduction Numeric(10, 2) NOT NULL,
     wallet_id INTEGER,
     address_id INTEGER,
+    user_id varchar(11),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
     FOREIGN KEY (wallet_id) REFERENCES Wallet(wallet_id),
     FOREIGN KEY (address_id) REFERENCES Address(address_id),
     FOREIGN KEY (pharmacy_id) REFERENCES Pharmacy(pharmacy_id)
