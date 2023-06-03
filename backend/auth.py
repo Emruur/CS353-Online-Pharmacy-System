@@ -61,7 +61,7 @@ doctor_specific_fields = ['speciality','hospital_id']
 pharmacist_specific_fields = ['education','pharmacy_id']
     
 @auth_blueprint.route('/signup', methods=['POST'])
-def signup():
+def signup():    
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
 
@@ -75,6 +75,7 @@ def signup():
     phone_number = request.json.get('phone_number', None)
     user_type = request.json.get('user_type', None)
     type_specific = request.json.get('type_specific', {})
+    print(type_specific)
 
     ''' EXAMPLE JSON REQUEST
     {
@@ -133,23 +134,22 @@ def signup():
             cursor.execute("INSERT INTO Patient (user_id, height, weight, birthday) VALUES (%s, %s, %s,%s)",
                             (user_id, type_specific.get('height'), type_specific.get('weight'), type_specific.get("birthday")))
         elif user_type == 'doctor':
-            cursor.execute("INSERT INTO Doctor (user_id, speciality,hospital_id) VALUES (%s, %s,%s)",
+            cursor.execute("INSERT INTO Doctor (user_id, speciality, hospital_id) VALUES (%s, %s, %s)",
                         (user_id, type_specific.get('speciality'),type_specific.get('hospital_id')))
+            print(cursor)
         elif user_type == 'pharmacist':
             cursor.execute("INSERT INTO Pharmacist (user_id, education,pharmacy_id) VALUES (%s, %s,%s)",
                         (user_id, type_specific.get('education'),type_specific.get('education')))
         else:
             return jsonify({"msg": "Invalid user_type"}), 400
     except:
-        cursor.execute("DELETE FROM USER WHERE user_id = %s", (user_id,))
+        cursor.execute("DELETE FROM User WHERE user_id = %s", (user_id,))
         conn.commit()
         return jsonify({"msg": "Invalid type_specific data"}), 400
 
     conn.commit()
 
     return jsonify({"msg": "User created successfully"}), 201
-
-
 
 @auth_blueprint.route('/protected', methods=['GET'])
 @jwt_required()
