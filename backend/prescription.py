@@ -40,7 +40,16 @@ def prescription():
         "prescribed_to" : "11176269610",
         "type": "prescription type",
         "notes" : "prescription notes",
-        "medicine" : [1,3,4]
+        "medicine" : [
+                        {
+                        "id": 1,
+                         "quantity" : 5,
+                        },
+                        {
+                        "id": 3,
+                         "quantity" : 2,
+                        },
+                        ]
 
     }
     date is current time, status is valid by default.
@@ -70,8 +79,8 @@ def prescription():
 
                 for med in medicine:
                     cursor.execute(
-                        "insert into prescribedmedication (pres_id,med_id) VALUES (%s,%s)",
-                        (last_inserted_id, med))
+                        "insert into prescribedmedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
+                        (last_inserted_id, med.get("id"), med.get("quantity")))
                 conn.commit()
                 return jsonify({"msg": "Prescription created successfully"}), 200
             except Exception as e:
