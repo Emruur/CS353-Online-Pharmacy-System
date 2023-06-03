@@ -123,14 +123,17 @@ def signup():
         return jsonify({"msg": "Email, User ID or Phone Number already in use"}), 400
 
     # insert new user
+    cursor.execute("INSERT INTO Wallet (balance) VALUES  (0)")
+    conn.commit()
+    last = cursor.lastrowid
     cursor.execute("INSERT INTO User (user_id, email, password, first_name, middle_name, surname, phone_number, user_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                    (user_id, email, hashed_password, first_name, middle_name, surname, phone_number, user_type))
     conn.commit()
 
     # insert into the respective user_type table
     try:
-        cursor.execute("INSERT INTO Patient (user_id, height, weight, birthday) VALUES (%s, %s, %s,%s)",
-                        (user_id, type_specific.get('height'), type_specific.get('weight'), type_specific.get("birthday")))
+        cursor.execute("INSERT INTO Patient (user_id, height, weight, birthday,wallet_id) VALUES (%s, %s, %s,%s,%s)",
+                        (user_id, type_specific.get('height'), type_specific.get('weight'), type_specific.get("birthday"),last))
         if user_type == 'doctor':
             cursor.execute("INSERT INTO Doctor (user_id, speciality, hospital_id) VALUES (%s, %s, %s)",
                         (user_id, type_specific.get('speciality'),type_specific.get('hospital_id')))
@@ -138,9 +141,10 @@ def signup():
         elif user_type == 'pharmacist':
             cursor.execute("INSERT INTO Pharmacist (user_id, education,pharmacy_id) VALUES (%s, %s,%s)",
                         (user_id, type_specific.get('education'),type_specific.get('pharmacy_id')))
-        else:
+        elif user_type != 'patient':
             return jsonify({"msg": "Invalid user_type"}), 400
-    except:
+    except Exception as e:
+        print(e)
         cursor.execute("DELETE FROM User WHERE user_id = %s", (user_id,))
         conn.commit()
         return jsonify({"msg": "Invalid type_specific data"}), 400
