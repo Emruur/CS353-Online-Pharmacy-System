@@ -4,6 +4,7 @@ from users import users_blueprint
 from auth import auth_blueprint
 from prescription import prescription_blueprint
 from medicine import medicine_blueprint
+from reports import reports_blueprint
 from flask_jwt_extended import JWTManager
 
 # Configuration for Flask-JWT-Extended
@@ -20,6 +21,7 @@ app.register_blueprint(users_blueprint, url_prefix='/users')
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
 app.register_blueprint(prescription_blueprint, url_prefix='/prescription')
 app.register_blueprint(medicine_blueprint, url_prefix='/medicine')
+app.register_blueprint(reports_blueprint, url_prefix='/reports')
 
 
 if __name__ == '__main__':
