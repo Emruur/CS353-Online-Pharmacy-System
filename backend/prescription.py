@@ -85,7 +85,7 @@ def prescription():
 
     elif request.method == 'GET':
         try:
-            keys = ["id","prescribed_by", "prescribed_to", "date", "type", "notes", "status"]
+            keys = ["id", "prescribed_by", "prescribed_to", "date", "type", "notes", "status"]
             cursor.execute(
                 "select * from prescription where prescribed_to = %s",
                 (current_user,)
@@ -97,7 +97,7 @@ def prescription():
             return jsonify({"msg": "Couldn't get prescription"}), 500
 
 
-@prescription_blueprint.route('/<id>', methods=['GET', 'DELETE','PUT'])
+@prescription_blueprint.route('/<id>', methods=['GET', 'DELETE', 'PUT'])
 @jwt_required()
 def prescription_detail(id):
     """
@@ -160,13 +160,13 @@ def prescription_detail(id):
                     if value is not None and value != "" and key != "medicine":
                         non_empty = True
                         query += key + "= '" + str(value) + "',"
-                #remove the last comma
+                # remove the last comma
                 conn.autocommit = False
                 query = query[0:len(query) - 1] + "where pres_id =" + str(id) + " and prescribed_by =" + current_user
                 print(query)
                 if non_empty:
                     cursor.execute(query)
-                    cursor.execute("delete from prescribedmedication where pres_id = %s",(id,))
+                    cursor.execute("delete from prescribedmedication where pres_id = %s", (id,))
                     if fields.get("medicine", None) is not None:
                         for med in fields.get("medicine"):
                             cursor.execute(
@@ -182,3 +182,57 @@ def prescription_detail(id):
 
         else:
             return jsonify({"msg": "Only doctors can edit prescription"}), 405
+
+
+@prescription_blueprint.route('/request', methods=['POST', 'GET'])
+@jwt_required()
+def requested_prescription():
+    """
+    make a prescription request as a patient
+
+    http://localhost:5000/prescription/request
+    post request data format:
+    {
+        "pres_id":5
+    }
+    """
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    if request.method == 'POST':
+        try:
+            if not request.is_json:
+                return jsonify({"msg": "Missing JSON in request"}), 400
+            try:
+                conn.autocommit = False
+                pres_id = request.json.get("pres_id")
+                cursor.execute("INSERT INTO RequestedPrescription (doctor_id, patient_id, pres_id, status) "
+                               "SELECT (SELECT user_id from doctor d where d.user_id = p.prescribed_by) as doctor_id, prescribed_to, pres_id, 'pending' "
+                               "FROM Prescription p "
+                               "WHERE prescribed_to = %s AND pres_id = %s AND (status = 'used' or status = 'expired') ",
+                               (current_user, pres_id))
+
+                conn.commit()
+                return jsonify({"msg": "Prescription requested successfully"}), 200
+            except Exception as e:
+                conn.rollback()
+                return f'Transaction failed: {str(e)}', 500
+            finally:
+                conn.autocommit = True
+
+        except Exception as e:
+            return jsonify({"msg": str(e)}), 405
+
+    elif request.method == 'GET':
+        try:
+            keys = ["prescribed_by", "prescribed_to", "status", "type", "notes", "pres_id","date"]
+            cursor.execute(
+                "select prescribed_by,prescribed_to, rp.status, type, notes, p.pres_id, date "
+                "from requestedprescription rp join prescription p on rp.pres_id = p.pres_id where prescribed_to = %s",
+                (current_user,)
+            )
+            prescriptions = cursor.fetchall()
+            return [dict(zip(keys, row)) for row in prescriptions], 200
+        except Exception as e:
+            print(e)
+            return jsonify({"msg": "Couldn't get requested prescription"}), 500
