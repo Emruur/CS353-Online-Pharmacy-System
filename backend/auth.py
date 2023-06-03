@@ -139,7 +139,7 @@ def signup():
         elif user_type == 'pharmacist':
             cursor.execute("INSERT INTO Pharmacist (user_id, education,pharmacy_id) VALUES (%s, %s,%s)",
                         (user_id, type_specific.get('education'),type_specific.get('pharmacy_id')))
-        else:
+        elif user_type != 'patient':
             return jsonify({"msg": "Invalid user_type"}), 400
     except:
         cursor.execute("DELETE FROM User WHERE user_id = %s", (user_id,))
