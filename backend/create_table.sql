@@ -340,3 +340,15 @@ BEGIN
     END IF;
 END; //
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER check_prescription_to_oneself
+BEFORE INSERT ON Prescription
+FOR EACH ROW
+BEGIN
+     IF NEW.prescribed_by = NEW.prescribed_to THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Doctor cannot prescribe to themselves.';
+    END IF;
+END; //
+DELIMITER ;
