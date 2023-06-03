@@ -23,8 +23,6 @@ def close_conn(e):
     if conn is not None:
         conn.close()
 
-
-
 @pharmacy_blueprint.route('/register_drug', methods=['POST'])
 @jwt_required()
 def register():
@@ -148,6 +146,8 @@ def getMedicines():
     if pharmacist:
         if request.method == 'GET':
             try:
+                keys = ["med_id", "amount", "name", "prescription_type", "used_for", "dosages", "side_effects", "risk_factors",
+                        "preserve_conditions","prod_firm", "price", "med_type", "min_age"]
                 cursor.execute(
                     "SELECT pharmacy_id FROM Pharmacist WHERE user_id = %s",
                     (pharmacist[0],)
@@ -155,15 +155,11 @@ def getMedicines():
                 pharmacy_id = cursor.fetchone()[0]
 
                 cursor.execute(
-                    "SELECT * FROM StoredIn WHERE pharmacy_id = %s",
+                    "SELECT * FROM StoredIn NATURAL JOIN Medicine WHERE pharmacy_id = %s",
                     (pharmacy_id,)
                 )
                 medicines = cursor.fetchall()
-                for med in medicines:
-                    print(med)
-                conn.commit()
-
-                return jsonify({"msg": "Medicine list is fetched"}), 200
+                return [dict(zip(keys, row)) for row in medicines], 200
             except Exception as e:
                 conn.rollback()
                 return f'Transaction failed: {str(e)}', 500
@@ -196,3 +192,21 @@ def getMedicines():
                 return f'Transaction failed: {str(e)}', 500
     else:
         return jsonify({"msg": "Only Pharmacists can view the editing page"}), 405
+
+# method to get all pharmacies
+@pharmacy_blueprint.route('/allPharmacies', methods=['GET'])
+def getAllPharmacies():
+    conn = get_conn()
+    cursor = conn.cursor()
+
+    try:
+        keys = ["hospital_id", "address_id", "name"]
+        cursor.execute(
+            "SELECT * FROM Pharmacy"
+        )
+        pharmacies = cursor.fetchall()
+        return [dict(zip(keys, row)) for row in pharmacies], 200
+    
+    except Exception as e:
+        conn.rollback()
+        return f'Transaction failed: {str(e)}', 500

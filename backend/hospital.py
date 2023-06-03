@@ -26,28 +26,19 @@ def close_conn(e):
 
 # method to get all hospitals
 @hospital_blueprint.route('/', methods=['GET'])
-@jwt_required()
 def getAllHospitals():
-    current_user = get_jwt_identity()
     conn = get_conn()
     cursor = conn.cursor()
-    """ cursor.execute("SELECT * FROM Pharmacist WHERE user_id = %s", (current_user,))
-    pharmacist = cursor.fetchone() """
-    
-    #if pharmacist:
-    #if not request.is_json:
-    #    return jsonify({"msg": "Missing JSON in request"}), 400
+
     try:
+        keys = ["hospital_id", "address_id", "name"]
         cursor.execute(
             "SELECT * FROM Hospital"
         )
         hospitals = cursor.fetchall()
 
-        return jsonify({"msg": "Hospitals are listed"}), 200
+        return [dict(zip(keys, row)) for row in hospitals], 200
     
     except Exception as e:
         conn.rollback()
         return f'Transaction failed: {str(e)}', 500
-
-    #else:
-    #    return jsonify({"msg": "Only Pharmacists can register new drugs"}), 405
