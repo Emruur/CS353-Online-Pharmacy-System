@@ -96,7 +96,7 @@ CREATE TABLE UserCondition(
 CREATE TABLE Medicine (
     med_id INTEGER PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL UNIQUE,
-    prescription_type VARCHAR(255) NOT NULL,
+    prescription_type ENUM('white', 'red', 'green', 'orange', 'purple') NOT NULL,
     used_for VARCHAR(255),
     dosages VARCHAR(255),
     side_effects VARCHAR(255),
@@ -115,7 +115,7 @@ CREATE TABLE Prescription (
     prescribed_to VARCHAR(11),
     FOREIGN KEY (prescribed_to) REFERENCES Patient(user_id),
     date DATE,
-    type VARCHAR(255),
+    type ENUM('white', 'red', 'green', 'orange', 'purple') NOT NULL,
     notes TEXT,
     status ENUM("valid", "used", "expired")
 );
