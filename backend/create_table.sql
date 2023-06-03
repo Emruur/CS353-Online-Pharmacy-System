@@ -239,7 +239,19 @@ VALUES
     ("Turkey", "Ankara", "Keçiören", "Aşağı Eğlence Mahallesi, Altınoluk Sokak No:4/B"),
     ("Turkey", "Ankara", "Sincan", "Akşemsettin Mahallesi, Fecri Ebcioğlu Sokak No:7/A");
 
-
+-- Insert mock data
+INSERT INTO Medicine (name, prescription_type, used_for, dosages, side_effects, risk_factors, preserve_conditions, prod_firm, price, med_type, min_age)
+VALUES
+    ('Aspirin', 'white', 'Pain, Fever', '1-2 tablets every 4-6 hours', 'Stomach irritation', 'Bleeding disorders', 'Store at room temperature', 'ABC Pharmaceuticals', 4.99, 'Tablet', 18),
+    ('Lisinopril', 'green', 'High blood pressure', '1 tablet daily', 'Cough, Dizziness', 'Pregnancy, Kidney problems', 'Keep in a dry place', 'XYZ Pharmaceuticals', 9.99, 'Tablet', 18),
+    ('Metformin', 'white', 'Type 2 Diabetes', '1-2 tablets with meals', 'Nausea, Diarrhea', 'Kidney disease', 'Store at room temperature', 'DEF Pharmaceuticals', 7.50, 'Tablet', 18),
+    ('Simvastatin', 'red', 'High cholesterol', '1 tablet daily', 'Muscle pain, Liver problems', 'Liver disease', 'Keep in a dry place', 'GHI Pharmaceuticals', 12.75, 'Tablet', 18),
+    ('Omeprazole', 'purple', 'Acid reflux', '1 capsule daily', 'Headache, Diarrhea', 'Liver disease', 'Keep in a dry place', 'JKL Pharmaceuticals', 8.99, 'Capsule', 18),
+    ('Cetirizine', 'green', 'Allergies', '1 tablet daily', 'Drowsiness, Dry mouth', 'Kidney disease', 'Store at room temperature', 'MNO Pharmaceuticals', 6.50, 'Tablet', 6),
+    ('Albuterol', 'orange', 'Asthma', '2 puffs every 4-6 hours', 'Shakiness, Nervousness', 'Heart disease', 'Keep in a dry place', 'PQR Pharmaceuticals', 15.99, 'Inhaler', 12),
+    ('Warfarin', 'purple', 'Blood thinning', 'Dose varies', 'Bleeding, Bruising', 'Pregnancy', 'Store at room temperature', 'STU Pharmaceuticals', 10.50, 'Tablet', 18),
+    ('Levothyroxine', 'white', 'Hypothyroidism', '1 tablet daily', 'Nervousness, Tremors', 'Heart disease', 'Keep in a dry place', 'VWX Pharmaceuticals', 8.75, 'Tablet', 18),
+    ('Metoprolol', 'red', 'High blood pressure', '1 tablet daily', 'Fatigue, Dizziness', 'Heart problems', 'Store at room temperature', 'YZ Pharmaceuticals', 7.50, 'Tablet', 18);
 
 -- TRIGGERS
 
