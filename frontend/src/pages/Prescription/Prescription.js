@@ -6,6 +6,8 @@ import Arveles from 'assets/images/arveles.png'
 import Codeine from 'assets/images/codeine.png'
 import Augmentin from 'assets/images/augmentin.png'
 import Concerta from 'assets/images/concerta.png'
+import { useEffect, useState } from 'react';
+import axios from 'axios_config';
 
 const prescriptions = [
     {
@@ -73,6 +75,32 @@ const prescriptions = [
 ];
 
 const Prescription = () => {
+
+    const [presc, setPresc] = useState([]);
+
+	const token = "Bearer " + sessionStorage.getItem("token");
+
+    useEffect(() => {
+        const getAllPrescription = async () => {
+            await axios.get('/prescription/', {
+                headers: {
+                    "Authorization": token
+                }
+            })
+                .then((res) => {
+                    if (res && res.data) {
+                        console.log(res.data)
+                    }
+                })
+                .catch((err) => {
+                    if (err && err.response) {
+                        console.log(err.response.data)
+                    }
+                })
+        }
+        getAllPrescription();
+    }, []);
+
     return(
         <>
             <title>Prescriptions</title>

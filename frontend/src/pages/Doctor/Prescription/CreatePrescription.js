@@ -101,8 +101,13 @@ const CreatePrescription = () => {
                 notes: values.notes,
                 medicine: medicines.filter((medicine) => medicine.type !== 0)
             }
+			console.log(newValues)
 			await axios
-				.post('/prescription/', newValues)
+				.post('/prescription/', newValues, {
+					headers: {
+						"Authorization": token
+					}
+				})
 				.then((res) => {
 					if (res && res.data) {
                         console.log(res.data)
@@ -115,6 +120,7 @@ const CreatePrescription = () => {
 							setErrorMessage(err.response.data.msg);
 						} else {
 							setErrorMessage('Invalid request');
+							console.log("Error", err.response);
 						}
 					} else {
 						setErrorMessage('Connection error');
@@ -198,6 +204,7 @@ const CreatePrescription = () => {
 						{errorMessage}
 					</Alert>
 				)}
+				<form onSubmit={formik.handleSubmit}>
 				<Grid container spacing={3}>
 					<Grid item lg={12} md={12} xl={15} xs={12}>
                         <FormCreatePrescription 
@@ -209,6 +216,19 @@ const CreatePrescription = () => {
                         />
 					</Grid>
 				</Grid>
+				<Box sx={{ py: 2 }}>
+					<Button
+						color="primary"
+						disabled={formik.isSubmitting}
+						fullWidth
+						size="large"
+						type="submit"
+						variant="contained"
+					>
+						Prescribe
+					</Button>
+				</Box>
+				</form>
 			</Container>
         </>
     );

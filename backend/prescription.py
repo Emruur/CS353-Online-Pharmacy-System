@@ -95,7 +95,7 @@ def prescription():
                 medicine = request.json.get('medicine', None)
                 status_value = "valid"
                 cursor.execute(
-                    "INSERT INTO prescription (prescribed_by, prescribed_to, `date`, `type`, notes, status) VALUES (%s, %s, %s, %s, %s, %s)",
+                    "INSERT INTO Prescription (prescribed_by, prescribed_to, `date`, `type`, notes, status) VALUES (%s, %s, %s, %s, %s, %s)",
                     (prescribed_by_value, prescribed_to_value, date_now_value, pres_type_value, notes_value,
                      status_value)
                 )
@@ -120,7 +120,7 @@ def prescription():
         try:
             keys = ["id", "prescribed_by", "prescribed_to", "date", "type", "notes", "status"]
             cursor.execute(
-                "select * from prescription where prescribed_to = %s",
+                "select * from Prescription where prescribed_to = %s",
                 (current_user,)
             )
             prescriptions = cursor.fetchall()
