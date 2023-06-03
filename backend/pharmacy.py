@@ -144,6 +144,7 @@ def getMedicines():
     pharmacist = cursor.fetchone()
     
     if pharmacist:
+        # method to get all medicines in a pharmacy
         if request.method == 'GET':
             try:
                 keys = ["med_id", "amount", "name", "prescription_type", "used_for", "dosages", "side_effects", "risk_factors",
@@ -164,6 +165,7 @@ def getMedicines():
                 conn.rollback()
                 return f'Transaction failed: {str(e)}', 500
             
+        # method to update the stock of a medicine
         if request.method == 'PUT':
             if not request.is_json:
                 return jsonify({"msg": "Missing JSON in request"}), 400
@@ -184,9 +186,13 @@ def getMedicines():
                 updatedRows = cursor.rowcount
 
                 if updatedRows < 1:
-                    return jsonify({"msg": "Medicine is not found in the system!"}), 200
-                else:
-                    return jsonify({"msg": "Medicine is updated successfully"}), 200
+                    cursor.execute(
+                        "INSERT INTO StoredIn (pharmacy_id, med_id, amount) VALUES (%s, %s, %s)",
+                        (pharmacy_id, med_id, med_no)
+                    )
+                    conn.commit()
+                
+                return jsonify({"msg": "Medicine is updated successfully"}), 200
             except Exception as e:
                 conn.rollback()
                 return f'Transaction failed: {str(e)}', 500
