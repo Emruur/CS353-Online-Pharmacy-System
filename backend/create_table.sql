@@ -20,6 +20,8 @@ DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Pharmacy;
 DROP TABLE IF EXISTS Hospital;
 DROP TABLE IF EXISTS Address;
+DROP VIEW IF EXISTS patient_prescription;
+DROP EVENT IF EXISTS check_presc_valid;
 
 CREATE TABLE Address(
     address_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -280,22 +282,6 @@ END IF;
 END;//
 DELIMITER ;
 
--- Before insert into purchase check existence of an address
-DELIMITER //
-CREATE TRIGGER address_before_purchase BEFORE
-INSERT ON Purchase FOR EACH ROW BEGIN
-DECLARE is_exists TINYINT(1);
-SELECT EXISTS(
-        SELECT 1
-        FROM Address
-        WHERE address_id = NEW.address_id
-    ) INTO is_exists;
-IF NOT is_exists THEN SIGNAL SQLSTATE '45000'
-SET MESSAGE_TEXT = 'Error: No such address exists!';
-END IF;
-END;//
-DELIMITER ;
-
 -- Before insert into purchase check existence of an pharmacy
 DELIMITER //
 CREATE TRIGGER pharmacy_before_purchase BEFORE
@@ -387,19 +373,6 @@ FROM user u
     join prescribedmedication p2 on p.pres_id = p2.pres_id
 WHERE p.status='valid';
 
-
--- events
-
-CREATE EVENT daily_check_event
-ON SCHEDULE EVERY 1 DAY
-DO
-BEGIN
-    UPDATE prescription p
-    SET p.status = 'expired'
-    WHERE DATEDIFF(NOW(), p.date) >= 4;
-END;
-
-
 DELIMITER //
 CREATE TRIGGER balance_check BEFORE UPDATE ON Wallet
 FOR EACH ROW 
@@ -417,5 +390,18 @@ BEGIN
    IF NEW.amount < 0 THEN 
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Amount cannot be negative';
    END IF;
+END;//
+DELIMITER ;
+
+
+-- events
+DELIMITER //
+CREATE EVENT check_presc_valid
+ON SCHEDULE EVERY 1 DAY
+DO
+BEGIN
+    UPDATE prescription p
+    SET p.status = 'expired'
+    WHERE DATEDIFF(NOW(), p.date) >= 4;
 END;//
 DELIMITER ;
