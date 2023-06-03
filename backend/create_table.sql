@@ -168,6 +168,7 @@ CREATE TABLE Purchase (
 );
 CREATE TABLE PurchasedMedicine (
     purchase_id INTEGER,
+    purchase_count INTEGER,
     FOREIGN KEY (purchase_id) REFERENCES Purchase(purchase_id),
     med_id INTEGER,
     FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
