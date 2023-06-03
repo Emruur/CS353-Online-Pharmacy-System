@@ -176,12 +176,14 @@ CREATE TABLE PurchasedMedicine (
 
 
 CREATE TABLE RequestedPrescription (
-    doctor_id INTEGER,
-    patient_id INTEGER,
+    doctor_id varchar(11),
+    patient_id varchar(11),
     pres_id INTEGER,
     status ENUM ("pending", "accepted", "rejected") DEFAULT 'pending',
+    FOREIGN KEY (doctor_id) REFERENCES Doctor(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES Patient(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id) ON DELETE CASCADE,
     PRIMARY KEY (doctor_id, patient_id, pres_id)
-    -- FIXME no foreign key
 );
 CREATE TABLE EquivalentTo (
     orig_id INTEGER,
@@ -316,6 +318,25 @@ BEGIN
     IF is_doctor = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Only doctors can add prescriptions.!';
+    END IF;
+END; //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER check_request_insert
+BEFORE INSERT ON RequestedPrescription
+FOR EACH ROW
+BEGIN
+    DECLARE is_requested INT;
+
+    SELECT COUNT(*) INTO is_requested
+    FROM RequestedPrescription
+    WHERE patient_id = NEW.patient_id and pres_id=NEW.pres_id and status = 'pending';
+
+
+    IF is_requested = 1 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'There is already a pending request!';
     END IF;
 END; //
 DELIMITER ;
