@@ -50,7 +50,20 @@ def purchase():
                 return jsonify({"msg": "Missing JSON in request"}), 400
             try:
                 conn.autocommit = False
-                cursor.execute("INSERT INTO Purchase(pharmacy_id,date,deduction,)")
+                ## check if pharmacy exists
+                p_id = request.json.get("pharmacy_id")
+                query = "SELECT FROM Pharmacy WHERE pharmacy_id = %s"
+                cursor.execute(query, (p_id,))
+                result = cursor.fetchone()
+                if not result:
+                    return jsonify({"msg": "No pharmacy"}), 400
+                
+                ##fetch available reguested medicines from the pharmacy
+                
+                query = "SELECT FROM StoredIn WHERE pharmacy_id = %s and med_id IN (%s)"
+                cursor.execute(query, (p_id,))
+                result = cursor.fetchone()
+                 
 
 
    
