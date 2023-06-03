@@ -13,6 +13,7 @@ import Payment from 'pages/Patient/Payment/Payment';
 import Cart from 'pages/Patient/ShoppingCart/Cart';
 import Prescription from 'pages/Prescription/Prescription';
 import Purchase from 'pages/PreviousPurchase/Purchase';
+import { PharmacistStock } from 'pages/Pharmacist/PharmacistStock';
 
 const routes = [
 	{
@@ -41,6 +42,14 @@ const routes = [
 		label: 'Pharmacist Dashboard',
 		user: "pharmacist",
 		component: <PharmacistDashboard/>,
+	},
+	{
+		type: 'collapse',
+		name: 'Pharmacy Stock',
+		key: 'stock',
+		route: '/pharmacystock',
+		label: 'Pharmacystock',
+		component: <PharmacistStock />,
 	},
 	{
 		type: 'collapse',
