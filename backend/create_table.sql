@@ -353,3 +353,11 @@ BEGIN
     END IF;
 END; //
 DELIMITER ;
+
+-- views
+CREATE VIEW patient_prescription AS
+SELECT u.user_id, p.pres_id,p2.med_id
+FROM user u
+    join prescription p on u.user_id = p.prescribed_to
+    join prescribedmedication p2 on p.pres_id = p2.pres_id
+WHERE p.status='valid';
