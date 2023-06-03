@@ -137,7 +137,7 @@ def signup():
                         (user_id, type_specific.get('speciality'),type_specific.get('hospital_id')))
         elif user_type == 'pharmacist':
             cursor.execute("INSERT INTO Pharmacist (user_id, education,pharmacy_id) VALUES (%s, %s,%s)",
-                        (user_id, type_specific.get('education'),type_specific.get('education')))
+                        (user_id, type_specific.get('education'),type_specific.get('pharmacy_id')))
         else:
             return jsonify({"msg": "Invalid user_type"}), 400
     except:
