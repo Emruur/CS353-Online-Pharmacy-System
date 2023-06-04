@@ -100,6 +100,8 @@ def purchase():
                 update_query = "UPDATE Prescription SET status='used' WHERE pres_id IN ({})".format(invalidated_str)
                 cursor.execute(update_query)
                     
+
+                    
                 # Fetch the prices
                 query = "SELECT med_id, price FROM Medicine WHERE med_id in ({})".format(','.join(map(str, medid_list)))
                 cursor.execute(query)
