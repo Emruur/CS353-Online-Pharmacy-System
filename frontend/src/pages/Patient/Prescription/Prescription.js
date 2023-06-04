@@ -1,82 +1,11 @@
 import { Box, Container, Typography } from '@mui/material';
 import { Collapsable } from './Collapsable';
-import Minoset from 'assets/images/minoset.png'
-import Parol from 'assets/images/parol.png'
-import Arveles from 'assets/images/arveles.png'
-import Codeine from 'assets/images/codeine.png'
-import Augmentin from 'assets/images/augmentin.png'
-import Concerta from 'assets/images/concerta.png'
 import { useEffect, useState } from 'react';
 import axios from 'axios_config';
 
-const prescriptions = [
-    {
-        id: 0,
-        prescribedBy: "Ahmet Tuğrul Sağlam",
-        date: "04/02/2021",
-        medication: [
-            {
-                name: 'Parol',
-                type: 'Paracetamol',
-                requiredProspectus: 'white',
-                sideEffect: 'Dryness in mouth, Dizziness, Tremors, Insomnia',
-                prescriptionStatus: 'Over the Counter',
-                image: Parol,
-            },
-            {
-                name: 'Augmentin',
-                type: 'Antibiotic',
-                requiredProspectus: 'white',
-                sideEffect: 'Nausea, Vomiting, Headache, Diarrhea',
-                prescriptionStatus: 'Not Prescribed',
-                image: Augmentin,
-            },
-            {
-                name: 'Concerta',
-                type: 'Nervous System Stimulant',
-                requiredProspectus: 'red',
-                sideEffect: 'Nervousness, Trouble sleeping, Loss of appetite, Weight loss',
-                prescriptionStatus: 'Not Prescribed',
-                image: Concerta,
-            }
-        ]
-    },
-    {
-        id: 1,
-        prescribedBy: "Nisa Yılmaz",
-        date: "18/06/2021",
-        medication: [
-            {
-                name: 'Minoset Plus',
-                type: 'Paracetamol',
-                requiredProspectus: 'white',
-                sideEffect: 'Severe nausea, Vomiting, Stomach pain',
-                prescriptionStatus: 'Over the Counter',
-                image: Minoset,
-            },
-            {
-                name: 'Arveles',
-                type: 'Anti-inflammatory',
-                requiredProspectus: 'white',
-                sideEffect: 'Heartburn, Nausea and vomiting, Diarrhea',
-                prescriptionStatus: 'Over the Counter',
-                image: Arveles,
-            },
-            {
-                name: 'Codeine Phosphate',
-                type: 'Pain Killer',
-                requiredProspectus: 'red',
-                sideEffect: 'Constipation, Nausea and Stomach cramps, Mood changes, Dizziness',
-                prescriptionStatus: 'Prescribed',
-                image: Codeine,
-            }
-        ]
-    },
-];
-
 const Prescription = () => {
 
-    const [presc, setPresc] = useState([]);
+    const [prescriptions, setPrescriptions] = useState([]);
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 
@@ -90,6 +19,16 @@ const Prescription = () => {
                 .then((res) => {
                     if (res && res.data) {
                         console.log(res.data)
+                        let arr = []
+                        for (let i = 0; i < res.data.length; i++) {
+                            if (arr[res.data[i].pres_id]) {
+                                arr[res.data[i].pres_id].push(res.data[i]);
+                            } else {
+                                arr[res.data[i].pres_id] = [res.data[i]];
+                            }
+                        }
+                        setPrescriptions(arr);
+                        console.log(arr)
                     }
                 })
                 .catch((err) => {
@@ -100,6 +39,27 @@ const Prescription = () => {
         }
         getAllPrescription();
     }, []);
+
+    const requestPrescription = async (medicine) => {
+        const values = {
+            pres_id: medicine.pres_id
+        }
+        await axios.post('/prescription/request', values,{
+            headers: {
+                "Authorization": token
+            }
+        })
+            .then((res) => {
+                if (res && res.data) {
+                    console.log(res.data.msg)
+                }
+            })
+            .catch((err) => {
+                if (err) {
+                    console.log(err.response)
+                }
+            })
+    }
 
     return(
         <>
@@ -113,7 +73,10 @@ const Prescription = () => {
                 
                 {prescriptions.map((prescription, index) => (
                     <Box key={index}>
-                        <Collapsable prescription={prescription}/>
+                        <Collapsable 
+                            prescription={prescription}
+                            requestPrescription={requestPrescription}    
+                        />
                     </Box>
                 ))}
 			</Container>
