@@ -100,9 +100,8 @@ def purchase():
                     SET balance = balance - {total_price}
                     WHERE wallet_id = (SELECT wallet_id FROM Patient WHERE user_id = {current_user})
                 """
-                print("--2")
-                
                 cursor.execute(sql)
+                print("--2")
 
                 #deduct medicines from the storage of pharmacies
                 for med in med_list:
@@ -116,22 +115,30 @@ def purchase():
 
                 ## create a purchase object
                 cursor.execute("SELECT wallet_id FROM Patient WHERE user_id = %s",(current_user,))
-                w_id= cursor.lastrowid
+                w_id= cursor.fetchone()[0]
                 print(w_id)
                 cursor.execute("""
                     INSERT INTO Purchase (pharmacy_id, date, deduction, wallet_id, user_id)
                     VALUES (%s, %s, %s, %s, %s);
                     """,(p_id, datetime.now().date().strftime('%Y-%m-%d'), total_price, w_id, current_user))
                 
+
+                #Invalidate Prescription
+                update_query = "UPDATE Prescription SET status='used' WHERE pres_id = %s"
+                print("STS ",cursor.lastrowid)
+                cursor.execute(update_query, (cursor.lastrowid,))
+                
+
                 print("--4")
 
                 purchase_id = cursor.lastrowid
+                print("PR",purchase_id)
                 ## create purchased medicine objects
                 for med in med_list:
                     cursor.execute("""
                         INSERT INTO PurchasedMedicine (purchase_id, purchase_count, med_id)
-                        VALUES (?, ?, ?);
-                    """,(purchase_id,med["quentity"],med["id"]))
+                        VALUES (%s, %s, %s);
+                    """,(purchase_id,med["quantity"],med["id"],))
                 print("--5")
 
                 conn.commit()
