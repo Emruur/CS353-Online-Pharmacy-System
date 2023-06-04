@@ -77,19 +77,18 @@ def purchase():
                 
                 invalidated= []
                 for med in medid_list:
-                    print(med)
+                    print("med:",med)
 
                     query = """SELECT pres_id
                         FROM Prescription NATURAL JOIN PrescribedMedication
-                        WHERE Prescription.status='valid and PrescribedMedication.med_id= %s'
+                        WHERE Prescription.status='valid' and PrescribedMedication.med_id= '%s'
                     """
                     print("i")
                     cursor.execute(query,(med,))
                     print("f")
                     result = cursor.fetchone()
                     print("s")
-                    
-                    print(result)
+                    print("r:",result)
                     if not result:
                         return jsonify({"msg": "Cant buy medicine not allowed"}), 400
                     
@@ -97,8 +96,9 @@ def purchase():
                 
                 print("--0")
                 #Invalidate Prescription
-                update_query = "UPDATE Prescription SET status='used' WHERE pres_id in ({}) %s"
-                cursor.execute(update_query, (",".join(map(str, invalidated,))))
+                invalidated_str = ','.join(map(str, invalidated))
+                update_query = "UPDATE Prescription SET status='used' WHERE pres_id IN ({})".format(invalidated_str)
+                cursor.execute(update_query)
                     
                 # Fetch the prices
                 query = "SELECT med_id, price FROM Medicine WHERE med_id in ({})".format(','.join(map(str, medid_list)))
