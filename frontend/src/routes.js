@@ -13,7 +13,7 @@ import Medicine from 'pages/Patient/Medicine/Medicine';
 import Payment from 'pages/Patient/Payment/Payment';
 import Cart from 'pages/Patient/ShoppingCart/Cart';
 import Purchase from 'pages/PreviousPurchase/Purchase';
-import { PharmacistStock } from 'pages/Pharmacist/PharmacistStock';
+import StockMedicine from 'pages/Pharmacist/StockMedicine';
 
 const routes = [
 	{
@@ -48,8 +48,8 @@ const routes = [
 		name: 'Pharmacy Stock',
 		key: 'stock',
 		route: '/pharmacystock',
-		label: 'Pharmacystock',
-		component: <PharmacistStock />,
+		label: 'Pharmacy Stock',
+		component: <StockMedicine />,
 	},
 	{
 		type: 'collapse',
