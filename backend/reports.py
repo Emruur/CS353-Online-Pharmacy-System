@@ -53,9 +53,18 @@ def sold_med_report():
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
-                cursor.execute("select  name, count(*) from Medicine where med_id in (select med_id from PurchasedMedicine join "
-                               "Purchase p on p.purchase_id = PurchaseMmedicine.purchase_id where date between %s and %s and pharmacy_id = %s)"
-                               "group by name",
+                cursor.execute("""
+                                SELECT name, COUNT(*) 
+                                FROM Medicine 
+                                WHERE med_id IN (
+                                    SELECT med_id 
+                                    FROM PurchasedMedicine 
+                                    JOIN Purchase p ON p.purchase_id = PurchasedMedicine.purchase_id 
+                                    WHERE date BETWEEN %s AND %s 
+                                    AND pharmacy_id = %s
+                                )
+                                GROUP BY name;
+                """,
                                (start_date, end_date, pharmacy_id))
 
                 result = cursor.fetchall()
@@ -99,13 +108,16 @@ def max_min_rep():
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
-                cursor.execute("select name, max(age) as max, min(age) as min from Medicine join "
-                                "Purchase join "
-                               "PurchasedMedicine p  "
-                               "join Patient on Medicine.med_id = p.med_id and "
-                               "Purchase.purchase_id = p.purchase_id and "
-                               "Purchase.user_id = Patient.user_id "
-                               "where Purchase.pharmacy_id = %s and Purchase.date between %s and %s group by name",
+                cursor.execute("""
+                SELECT name, MAX(age) AS max, MIN(age) AS min
+                    FROM Medicine
+                    JOIN PurchasedMedicine p ON Medicine.med_id = p.med_id
+                    JOIN Purchase ON Purchase.purchase_id = p.purchase_id
+                    JOIN Patient ON Purchase.user_id = Patient.user_id
+                    WHERE Purchase.pharmacy_id = %s
+                        AND Purchase.date BETWEEN %s AND %s
+                    GROUP BY name;
+                """,
                                (pharmacy_id, start_date, end_date))
 
                 result = cursor.fetchall()

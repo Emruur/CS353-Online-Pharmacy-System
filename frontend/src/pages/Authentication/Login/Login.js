@@ -142,7 +142,7 @@ const Login = () => {
 							<Typography gutterBottom color="textSecondary" variant="body2">
 								{" Don't you have an account? Click "}
 								<Link href="/register">here</Link>
-								{' to sign register.'}
+								{' to register.'}
 							</Typography>
 							<Link></Link>
 						</Box>

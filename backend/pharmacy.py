@@ -216,7 +216,7 @@ def getAllPharmacies():
     cursor = conn.cursor()
 
     try:
-        keys = ["hospital_id", "address_id", "name"]
+        keys = ["pharmacy_id", "address_id", "name"]
         cursor.execute(
             "SELECT * FROM Pharmacy"
         )
