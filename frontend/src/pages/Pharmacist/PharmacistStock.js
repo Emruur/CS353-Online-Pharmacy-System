@@ -31,6 +31,7 @@ import {
 	Typography,
 } from '@mui/material';
 import axios from 'axios_config';
+import defaultpic from 'assets/images/default.png'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -487,6 +488,7 @@ const PharmacistStock = (props) => {
 								<TableCell align="right">Usage Purpose</TableCell>
 								<TableCell align="right">Side Effects</TableCell>
 								<TableCell align="right">Prescribed</TableCell>
+								<TableCell align="right">Amount</TableCell>
 								<TableCell align="right">Operation</TableCell>
 							</TableRow>
 						</TableHead>
@@ -500,26 +502,28 @@ const PharmacistStock = (props) => {
 									}}
 								>
 									<TableCell>
-										<img alt={medicine.name} src={medicine.image}/>
+										<img  alt={defaultpic} src={defaultpic} width="100" height="100"/>
 									</TableCell>
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">
-										<SeverityPill color={`${medicine.requiredProspectus}`}>
-											{medicine.requiredProspectus}
+										<SeverityPill color={`${medicine.prescription_type}`}>
+											{medicine.prescription_type}
 										</SeverityPill>
 									</TableCell>
 									<TableCell align="right">
-										{medicine.type}
+										{medicine.med_type}
 									</TableCell>
-									<TableCell align="right">{medicine.sideEffect}</TableCell>
+									<TableCell align="right">{medicine.side_effects}</TableCell>
 									<TableCell align="right">
-										{medicine.prescriptionStatus}
+										{medicine.price}
+									</TableCell>
+									<TableCell align="right">
+										{medicine.amount}
 									</TableCell>
 									<TableCell align="right">
 										<>
 											<Tooltip>
 												<IconButton
-													
 													disabled= 'false'
 												>
 													<EditIcon />
@@ -540,14 +544,6 @@ const PharmacistStock = (props) => {
 						p: 2,
 					}}
 				>
-						<Button
-							color="primary" 
-							size="large" 
-							variant="contained"
-							onClick={props.confirmOrder}
-						>
-							Confirm Order
-						</Button>
 				</Box>
 			</PerfectScrollbar>
 		</Card>
