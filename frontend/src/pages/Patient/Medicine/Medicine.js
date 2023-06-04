@@ -1,11 +1,5 @@
 import { Alert, AlertTitle,  Container, Grid } from '@mui/material';
 import { MedicineList } from './MedicineList';
-import Minoset from 'assets/images/minoset.png'
-import Parol from 'assets/images/parol.png'
-import Arveles from 'assets/images/arveles.png'
-import Codeine from 'assets/images/codeine.png'
-import Augmentin from 'assets/images/augmentin.png'
-import Concerta from 'assets/images/concerta.png'
 import axios from 'axios_config';
 import { useEffect, useState } from 'react';
 import { useNavigate} from 'react-router-dom';
