@@ -28,6 +28,48 @@ def close_conn(e):
         conn.close()
 
 
+# methods to get/update wallet balance
+@purchase_blueprint.route('/wallet', methods=['GET', 'PUT'])
+@jwt_required()
+def updateWallet():
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Patient WHERE user_id = %s", (current_user,))
+    patient = cursor.fetchone()
+    if request.method == "PUT":
+        if not request.is_json:
+            return jsonify({"msg": "Missing JSON in request"}), 400
+        try:
+            amount = request.json.get('amount', None)
+            
+            cursor.execute(
+                "UPDATE Wallet SET balance = balance + %s WHERE wallet_id = %s",
+                (amount, patient[5])
+            )
+            conn.commit()
+            updatedRows = cursor.rowcount
+
+            if updatedRows < 1:
+                return jsonify({"msg": "Wallet balance is not changed"}), 200
+            return jsonify({"msg": "Wallet balance is updated successfully"}), 200
+        except Exception as e:
+            conn.rollback()
+            return f'Transaction failed: {str(e)}', 500
+        
+    if request.method == "GET":
+        try:            
+            cursor.execute(
+                "SELECT balance FROM Wallet WHERE wallet_id = %s",
+                (patient[5],)
+            )
+            balance = cursor.fetchone()
+
+            return jsonify({"balance": balance}), 200
+        except Exception as e:
+            conn.rollback()
+            return f'Transaction failed: {str(e)}', 500
+
 @purchase_blueprint.route('/', methods=['POST', 'GET'])
 @jwt_required()
 def purchase():
