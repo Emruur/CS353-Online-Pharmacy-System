@@ -237,7 +237,20 @@ VALUES
     (7, "Gazi Üniversitesi Tıp Fakültesi Gazi Hastanesi", 7),
     (8, "Hacettepe Üniversitesi İhsan Doğramacı Çocuk Hastanesi", 8);
 
-
+INSERT INTO StoredIn (pharmacy_id, med_id, amount)
+VALUES
+    (1, 1, 3),
+    (1, 2, 2),
+    (1, 3, 3),
+    (1, 4, 5),
+    (1, 5, 5),
+    (1, 6, 10),
+    (2, 5, 30),
+    (2, 6, 1),
+    (2 7, 23),
+    (2, 8, 4),
+    (2, 9, 12),
+    (2, 10, 17);
 
 -- Insert mock data
 INSERT INTO Medicine (name, prescription_type, used_for, dosages, side_effects, risk_factors, preserve_conditions, prod_firm, price, med_type, min_age)
