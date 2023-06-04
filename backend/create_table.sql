@@ -396,11 +396,14 @@ WHERE p.status='valid';
 
 
 CREATE VIEW patient_prescription_all AS
-SELECT u.user_id, p.pres_id, p2.med_id, p2.med_count, name,prescription_type,used_for,side_effects
-FROM user u
-    join prescription p on u.user_id = p.prescribed_to
-    join prescribedmedication p2 on p.pres_id = p2.pres_id
-    join medicine on p2.med_id = medicine.med_id;
+SELECT doc.first_name as doctor_name, doc.middle_name as doctor_middle_name,
+       doc.surname as doctor_surname, u.user_id, p.pres_id, p2.med_id,
+       p2.med_count, name, prescription_type, used_for, side_effects, date
+FROM User u
+    JOIN Prescription p ON u.user_id = p.prescribed_to
+    JOIN PrescribedMedication p2 ON p.pres_id = p2.pres_id
+    JOIN Medicine ON p2.med_id = Medicine.med_id
+    JOIN User doc on p.prescribed_by = doc.user_id
 
 
 DELIMITER //
