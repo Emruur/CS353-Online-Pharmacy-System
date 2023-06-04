@@ -73,7 +73,6 @@ def purchase():
                 med_list= request.json.get("medicine")
 
                 medid_list= [med["id"] for med in med_list]
-                quantities= [med["quantity"] for med in med_list]
                 for med in med_list:
                     print(med)
 
@@ -82,16 +81,14 @@ def purchase():
                     result = cursor.fetchone()
                     if not result:
                         return jsonify({"msg": "Cant buy medicine not allowed"}), 400
+                    
+                    
                 
-                # Fetch the prices
-                query = "SELECT med_id, price FROM Medicine WHERE med_id in ({})".format(','.join(map(str, medid_list)))
-                cursor.execute(query)
-
-                # Calculate the total price
-                total_price = 0
-                for med_id, price in cursor:
-                    index = medid_list.index(med_id)
-                    total_price += price * quantities[index]
+                ##balance deduction
+                query = "SELECT SUM(price) as total_price FROM Medicine WHERE med_id in (%s)"
+                cursor.execute(query, (current_user,))
+                total_price = cursor.fetchone()
+                total_price = float(total_price[0])
                 print(total_price)
                 sql = f"""
                     UPDATE Wallet
