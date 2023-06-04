@@ -12,6 +12,8 @@ const Medicine = () => {
 	const [list, setCartItems] = useGlobalState("cartItems");
 	const [medicineList, setMedicineList] = useState([]);
 	const [prescribedMeds, setPrescribedMeds] = useState([])
+	const [pharmacies, setPharmacies] = useState([])
+
 	
 	const [successMessage, setSuccessMessage] = useState('');
 
@@ -21,6 +23,7 @@ const Medicine = () => {
 	const [firm, setFirm] = useState('none');
 	const [minPrice, setMinPrice] = useState(0);
 	const [maxPrice, setMaxPrice] = useState(10000);
+	const [pharmacy, setPharmacy] = useState(1);
 
 	const navigate = useNavigate('');
   
@@ -59,6 +62,9 @@ const Medicine = () => {
 			quarries.push("min_price=" + minPrice)
 			quarries.push("max_price=" + maxPrice)
 		}
+		if (pharmacy > 0) {
+			quarries.push("pharmacy_id=" + pharmacy)
+		}
 		for (let i = 0; i < quarries.length; i++) {
 			if (i == 0) {
 				domain += "?" + quarries[i];
@@ -77,7 +83,6 @@ const Medicine = () => {
 					let arr2 = []
 					let arr1 = []
 					for (let i = 0; i < res.data.length; i++) {
-						//console.log(res.data[i])
 						arr2.push({medicine: res.data[i], quantity: 0, total: 0})
 						arr1.push({
 							name: res.data[i].name,
@@ -136,7 +141,12 @@ const Medicine = () => {
 			await axios.get('/pharmacy/allPharmacies')
 				.then((res) => {
 					if (res && res.data) {
-						console.log(res.data)
+						let arr = []
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push(res.data[i])
+						}
+						console.log(arr)
+						setPharmacies(arr)
 					}
 				})
 				.catch((err) => {
@@ -190,6 +200,7 @@ const Medicine = () => {
 							medicines={medicineList}
 							addToShoppingCart={addToShoppingCart}
 							confirmOrder={confirmOrder}
+							pharmacies={pharmacies}
 							prescribedMeds={prescribedMeds}
 							name={name}
 							setName={setName}
@@ -203,6 +214,8 @@ const Medicine = () => {
 							setMinPrice={setMinPrice}
 							maxPrice={maxPrice}
 							setMaxPrice={setMaxPrice}
+							pharmacy={pharmacy}
+							setPharmacy={setPharmacy}
 							getAllMedicine={getAllMedicine}
 						/>
 					</Grid>

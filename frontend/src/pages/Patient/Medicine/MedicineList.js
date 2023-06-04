@@ -29,7 +29,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const MedicineList = (props) => {
-	const { medicines, prescribedMeds, name, setName, usage, setUsage, risk, setRisk, firm, setFirm, minPrice, setMinPrice, maxPrice, setMaxPrice } = props;
+	const { medicines, prescribedMeds, name, setName, usage, setUsage, risk, setRisk, firm, setFirm, minPrice, setMinPrice, maxPrice, setMaxPrice, pharmacy, setPharmacy } = props;
 	//console.log(medicines);
 
 	const handleName = (event) => {
@@ -49,6 +49,9 @@ const MedicineList = (props) => {
 	};
 	const handleMax = (event) => {
 		setMaxPrice(event.target.value)
+	};
+	const handlePharmacy = (event) => {
+		setPharmacy(event.target.value)
 	};
 
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -77,6 +80,19 @@ const MedicineList = (props) => {
 				}}
 			>
 				<CardHeader title="Medicine List" />
+				<Box>
+					<TextField
+						select
+						value={pharmacy}
+						onChange={handlePharmacy}
+					>
+						{props.pharmacies.map((pharmacy, index) => (
+							<MenuItem key={index} value={pharmacy.pharmacy_id}>
+								{pharmacy.name}
+							</MenuItem>
+						))}
+					</TextField>
+				</Box>
 				<Tooltip>
 					<IconButton onClick={handleOpenPopover}>
 						<FilterAltIcon />
