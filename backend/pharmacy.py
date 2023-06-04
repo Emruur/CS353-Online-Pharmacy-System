@@ -156,7 +156,8 @@ def getMedicines():
                 pharmacy_id = cursor.fetchone()[0]
 
                 cursor.execute(
-                    "SELECT * FROM StoredIn NATURAL JOIN Medicine WHERE pharmacy_id = %s",
+                    """SELECT med_id, amount, name, prescription_type, used_for, dosages, side_effects, risk_factors,
+                        preserve_conditions,prod_firm, price, med_type, min_age FROM StoredIn NATURAL JOIN Medicine WHERE pharmacy_id = %s""",
                     (pharmacy_id,)
                 )
                 medicines = cursor.fetchall()
