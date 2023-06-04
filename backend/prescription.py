@@ -93,7 +93,7 @@ def prescription():
 
     elif request.method == 'GET':
         try:
-            keys = ["user_id", "pres_id", "med_id", "med_count", "name", "prescription_type", "used_for", "side_effects"]
+            keys = ["doctor_name", "doctor_middle_name", "doctor_surname","user_id", "pres_id", "med_id", "med_count", "name", "prescription_type", "used_for", "side_effects", "date"]
             cursor.execute(
                 "select * from patient_prescription_all where user_id = %s",
                 (current_user,)
