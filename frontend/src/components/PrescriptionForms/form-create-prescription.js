@@ -2,13 +2,11 @@ import {
     Card,
     CardHeader,
     CardContent,
-    InputAdornment,
+    MenuItem,
     Divider,
     Grid,
 	TextField,
 } from '@mui/material';
-import { useState} from 'react';
-import { MuiTelInput } from 'mui-tel-input';
 import { MedicineList } from 'pages/Doctor/Prescription/MedicineList';
 
 export const FormCreatePrescription = (props) => {
@@ -44,6 +42,7 @@ export const FormCreatePrescription = (props) => {
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <TextField
+                                select
                                 error={Boolean(
                                     props.formik.touched.type && props.formik.errors.type
                                 )}
@@ -60,7 +59,13 @@ export const FormCreatePrescription = (props) => {
                                 value={props.formik.values.type}
                                 variant="outlined"
                                 required
-                            />
+                            >
+                                {props.pres_type.map((type, index) => (
+                                    <MenuItem key={index} value={type.value}>
+                                        {type.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
                         <Grid item md={6} xs={12}>
                             <TextField
