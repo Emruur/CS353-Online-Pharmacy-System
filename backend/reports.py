@@ -49,12 +49,12 @@ def sold_med_report():
 
     try:
         if start_date and end_date:
-            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            cursor.execute("select * from Pharmacist where user_id = %s",(current_user,))
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
-                cursor.execute("select  name, count(*) from medicine where med_id in (select med_id from purchasedmedicine join "
-                               "purchase p on p.purchase_id = purchasedmedicine.purchase_id where date between %s and %s and pharmacy_id = %s)"
+                cursor.execute("select  name, count(*) from Medicine where med_id in (select med_id from PurchasedMedicine join "
+                               "Purchase p on p.purchase_id = PurchaseMmedicine.purchase_id where date between %s and %s and pharmacy_id = %s)"
                                "group by name",
                                (start_date, end_date, pharmacy_id))
 
@@ -95,17 +95,17 @@ def max_min_rep():
 
     try:
         if start_date and end_date:
-            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            cursor.execute("select * from Pharmacist where user_id = %s",(current_user,))
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
-                cursor.execute("select name, max(age) as max, min(age) as min from medicine join "
-                                "purchase join "
-                               "purchasedmedicine p  "
-                               "join patient on medicine.med_id = p.med_id and "
-                               "purchase.purchase_id = p.purchase_id and "
-                               "purchase.user_id = patient.user_id "
-                               "where purchase.pharmacy_id = %s and purchase.date between %s and %s group by name",
+                cursor.execute("select name, max(age) as max, min(age) as min from Medicine join "
+                                "Purchase join "
+                               "PurchasedMedicine p  "
+                               "join Patient on Medicine.med_id = p.med_id and "
+                               "Purchase.purchase_id = p.purchase_id and "
+                               "Purchase.user_id = Patient.user_id "
+                               "where Purchase.pharmacy_id = %s and Purchase.date between %s and %s group by name",
                                (pharmacy_id, start_date, end_date))
 
                 result = cursor.fetchall()
@@ -142,14 +142,14 @@ def avg_revenue():
 
     try:
         if type:
-            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            cursor.execute("select * from Pharmacist where user_id = %s",(current_user,))
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
                 #TODO: average neye göre average? şu an total revenue / 12 yıllık hesap
-                query = f"SELECT {type}, SUM(price)/12 FROM purchasedmedicine p " \
-                        f"JOIN medicine m ON m.med_id = p.med_id " \
-                        f"WHERE p.purchase_id IN (SELECT purchase_id FROM purchase WHERE purchase.pharmacy_id = %s) " \
+                query = f"SELECT {type}, SUM(price)/12 FROM PurchasedMedicine p " \
+                        f"JOIN Medicine m ON m.med_id = p.med_id " \
+                        f"WHERE p.purchase_id IN (SELECT purchase_id FROM Purchase WHERE Purchase.pharmacy_id = %s) " \
                         f"GROUP BY {type}"
 
                 cursor.execute(query, (pharmacy_id,))
@@ -188,7 +188,7 @@ def max_purchased():
 
     try:
         if type:
-            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            cursor.execute("select * from Pharmacist where user_id = %s",(current_user,))
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
@@ -196,9 +196,9 @@ def max_purchased():
                         SELECT p.{type}, p.name, p.purchase_count
                         FROM (
                             SELECT m.name, m.{type}, SUM(pm.purchase_count) AS purchase_count
-                            FROM medicine m
-                            JOIN purchasedmedicine pm ON m.med_id = pm.med_id
-                            JOIN purchase pu ON pu.purchase_id = pm.purchase_id
+                            FROM Medicine m
+                            JOIN Purchasedmedicine pm ON m.med_id = pm.med_id
+                            JOIN Purchase pu ON pu.purchase_id = pm.purchase_id
                             WHERE pu.pharmacy_id = {pharmacy_id}
                             GROUP BY m.name, m.{type}
                         ) AS p
@@ -206,9 +206,9 @@ def max_purchased():
                             SELECT {type}, MAX(purchase_count) AS max_count
                             FROM (
                                 SELECT m.name, m.{type}, SUM(pm.purchase_count) AS purchase_count
-                                FROM medicine m
-                                JOIN purchasedmedicine pm ON m.med_id = pm.med_id
-                                JOIN purchase pu ON pu.purchase_id = pm.purchase_id
+                                FROM Medicine m
+                                JOIN PurchasedMedicine pm ON m.med_id = pm.med_id
+                                JOIN Purchase pu ON pu.purchase_id = pm.purchase_id
                                 GROUP BY m.name, m.{type}
                             ) AS purchase_cnt
                             GROUP BY {type}
@@ -249,7 +249,7 @@ def monthly_revenue():
 
     try:
         if year:
-            cursor.execute("select * from pharmacist where user_id = %s",(current_user,))
+            cursor.execute("select * from Pharmacist where user_id = %s",(current_user,))
             pharmacist = cursor.fetchone()
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
