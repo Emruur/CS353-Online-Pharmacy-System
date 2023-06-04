@@ -22,7 +22,7 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 const Collapsable = (props) => {
     const {prescription} = props;
 
-    //console.log(prescription)
+    console.log(prescription[0].pres_id)
 
     const [expand, setExpand] = useState(false);
 
