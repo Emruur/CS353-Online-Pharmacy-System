@@ -226,17 +226,11 @@ def purchase():
         try:
             # Execute the query
             cursor.execute("""
-                SELECT Medicine.name as name, PrescribedMedication.med_count as quantity, (PrescribedMedication.med_count * Medicine.price) as total, 
+                SELECT Medicine.name as name, PrescribedMedication.med_count as quantity, (PrescribedMedication.med_count * Medicine.price) as total, date as date, 0 as balance, 
                 FROM Purchase
                 INNER JOIN PurchasedMedicine ON Purchase.purchase_id = PurchasedMedicine.purchase_id
                 INNER JOIN Medicine ON PurchasedMedicine.med_id = Medicine.med_id;
                  """)
-            
-                name: 'Parol',
-                quantity: 3,
-                total: 30,
-                date: "04/02/2021",
-                balance: 1230
 
 
             # Fetch all rows from the last executed statement
