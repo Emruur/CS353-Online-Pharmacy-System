@@ -15,8 +15,12 @@ const Medicine = () => {
 	
 	const [successMessage, setSuccessMessage] = useState('');
 
+	const [name, setName] = useState('');
 	const [usage, setUsage] = useState('none');
 	const [risk, setRisk] = useState('none');
+	const [firm, setFirm] = useState('none');
+	const [minPrice, setMinPrice] = useState(0);
+	const [maxPrice, setMaxPrice] = useState(10000);
 
 	const navigate = useNavigate('');
   
@@ -38,11 +42,22 @@ const Medicine = () => {
 	const getAllMedicine = async (arr) => {
 		let domain = '/medicine/';
 		let quarries = [];
+
+		if (name !== '') {
+			quarries.push("name=" + name);
+		}
 		if (usage !== "none") {
 			quarries.push("used_for=" + usage);
 		}
 		if (risk !== "none") {
 			quarries.push("risk_factors=" + risk);
+		}
+		if (firm !== "none") {
+			quarries.push("prod_firm=" + firm)
+		}
+		if (minPrice > 0) {
+			quarries.push("min_price=" + minPrice)
+			quarries.push("max_price=" + maxPrice)
 		}
 		for (let i = 0; i < quarries.length; i++) {
 			if (i == 0) {
@@ -62,7 +77,7 @@ const Medicine = () => {
 					let arr2 = []
 					let arr1 = []
 					for (let i = 0; i < res.data.length; i++) {
-						console.log(res.data[i])
+						//console.log(res.data[i])
 						arr2.push({medicine: res.data[i], quantity: 0, total: 0})
 						arr1.push({
 							name: res.data[i].name,
@@ -117,7 +132,21 @@ const Medicine = () => {
                     }
                 })
         }
+		const getAllPharmacies = async () => {
+			await axios.get('/pharmacy/allPharmacies')
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data)
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log(err.response)
+					}
+				})
+		}
         getAllPrescription();
+		getAllPharmacies()
 	}, [])
 
 	const addToShoppingCart = (medicine) => {
@@ -162,10 +191,18 @@ const Medicine = () => {
 							addToShoppingCart={addToShoppingCart}
 							confirmOrder={confirmOrder}
 							prescribedMeds={prescribedMeds}
+							name={name}
+							setName={setName}
 							usage={usage}
 							setUsage={setUsage}
 							risk={risk}
 							setRisk={setRisk}
+							firm={firm}
+							setFirm={setFirm}
+							minPrice={minPrice}
+							setMinPrice={setMinPrice}
+							maxPrice={maxPrice}
+							setMaxPrice={setMaxPrice}
 							getAllMedicine={getAllMedicine}
 						/>
 					</Grid>
