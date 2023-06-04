@@ -93,12 +93,15 @@ def purchase():
                     index = medid_list.index(med_id)
                     total_price += price * quantities[index]
                 print(total_price)
+                print("--1")
                 
                 sql = f"""
                     UPDATE Wallet
                     SET balance = balance - {total_price}
                     WHERE wallet_id = (SELECT wallet_id FROM Patient WHERE user_id = {current_user})
                 """
+                print("--2")
+                
                 cursor.execute(sql)
 
                 #deduct medicines from the storage of pharmacies
@@ -109,14 +112,18 @@ def purchase():
                     WHERE pharmacy_id = %s AND med_id = %s;
                     """, (med["quantity"], p_id, med["id"]))
 
+                print("--3")
+
                 ## create a purchase object
                 cursor.execute("SELECT wallet_id FROM Patient WHERE user_id = %s",(current_user,))
-                w_id= cursor.fetchone()
+                w_id= cursor.lastrowid
                 print(w_id)
                 cursor.execute("""
                     INSERT INTO Purchase (pharmacy_id, date, deduction, wallet_id, user_id)
                     VALUES (%s, %s, %s, %s, %s);
-                    """,(p_id, datetime.now().date().strftime('%Y-%m-%d'), total_price, w_id[0], current_user))
+                    """,(p_id, datetime.now().date().strftime('%Y-%m-%d'), total_price, w_id, current_user))
+                
+                print("--4")
 
                 purchase_id = cursor.lastrowid
                 ## create purchased medicine objects
@@ -125,6 +132,7 @@ def purchase():
                         INSERT INTO PurchasedMedicine (purchase_id, purchase_count, med_id)
                         VALUES (?, ?, ?);
                     """,(purchase_id,med["quentity"],med["id"]))
+                print("--5")
 
                 conn.commit()
                 return jsonify({"msg": "Purchase created successfully"}), 200
