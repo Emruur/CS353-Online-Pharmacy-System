@@ -39,13 +39,13 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 import * as Yup from 'yup';
 
 const PharmacistStock = (props) => {
-    const navigate = useNavigate();
-
-    const [errorMessage, setErrorMessage] = useState('');
-	//console.log("Bearer ");
-
 	const { medicines } = props;
-	console.log(medicines);
+
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+	console.log("Bearer ");
+
+	console.log('anan',medicines);
 
 	const [type, setType] = useState('none');
 
@@ -492,8 +492,7 @@ const PharmacistStock = (props) => {
 						</TableHead>
 						<TableBody>
                             
-							{filteredMedinices?
-                            filteredMedinices.map((medicine, index) => (
+							{medicines.map((medicine, index) => (
 								<TableRow
 									key={index}
 									sx={{
@@ -529,7 +528,8 @@ const PharmacistStock = (props) => {
 										</>
 									</TableCell>
 								</TableRow>
-							)):null}
+							))
+							}
 						</TableBody>
 					</Table>
 				</Box>
