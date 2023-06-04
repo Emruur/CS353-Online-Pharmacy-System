@@ -28,15 +28,16 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const MedicineList = (props) => {
-	const { medicines } = props;
-	console.log(medicines);
+	const { medicines, prescribedMeds, usage, setUsage, risk, setRisk } = props;
+	//console.log(medicines);
 
-	const [type, setType] = useState('none');
-
-	const [filteredMedinices, setFilteredMedinices] = useState(medicines);
-
-	const handlePrescription = (event) => {
-		setType(event.target.value);
+	const handleUsage = (event) => {
+		console.log(event.target.value);
+		setUsage(event.target.value)
+	};
+	const handleRisk = (event) => {
+		console.log(event.target.value);
+		setRisk(event.target.value)
 	};
 
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -50,15 +51,7 @@ const MedicineList = (props) => {
 	};
 
 	const applyFilters = () => {
-		if (type !== 'none') {
-			setFilteredMedinices(
-				medicines.filter(
-					(medicine) => medicine.type === type
-				)
-			);
-		} else {
-			setFilteredMedinices(medicines);
-		}
+		props.getAllMedicine(prescribedMeds);
 	};
 
 	const open = Boolean(anchorEl);
@@ -98,34 +91,113 @@ const MedicineList = (props) => {
 						<Divider />
 						<FormControl>
 							<FormLabel id="demo-radio-buttons-group-label">
-								Prescription
+								Usage Purpose
 							</FormLabel>
 							<RadioGroup
 								aria-labelledby="demo-radio-buttons-group-label"
 								defaultValue="female"
 								name="radio-buttons-group"
-								value={type}
-								onChange={handlePrescription}
+								value={usage}
+								onChange={handleUsage}
 							>
 								<FormControlLabel
-									value="Paracetamol"
+									value="Pain, Fever"
 									control={<Radio />}
-									label="Paracetamol"
+									label="Pain, Fever"
 								/>
 								<FormControlLabel
-									value="Nervous System Stimulant" 
-									control={<Radio />} 
-									label="Nervous System Stimulant" 
+									value="High blood pressure"
+									control={<Radio />}
+									label="High blood pressure"
 								/>
 								<FormControlLabel
-									value="Antibiotic"
+									value="Type 2 Diabetes"
 									control={<Radio />}
-									label="Antibiotic"
+									label="Type 2 Diabetes"
 								/>
 								<FormControlLabel
-									value="Anti-inflammatory"
+									value="High cholesterol"
 									control={<Radio />}
-									label="Anti-inflammatory"
+									label="High cholesterol"
+								/>
+								<FormControlLabel
+									value="Acid reflux"
+									control={<Radio />}
+									label="Acid reflux"
+								/>
+								<FormControlLabel
+									value="Asthma"
+									control={<Radio />}
+									label="Asthma"
+								/>
+								<FormControlLabel
+									value="Allergies"
+									control={<Radio />}
+									label="Allergies"
+								/>
+								<FormControlLabel
+									value="Blood thinning"
+									control={<Radio />}
+									label="Blood thinning"
+								/>
+								<FormControlLabel
+									value="Hypothyroidism"
+									control={<Radio />}
+									label="Hypothyroidism"
+								/>
+								<FormControlLabel
+									value="none"
+									control={<Radio />}
+									label="None"
+								/>
+							</RadioGroup>
+						</FormControl>
+						<Divider />
+						<FormControl>
+							<FormLabel id="demo-radio-buttons-group-label">
+								Risk Factor
+							</FormLabel>
+							<RadioGroup
+								aria-labelledby="demo-radio-buttons-group-label"
+								defaultValue="female"
+								name="radio-buttons-group"
+								value={risk}
+								onChange={handleRisk}
+							>
+								<FormControlLabel
+									value="Bleeding disorders"
+									control={<Radio />}
+									label="Bleeding disorders"
+								/>
+								<FormControlLabel
+									value="Pregnancy"
+									control={<Radio />}
+									label="Pregnancy"
+								/>
+								<FormControlLabel
+									value="Kidney disease"
+									control={<Radio />}
+									label="Kidney disease"
+								/>
+								<FormControlLabel
+									value="Liver disease"
+									control={<Radio />}
+									label="Liver disease"
+								/>
+								<FormControlLabel
+									value="Kidney disease"
+									control={<Radio />}
+									label="Kidney disease"
+								/>
+								<FormControlLabel
+									value="Heart disease"
+									control={<Radio />}
+									label="Heart disease"
+								/>
+								<FormControlLabel
+									value="Heart problems"
+									control={<Radio />}
+									label="Heart problems"
 								/>
 								<FormControlLabel
 									value="none"
@@ -157,11 +229,14 @@ const MedicineList = (props) => {
 					<Table>
 						<TableHead sx={{ display: 'table-header-group' }}>
 							<TableRow>
-								<TableCell>Image</TableCell>
-								<TableCell align="center">Medicine Name</TableCell>
+								<TableCell>Medicine Name</TableCell>
+								<TableCell align="right">Type</TableCell>
 								<TableCell align="right">Requirement</TableCell>
 								<TableCell align="right">Usage Purpose</TableCell>
+								<TableCell align="right">Risk Factors</TableCell>
 								<TableCell align="right">Side Effects</TableCell>
+								<TableCell align="right">Producer</TableCell>
+								<TableCell align="right">Price</TableCell>
 								<TableCell align="right">Prescribed</TableCell>
 								<TableCell align="right">Operation</TableCell>
 							</TableRow>
@@ -174,10 +249,8 @@ const MedicineList = (props) => {
 										border: 0,
 									}}
 								>
-									<TableCell>
-										<img alt={medicine.name} src={medicine.image}/>
-									</TableCell>
 									<TableCell>{medicine.name}</TableCell>
+									<TableCell align="right">{medicine.med_type}</TableCell>
 									<TableCell align="right">
 										<SeverityPill color={`${medicine.prescription_type}`}>
 											{medicine.prescription_type}
@@ -186,16 +259,17 @@ const MedicineList = (props) => {
 									<TableCell align="right">
 										{medicine.used_for}
 									</TableCell>
+									<TableCell align="right">{medicine.risk_factors}</TableCell>
 									<TableCell align="right">{medicine.side_effects}</TableCell>
-									<TableCell align="right">
-										{medicine.prescriptionStatus}
-									</TableCell>
+									<TableCell align="right">{medicine.prod_firm}</TableCell>
+									<TableCell align="right">{medicine.price + "₺"}</TableCell>
+									<TableCell align="right">{medicine.prescribed}</TableCell>
 									<TableCell align="right">
 										<>
 											<Tooltip>
 												<IconButton
 													onClick={() => {props.addToShoppingCart(medicine)}}
-													disabled={medicine.prescriptionStatus === 'Not Prescribed'}
+													disabled={medicine.prescribed === "No"}
 												>
 													<AddShoppingCartIcon />
 												</IconButton>
