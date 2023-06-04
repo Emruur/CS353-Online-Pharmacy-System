@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Button, Container, Grid } from '@mui/material';
-import { PharmacistStock } from '../components/PharmacistStock';
+import { PharmacistStock } from './PharmacistStock';
 import axios from 'axios_config';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';

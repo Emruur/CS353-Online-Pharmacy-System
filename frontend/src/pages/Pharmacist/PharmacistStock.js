@@ -32,7 +32,7 @@ import {
 } from '@mui/material';
 import axios from 'axios_config';
 import defaultpic from 'assets/images/default.png'
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -60,6 +60,16 @@ const PharmacistStock = (props) => {
     const [openDialog, setOpen] = useState(false);
     const [openNewMedicineDialog, setOpenNewMedicine] = useState(false);
     const [openMedicineStockDialog, setOpenMedicineStock] = useState(false);
+
+	const [updateClickable, setUpdateClickable] = useState(false);
+
+	const inputRef = useRef(null);
+
+	function handleClick() {
+	  console.log(inputRef.current.value);
+	}
+  
+
 
     const prescription_type = [
         {
@@ -124,6 +134,13 @@ const PharmacistStock = (props) => {
 	const open = Boolean(anchorEl);
 	const id = open ? 'simple-popover' : undefined;
 
+	const editAmount = (id,amount) => {
+		console.log(amount);
+	
+		navigate('/pharmacystock')
+	}
+
+
     const formik = useFormik({
 		initialValues: {
 			medicinename: 'anan',
@@ -187,6 +204,33 @@ const PharmacistStock = (props) => {
 					}
 				});
 			},
+			onUpdate: async (values) => {
+				const newValues = {
+					medicinename: values.medicinename,
+					
+				}
+				console.log(newValues);
+				await axios
+					.put('/pharmacy/mypharmacy', newValues)
+					.then((res) => {
+						if (res && res.data) {
+							console.log(res.data);
+							navigate('/pharmacystock');
+						}
+					})
+					.catch((err) => {
+						if (err && err.response) {
+							console.log("Error:", err.response.data);
+							if (err.response.status === 401) {
+								setErrorMessage('Invalid TCKN or password');
+							} else if (err.response.status === 400) {
+								setErrorMessage(err.response.data.msg);
+							}
+						} else {
+							setErrorMessage('Connection error');
+						}
+					});
+				},
 		});
 		
 		return (
@@ -518,13 +562,24 @@ const PharmacistStock = (props) => {
 										{medicine.price}
 									</TableCell>
 									<TableCell align="right">
-										{medicine.amount}
+										<TextField
+											type='number'
+											ref={inputRef}
+											InputProps={{
+												inputProps: { 
+													max: 1000, min: 0 
+												}
+											}}
+											onChange={setUpdateClickable}
+											defaultValue={medicine.amount}
+										/>
 									</TableCell>
 									<TableCell align="right">
 										<>
 											<Tooltip>
 												<IconButton
-													disabled= 'false'
+													onClick={() => {editAmount(medicine.med_id,{inputRef} )}}
+													disabled= {!updateClickable}
 												>
 													<EditIcon />
 												</IconButton>
