@@ -51,7 +51,7 @@ If no query parameters are used, the route will return all medicines in the data
 def get_medicines():
     conn = get_conn()
     cursor = conn.cursor(dictionary=True)
-    sql = "SELECT * FROM Medicine WHERE 1=1 "
+    sql = "SELECT * FROM Medicine NATURAL LEFT JOIN storedIn WHERE 1=1 "
     query_parameters = []
 
     # filtering according to name
@@ -84,6 +84,7 @@ def get_medicines():
         sql += "AND address_id = %s "
         query_parameters.append(address)
 
+
     # filtering according to price range
     min_price = request.args.get('min_price')
     max_price = request.args.get('max_price')
@@ -92,11 +93,18 @@ def get_medicines():
         query_parameters.append(min_price)
         query_parameters.append(max_price)
 
+    # filtering according to address 
+    p_id = request.args.get('pharmacy_id')
+    if p_id:
+        sql += "AND pharmacy_id = %s "
+        query_parameters.append(p_id)
+
     cursor.execute(sql, query_parameters)
     medicines = cursor.fetchall()
 
     return jsonify(medicines), 200
 
+    
 
 @medicine_blueprint.route('/pharmacy_inventory/<int:pharmacy_id>', methods=['GET'])
 @jwt_required()

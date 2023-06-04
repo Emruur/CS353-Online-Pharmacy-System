@@ -142,6 +142,7 @@ def purchase():
                 update_query = "UPDATE Prescription SET status='used' WHERE pres_id IN ({})".format(invalidated_str)
                 cursor.execute(update_query)
                     
+                
 
                     
                 # Fetch the prices
@@ -225,27 +226,18 @@ def purchase():
         try:
             # Execute the query
             cursor.execute("""
-                SELECT Purchase.*, PurchasedMedicine.med_id, PurchasedMedicine.purchase_count 
+                SELECT name as name, purchase_count as quantity, (purchase_count * Medicine.price) as total, date as date, 0 as balance
                 FROM Purchase
-                INNER JOIN PurchasedMedicine ON Purchase.purchase_id = PurchasedMedicine.purchase_id;
-            """)
+                INNER JOIN PurchasedMedicine ON Purchase.purchase_id = PurchasedMedicine.purchase_id
+                INNER JOIN Medicine ON PurchasedMedicine.med_id = Medicine.med_id;
+                 """)
+
 
             # Fetch all rows from the last executed statement
             rows = cursor.fetchall()
 
-            # Group rows by purchase_id
-            grouped = defaultdict(lambda: defaultdict(list))
-            for row in rows:
-                purchase_id = row.pop('purchase_id')
-                grouped[purchase_id]['purchase_id'] = purchase_id
-                for key, value in row.items():
-                    if key in ['med_id', 'purchase_count']:
-                        grouped[purchase_id][key].append(value)
-                    else:
-                        grouped[purchase_id][key] = value
-
             # Convert to JSON
-            json_data = json.dumps(list(grouped.values()), default=str)  # Convert dates to string
+            json_data = json.dumps(rows, default=str)  # Convert dates to string
 
             return json_data
         except Exception as e:

@@ -10,9 +10,14 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
+import { useEffect } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 const PurchaseList = (props) => {
 	const { items } = props;
+
+	useEffect(() => {
+		console.log(items)
+	  }, []);
 
 	return (
 		<Card>
@@ -33,7 +38,6 @@ const PurchaseList = (props) => {
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
                                 <TableCell></TableCell>
-                                <TableCell></TableCell>
                                 <TableCell>Wallet</TableCell>
                             </TableRow>
 							<TableRow>
@@ -42,7 +46,6 @@ const PurchaseList = (props) => {
 								<TableCell align="right">Total</TableCell>
 								<TableCell align="right">Quantity</TableCell>
                                 <TableCell align="right">Change</TableCell>
-                                <TableCell align="right">Balance</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -58,7 +61,6 @@ const PurchaseList = (props) => {
 									<TableCell align="right">{item.total + ' ₺'}</TableCell>
 									<TableCell align="right">{item.quantity}</TableCell>
 									<TableCell align="right">{'-' + item.total + ' ₺'}</TableCell>
-									<TableCell align="right">{item.balance + ' ₺'}</TableCell>
 								</TableRow>
 							))}
 						</TableBody>
