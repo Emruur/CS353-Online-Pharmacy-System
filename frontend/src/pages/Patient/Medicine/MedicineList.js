@@ -20,6 +20,7 @@ import {
 	TableCell,
 	TableHead,
 	TableRow,
+	TextField,
 	Tooltip,
 	Typography,
 } from '@mui/material';
@@ -28,16 +29,26 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const MedicineList = (props) => {
-	const { medicines, prescribedMeds, usage, setUsage, risk, setRisk } = props;
+	const { medicines, prescribedMeds, name, setName, usage, setUsage, risk, setRisk, firm, setFirm, minPrice, setMinPrice, maxPrice, setMaxPrice } = props;
 	//console.log(medicines);
 
+	const handleName = (event) => {
+		setName(event.target.value)
+	};
 	const handleUsage = (event) => {
-		console.log(event.target.value);
 		setUsage(event.target.value)
 	};
 	const handleRisk = (event) => {
-		console.log(event.target.value);
 		setRisk(event.target.value)
+	};
+	const handleFirm = (event) => {
+		setFirm(event.target.value)
+	};
+	const handleMin = (event) => {
+		setMinPrice(event.target.value)
+	};
+	const handleMax = (event) => {
+		setMaxPrice(event.target.value)
 	};
 
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -88,6 +99,25 @@ const MedicineList = (props) => {
 						}}
 					>
 						<Typography variant="overline">Filters</Typography>
+						<Divider />
+						<FormControl>
+							<FormLabel id="demo-radio-buttons-group-label">
+								Name
+							</FormLabel>
+							<Box
+								sx={{
+									pt: 2,
+									pb: 2
+								}}
+							>
+							<TextField 
+								type='text' 
+								label='Med Name'
+								value={name}
+								onChange={handleName}
+							/>
+							</Box>
+						</FormControl>
 						<Divider />
 						<FormControl>
 							<FormLabel id="demo-radio-buttons-group-label">
@@ -205,6 +235,105 @@ const MedicineList = (props) => {
 									label="None"
 								/>
 							</RadioGroup>
+						</FormControl>
+						<Divider />
+						<FormControl>
+							<FormLabel id="demo-radio-buttons-group-label">
+								Side Effects
+							</FormLabel>
+							<RadioGroup
+								aria-labelledby="demo-radio-buttons-group-label"
+								defaultValue="female"
+								name="radio-buttons-group"
+								value={firm}
+								onChange={handleFirm}
+							>
+								<FormControlLabel
+									value="ABC"
+									control={<Radio />}
+									label="ABC"
+								/>
+								<FormControlLabel
+									value="DEF"
+									control={<Radio />}
+									label="DEF"
+								/>
+								<FormControlLabel
+									value="GHI"
+									control={<Radio />}
+									label="GHI"
+								/>
+								<FormControlLabel
+									value="JKL"
+									control={<Radio />}
+									label="JKL"
+								/>
+								<FormControlLabel
+									value="MNO"
+									control={<Radio />}
+									label="MNO"
+								/>
+								<FormControlLabel
+									value="PQR"
+									control={<Radio />}
+									label="PQR"
+								/>
+								<FormControlLabel
+									value="STU"
+									control={<Radio />}
+									label="STU"
+								/>
+								<FormControlLabel
+									value="XYZ"
+									control={<Radio />}
+									label="XYZ"
+								/>
+								<FormControlLabel
+									value="VWX"
+									control={<Radio />}
+									label="VWX"
+								/>
+								<FormControlLabel
+									value="YZ"
+									control={<Radio />}
+									label="YZ"
+								/>
+								<FormControlLabel
+									value="none"
+									control={<Radio />}
+									label="None"
+								/>
+							</RadioGroup>
+						</FormControl>
+						<Divider />
+						<FormControl>
+							<FormLabel id="demo-radio-buttons-group-label">
+								Price
+							</FormLabel>
+							<Box
+								sx={{
+									pt: 2
+								}}
+							>
+							<TextField 
+								type='number' 
+								label='Min Price'
+								value={minPrice}
+								onChange={handleMin}
+							/>
+							</Box>
+							<Box
+								sx={{
+									pt: 2
+								}}
+							>
+							<TextField
+								type='number' 
+								label='Max Price'
+								value={maxPrice}
+								onChange={handleMax}
+							/>
+							</Box>
 						</FormControl>
 					</Box>
 					<MenuList

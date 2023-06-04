@@ -11,63 +11,31 @@ import {
 import axios from 'axios_config';
 import { useFormik } from 'formik';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import jwt_decode from "jwt-decode"
 import { FormCreatePrescription } from 'components/PrescriptionForms/form-create-prescription';
 import * as Yup from 'yup';
 
-/*const medicineList = [
-	{
-		name: 'Parol',
-		type: 'Paracetamol',
-		requiredProspectus: 'white',
-		sideEffect: 'Dryness in mouth, Dizziness, Tremors, Insomnia',
-		prescriptionStatus: 'Over the Counter',
-        count: 0,
-		price: 10
-	},
-	{
-		name: 'Augmentin',
-		type: 'Antibiotic',
-		requiredProspectus: 'white',
-		sideEffect: 'Nausea, Vomiting, Headache, Diarrhea',
-		prescriptionStatus: 'Not Prescribed',
-		price: 30
-	},
-	{
-		name: 'Minoset Plus',
-		type: 'Paracetamol',
-		requiredProspectus: 'white',
-		sideEffect: 'Severe nausea, Vomiting, Stomach pain',
-		prescriptionStatus: 'Over the Counter',
-		price: 15
-	},
-	{
-		name: 'Arveles',
-		type: 'Anti-inflammatory',
-		requiredProspectus: 'white',
-		sideEffect: 'Heartburn, Nausea and vomiting, Diarrhea',
-		prescriptionStatus: 'Over the Counter',
-		price: 40
-	},
-	{
-		name: 'Concerta',
-		type: 'Nervous System Stimulant',
-		requiredProspectus: 'red',
-		sideEffect: 'Nervousness, Trouble sleeping, Loss of appetite, Weight loss',
-		prescriptionStatus: 'Not Prescribed',
-		price: 100
-	},
-	{
-		name: 'Codeine Phosphate',
-		type: 'Pain Killer',
-		requiredProspectus: 'red',
-		sideEffect: 'Constipation, Nausea and Stomach cramps, Mood changes, Dizziness',
-		prescriptionStatus: 'Prescribed',
-		price: 1000
-	},
-];*/
-
+const pres_type = [
+    {
+        value: "white",
+        label: "White"
+    },
+    {
+        value: "red",
+        label: "Red"
+    },
+    {
+        value: "green",
+        label: "Green"
+    },
+    {
+        value: "purple",
+        label: "Purple"
+    },
+    {
+        value: "orange",
+        label: "Orange"
+    }
+]
 
 const CreatePrescription = () => {
 
@@ -82,7 +50,7 @@ const CreatePrescription = () => {
     const formik = useFormik({
 		initialValues: {
 			prescribed_to: '',
-			type: '',
+			type: 'white',
             notes: '',
             medicine: []
 		},
@@ -218,6 +186,7 @@ const CreatePrescription = () => {
                             medicineList={medicineList}
                             prescribe={prescribe}
                             unprescribe={unprescribe}
+							pres_type={pres_type}
                         />
 					</Grid>
 				</Grid>
