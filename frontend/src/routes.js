@@ -49,6 +49,7 @@ const routes = [
 		key: 'stock',
 		route: '/pharmacystock',
 		label: 'Pharmacy Stock',
+		user: "pharmacist",
 		component: <StockMedicine />,
 	},
 	{

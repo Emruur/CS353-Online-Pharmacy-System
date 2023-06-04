@@ -1,4 +1,4 @@
-import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import AddIcon from '@mui/icons-material/Add';
 import {
@@ -32,21 +32,24 @@ import {
 } from '@mui/material';
 import axios from 'axios_config';
 import defaultpic from 'assets/images/default.png'
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRef,createRef, useEffect, useState } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 import * as Yup from 'yup';
 
 const PharmacistStock = (props) => {
-	const { medicines } = props;
+	const { medicines,medicinenames } = props;
+
+	const token = "Bearer " + sessionStorage.getItem("token");
 
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
-	console.log("Bearer ");
 
 	console.log('anan',medicines);
+	console.log('anan',medicinenames);
+
 
 	const [type, setType] = useState('none');
 
@@ -62,12 +65,50 @@ const PharmacistStock = (props) => {
     const [openMedicineStockDialog, setOpenMedicineStock] = useState(false);
 
 	const [updateClickable, setUpdateClickable] = useState(false);
+	const lineRefs = useRef([]);
 
-	const inputRef = useRef(null);
+	lineRefs.current = medicines.map((_, i) => lineRefs.current[i] ?? createRef());
 
-	function handleClick() {
-	  console.log(inputRef.current.value);
+//() => {editAmount(medicine.med_id,{updateRef} )}
+	async function handleUpdateClick( index,id) {
+		const request= {med_id: id,
+						med_no: lineRefs.current[index].current.value};
+			await axios
+				.put('/pharmacy/mypharmacy', request, {
+					headers: {
+                    	"Authorization": token
+                	}
+			})
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data);
+						navigate('/pharmacystock');
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log("Error:", err.response.data);
+						if (err.response.status === 401) {
+							setErrorMessage('Invalid TCKN or password');
+						} else if (err.response.status === 400) {
+							setErrorMessage(err.response.data.msg);
+						}
+					} else {
+						setErrorMessage('Connection error');
+					}
+			});
+		redirect('/pharmacystock');
+
+	  console.log(lineRefs.current[index].current.value);
 	}
+
+	useEffect(() => {
+
+
+
+
+
+	},[])
   
 
 
@@ -134,11 +175,6 @@ const PharmacistStock = (props) => {
 	const open = Boolean(anchorEl);
 	const id = open ? 'simple-popover' : undefined;
 
-	const editAmount = (id,amount) => {
-		console.log(amount);
-	
-		navigate('/pharmacystock')
-	}
 
 
     const formik = useFormik({
@@ -248,20 +284,15 @@ const PharmacistStock = (props) => {
 					</IconButton>
 				</Tooltip>
         <Dialog open={openDialog} onClose={handleClose}>
-        <DialogTitle>Add a medicine</DialogTitle>
+        <DialogTitle align='center'> Add a medicine</DialogTitle>
         <DialogContent>
-            <Button onClick={handleOpenNewMedicine}>Add new medicine to database</Button>
+            <Button onClick={handleOpenNewMedicine}>Register new medicine to system</Button>
             <Button onClick={handleOpenMedicineStock}>Add new medicine to stock</Button>
-            <DialogContentText>
-            To subscribe to this website, please enter your Dosages here. We
-            will send updates occasionally.
-          </DialogContentText>
         </DialogContent>
             <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             </DialogActions>
 		</Dialog>
-        //new medicine dialog
             <Dialog open={openNewMedicineDialog} onClose={handleCloseNewMedicine}>
             <DialogTitle>Register New Medicine</DialogTitle>
             <DialogContent>
@@ -390,7 +421,6 @@ const PharmacistStock = (props) => {
                 </DialogActions>
             </Dialog>
 
-            //add amount dialog
             <Dialog open={openMedicineStockDialog} onClose={handleCloseMedicineStock}>
             <DialogTitle>Add medicine to stock</DialogTitle>
             <DialogContent>
@@ -399,28 +429,21 @@ const PharmacistStock = (props) => {
             </DialogContentText>
 			<form onSubmit={formik.handleSubmit}>
             <TextField
-                autoFocus
-                margin="dense"
+				autoFocus
+				margin="dense"
                 id="medicinename"
-                label="Name"
-                type="email"
-                fullWidth
-                variant="standard"
-            />
-            <TextField
-                id="prescriptiontype"
                 select
-                label="Prescription Type"
-                defaultValue="White"
+                label="Name"
+                fullWidth
                 SelectProps={{
                     native: true,
                   }}
-                helperText="Please select prescription type"
+                helperText="Please select medication name"
                 variant="standard"
             >
-            {prescription_type.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.value}
+            {medicinenames.map((value) => (
+            <option key={value} value={value}>
+              {value}
             </option>
             ))}
             </TextField>
@@ -526,12 +549,11 @@ const PharmacistStock = (props) => {
 					<Table>
 						<TableHead sx={{ display: 'table-header-group' }}>
 							<TableRow>
-								<TableCell>Image</TableCell>
 								<TableCell align="center">Medicine Name</TableCell>
 								<TableCell align="right">Requirement</TableCell>
 								<TableCell align="right">Usage Purpose</TableCell>
 								<TableCell align="right">Side Effects</TableCell>
-								<TableCell align="right">Prescribed</TableCell>
+								<TableCell align="right">Price</TableCell>
 								<TableCell align="right">Amount</TableCell>
 								<TableCell align="right">Operation</TableCell>
 							</TableRow>
@@ -545,9 +567,7 @@ const PharmacistStock = (props) => {
 										border: 0,
 									}}
 								>
-									<TableCell>
-										<img  alt={defaultpic} src={defaultpic} width="100" height="100"/>
-									</TableCell>
+									
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">
 										<SeverityPill color={`${medicine.prescription_type}`}>
@@ -555,7 +575,7 @@ const PharmacistStock = (props) => {
 										</SeverityPill>
 									</TableCell>
 									<TableCell align="right">
-										{medicine.med_type}
+										{medicine.used_for}
 									</TableCell>
 									<TableCell align="right">{medicine.side_effects}</TableCell>
 									<TableCell align="right">
@@ -564,7 +584,7 @@ const PharmacistStock = (props) => {
 									<TableCell align="right">
 										<TextField
 											type='number'
-											ref={inputRef}
+											inputRef={lineRefs.current[index]}
 											InputProps={{
 												inputProps: { 
 													max: 1000, min: 0 
@@ -578,10 +598,10 @@ const PharmacistStock = (props) => {
 										<>
 											<Tooltip>
 												<IconButton
-													onClick={() => {editAmount(medicine.med_id,{inputRef} )}}
+													onClick={()=> handleUpdateClick(index, medicine.med_id)}
 													disabled= {!updateClickable}
 												>
-													<EditIcon />
+													<CheckIcon />
 												</IconButton>
 											</Tooltip>
 										</>

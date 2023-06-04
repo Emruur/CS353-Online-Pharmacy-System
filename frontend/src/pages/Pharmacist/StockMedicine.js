@@ -9,6 +9,8 @@ const StockMedicine = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 	const [medicineList, setMedicineList] = useState([]);
+	const [medicineNameList, setMedicineNameList] = useState([]);
+
 	const navigate = useNavigate('');
 
 	const location = useLocation()
@@ -40,6 +42,30 @@ const StockMedicine = () => {
 				})
 		};
 		getAllMedicine();
+
+		const getAllMedicineName = async () => {
+			await axios.get('/medicine/', {
+				headers: {
+					"Authorization": token
+				}
+			})
+				.then((res) => {
+                    console.log('bu' ,res.data);
+					if (res && res.data) {
+						let arr1 = []
+						for (let i = 0; i < res.data.length; i++) {
+							arr1.push(res.data[i].name)
+						}
+						setMedicineNameList(arr1);
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log(err.response.data)
+					}
+				})
+		};
+		getAllMedicineName();
 	}, [])
 
 
@@ -51,6 +77,7 @@ const StockMedicine = () => {
 					<Grid item lg={12} md={12} xl={15} xs={12}>
 						<PharmacistStock 
 							medicines={medicineList}
+							medicinenames= {medicineNameList}
 						/>
 					</Grid>
 				</Grid>
