@@ -185,13 +185,22 @@ def getMedicines():
                 conn.commit()
                 updatedRows = cursor.rowcount
 
+                cursor.execute(
+                    "SELECT * FROM StoredIn WHERE med_id = %s AND pharmacy_id = %s",
+                    (med_id, pharmacy_id)
+                )
+                med = cursor.fetchall()
+
                 if updatedRows < 1:
-                    cursor.execute(
-                        "INSERT INTO StoredIn (pharmacy_id, med_id, amount) VALUES (%s, %s, %s)",
-                        (pharmacy_id, med_id, med_no)
-                    )
-                    conn.commit()
-                
+                    if med:
+                        return jsonify({"msg": "Enter a different number to update!"}), 400
+                    else:
+                        cursor.execute(
+                            "INSERT INTO StoredIn (pharmacy_id, med_id, amount) VALUES (%s, %s, %s)",
+                            (pharmacy_id, med_id, med_no)
+                        )
+                        conn.commit()
+                        return jsonify({"msg": "Medicine is inserted successfully"}), 200
                 return jsonify({"msg": "Medicine is updated successfully"}), 200
             except Exception as e:
                 conn.rollback()

@@ -5,3 +5,4 @@ db_env
 cs353venv
 backend/config.py
 package-lock.json
+backend/config.py
