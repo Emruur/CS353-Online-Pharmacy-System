@@ -62,6 +62,9 @@ const Medicine = () => {
 			quarries.push("min_price=" + minPrice)
 			quarries.push("max_price=" + maxPrice)
 		}
+		if (pharmacy > 0) {
+			quarries.push("pharmacy_id=" + pharmacy)
+		}
 		for (let i = 0; i < quarries.length; i++) {
 			if (i == 0) {
 				domain += "?" + quarries[i];
