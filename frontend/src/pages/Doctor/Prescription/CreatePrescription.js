@@ -100,7 +100,7 @@ const CreatePrescription = () => {
                 prescribed_to: values.prescribed_to,
                 type: values.type,
                 notes: values.notes,
-                medicine: medicines.filter((medicine) => medicine.type !== 0)
+                medicine: medicines.filter((medicine) => medicine.quantity !== 0)
             }
 			console.log(newValues)
 			await axios
