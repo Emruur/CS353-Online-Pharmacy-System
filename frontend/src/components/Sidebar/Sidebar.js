@@ -24,8 +24,16 @@ export const Sidebar = (props) => {
 					<Typography sx={{ m: 2 }} variant="h4">
 						Online Pharmacy
 					</Typography>
+				</Box>
+				<Divider
+					sx={{
+						borderColor: '#088395',
+						my: 3,
+					}}
+				/>
+				<Box sx={{ px: 2 }}>
 					<Typography sx={{ m: 2 }} variant="b1">
-						{role==="pharmacist" ? 'Pharmacist' : (role==="doctor" ? 'Doctor' : 'Patient')}
+						Patient
 					</Typography>
 				</Box>
 			</div>
@@ -35,9 +43,9 @@ export const Sidebar = (props) => {
 					my: 3,
 				}}
 			/>
-			<Box sx={{ flexGrow: 1 }}>
+			<Box sx={{ flexGrow: 0 }}>
 				{routes.map((item) => (
-					(item.type === "collapse" && item.user === role) && 
+					(item.type === "collapse" && item.user === "patient") && 
 					<NavItem
 						key={item.key}
 						icon={item.icon}
@@ -46,6 +54,68 @@ export const Sidebar = (props) => {
 					/>
 				))}
 			</Box>
+			<Divider
+				sx={{
+					borderColor: '#088395',
+					my: 3,
+				}}
+			/>
+			{ role === "doctor" &&
+				<>
+					<div>
+						<Box sx={{ px: 2 }}>
+							<Typography sx={{ m: 2 }} variant="b1">
+								{role==="pharmacist" ? 'Pharmacist' : (role==="doctor" ? 'Doctor' : 'Patient')}
+							</Typography>
+						</Box>
+					</div>
+					<Divider
+						sx={{
+							borderColor: '#088395',
+							my: 3,
+						}}
+					/>
+					<Box sx={{ flexGrow: 0 }}>
+						{routes.map((item) => (
+							(item.type === "collapse" && item.user === "doctor") && 
+							<NavItem
+								key={item.key}
+								icon={item.icon}
+								href={item.route}
+								title={item.name}
+							/>
+						))}
+					</Box>
+				</>
+			}
+			{ role === "pharmacist" &&
+				<>
+					<div>
+						<Box sx={{ px: 2 }}>
+							<Typography sx={{ m: 2 }} variant="b1">
+								{role==="pharmacist" ? 'Pharmacist' : (role==="doctor" ? 'Doctor' : 'Patient')}
+							</Typography>
+						</Box>
+					</div>
+					<Divider
+						sx={{
+							borderColor: '#088395',
+							my: 3,
+						}}
+					/>
+					<Box sx={{ flexGrow: 0 }}>
+						{routes.map((item) => (
+							(item.type === "collapse" && item.user === "pharmacist") && 
+							<NavItem
+								key={item.key}
+								icon={item.icon}
+								href={item.route}
+								title={item.name}
+							/>
+						))}
+					</Box>
+				</>
+			}
 		</Box>
 	);
 	if (lgUp) {

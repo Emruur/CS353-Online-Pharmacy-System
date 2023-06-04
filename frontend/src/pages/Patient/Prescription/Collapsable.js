@@ -9,14 +9,11 @@ import {
 	Collapse,
 	Grid,
 	IconButton,
-	Link,
 	Table,
     TableBody,
 	TableCell,
 	TableHead,
     TableRow,
-    Tooltip,
-	TextField,
 } from '@mui/material';
 import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -24,7 +21,8 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 
 const Collapsable = (props) => {
     const {prescription} = props;
-    console.log(prescription)
+
+    //console.log(prescription)
 
     const [expand, setExpand] = useState(false);
 
@@ -36,8 +34,8 @@ const Collapsable = (props) => {
 		arrow = <ArrowDropUp />;
 	}
 
-	let title = `#${prescription.id + 1} Prescribed By: Dr. ${prescription.prescribedBy}`;
-    let subheader = `Prescription Date: ${prescription.date}`
+	let title = `#${prescription[0].pres_id} Prescribed By: Dr. ${prescription[0].doctor_name} ${prescription[0].doctor_middle_name} ${prescription[0].doctor_surname}`;
+    let subheader = `Prescription Date: ${prescription[0].date.substring(5, 16)}`
 
     return(
         <>
@@ -62,38 +60,32 @@ const Collapsable = (props) => {
                                 <Table>
                                     <TableHead sx={{ display: 'table-header-group' }}>
                                         <TableRow>
-                                            <TableCell>Image</TableCell>
-								            <TableCell align="right">Medicine Name</TableCell>
+                                            <TableCell>Amount</TableCell>
+								            <TableCell >Medicine Name</TableCell>
                                             <TableCell align="right">Requirement</TableCell>
 								            <TableCell align="right">Usage Purpose</TableCell>
                                             <TableCell align="right">Side Effects</TableCell>
-                                            <TableCell align="right">Prescribed</TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {prescription.medication.map((medicine, index) => (
-                                            <TableRow
+                                        {prescription.map((medicine, index) => (
+                                            (medicine.med_count > 0) && <TableRow
                                                 key={index}
                                                 sx={{
                                                     border: 0,
                                                 }}
                                             >
-                                                <TableCell>
-										            <img src={medicine.image}/>
-									            </TableCell>
-                                                <TableCell>{medicine.name}</TableCell>
+                                                <TableCell>{medicine.med_count}</TableCell>
+                                                <TableCell align='left'>{medicine.name}</TableCell>
                                                 <TableCell align="right">
-                                                    <SeverityPill color={`${medicine.requiredProspectus}`}>
-                                                        {medicine.requiredProspectus}
+                                                    <SeverityPill color={`${medicine.prescription_type}`}>
+                                                        {medicine.prescription_type}
                                                     </SeverityPill>
                                                 </TableCell>
                                                 <TableCell align="right">
-										            {medicine.type}
+										            {medicine.used_for}
 									            </TableCell>
-                                                <TableCell align="right">{medicine.sideEffect}</TableCell>
-                                                <TableCell align="right">
-                                                    {medicine.prescriptionStatus}
-                                                </TableCell>
+                                                <TableCell align="right">{medicine.side_effects}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -111,6 +103,7 @@ const Collapsable = (props) => {
 								color="primary"
 								size="large"
 								variant="contained"
+                                onClick={() => props.requestPrescription(prescription[0].pres_id)}
 							>
 								Re-request Prescription
 							</Button>
