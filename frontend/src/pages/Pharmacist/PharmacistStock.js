@@ -1,4 +1,4 @@
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import EditIcon from '@mui/icons-material/Edit';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import AddIcon from '@mui/icons-material/Add';
 import {
@@ -30,11 +30,20 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
+import axios from 'axios_config';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
+import * as Yup from 'yup';
 
 const PharmacistStock = (props) => {
+    const navigate = useNavigate();
+
+    const [errorMessage, setErrorMessage] = useState('');
+	//console.log("Bearer ");
+
 	const { medicines } = props;
 	console.log(medicines);
 
@@ -114,14 +123,79 @@ const PharmacistStock = (props) => {
 	const open = Boolean(anchorEl);
 	const id = open ? 'simple-popover' : undefined;
 
-	return (
-		<Card>
+    const formik = useFormik({
+		initialValues: {
+			medicinename: 'anan',
+			prescriptiontype: '',
+			usedfor: '',
+			dosage: '',
+			side_effects: '',
+			risk_factors: '',
+			preserve_conditions: '',
+			prod_firm: '',
+            price: '',
+            medtype: '',
+            minage: '',
+		},
+		validationSchema: Yup.object({
+			medicinename: Yup.string().max(50).required('Medicine name is required'),
+			prescriptiontype: Yup.string().max(50).required('Prescription type is required'),
+			usedfor: Yup.string().max(50).required('Used for is required'),
+			dosage: Yup.string().max(50).required('Dosage is required'),
+			side_effects: Yup.string().required('Side effect is required'),
+            risk_factors: Yup.string().required('Risk factor is required'),
+			preserve_conditions: Yup.string().required('Preserve condition is required'),
+            prod_firm: Yup.string(),//.required('Name of pharmacy is required'),
+            price: Yup.number().min(1,'Price cannot be zero').required('Price is required'),
+            medtype: Yup.string().required('Medicine type is required'),
+            minage: Yup.number().required('Minimum age is required'),
+		}),
+		onSubmit: async (values) => {
+			const newValues = {
+				medicinename: values.medicinename,
+				prescriptiontype: values.prescriptiontype,
+				usedfor:  values.usedfor,
+				dosage: values.dosage,
+				side_effects: values.side_effects,
+				risk_factors: values.risk_factors,
+                preserve_conditions: values.preserve_conditions,
+                prod_firm: values.prod_firm,
+                price: values.price,
+                medtype: values.medtype,
+                minage: values.minage,
+			}
+			console.log(newValues);
+			await axios
+				.post('/register_drug', newValues)
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data);
+						navigate('/pharmacystock');
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log("Error:", err.response.data);
+						if (err.response.status === 401) {
+							setErrorMessage('Invalid TCKN or password');
+						} else if (err.response.status === 400) {
+							setErrorMessage(err.response.data.msg);
+						}
+					} else {
+						setErrorMessage('Connection error');
+					}
+				});
+			},
+		});
+		
+		return (
+			<Card>
 			<Box
 				sx={{
 					display: 'flex',
 					justifyContent: 'space-between',
 				}}
-			>
+				>
 				<CardHeader title="Medicine List" />
                 <Tooltip title="Add a medicine">
 							<IconButton		onClick={handleClickOpen}>
@@ -129,35 +203,156 @@ const PharmacistStock = (props) => {
 					</IconButton>
 				</Tooltip>
         <Dialog open={openDialog} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
+        <DialogTitle>Add a medicine</DialogTitle>
         <DialogContent>
             <Button onClick={handleOpenNewMedicine}>Add new medicine to database</Button>
             <Button onClick={handleOpenMedicineStock}>Add new medicine to stock</Button>
             <DialogContentText>
-            To subscribe to this website, please enter your email address here. We
+            To subscribe to this website, please enter your Dosages here. We
             will send updates occasionally.
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
-            fullWidth
-            variant="standard"
-          />
         </DialogContent>
             <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleClose}>Subscribe</Button>
             </DialogActions>
+		</Dialog>
         //new medicine dialog
             <Dialog open={openNewMedicineDialog} onClose={handleCloseNewMedicine}>
             <DialogTitle>Register New Medicine</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                 Register a new medicine to the database by filling the form.
+            	</DialogContentText>
+            <form onSubmit={formik.handleSubmit}>
+            <TextField
+                autoFocus
+                margin="dense"
+                id="medicinename"
+				name='medicinename'
+                label="Name"
+                type="email"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                id="prescriptiontype"
+				name='prescriptiontype'
+                select
+                label="Prescription Type"
+                defaultValue="White"
+                onBlur={formik.handleBlur}
+                SelectProps={{
+                    native: true,
+                  }}
+                helperText="Please select prescription type"
+                fullWidth
+                variant="standard"
+            >
+            {prescription_type.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.value}
+            </option>
+            ))}
+            </TextField>
+            <TextField
+                autoFocus
+                margin="dense"
+                id="usedfor"
+				name='usedfor'
+                label="Used For"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="dosage"
+				name='dosage'
+                label="Dosages"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="side_effects"
+				name='side_effects'
+                label="Side effects"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="risk_factors"
+				name='risk_factors'
+                label="Risk Factors"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="preserve_conditions"
+				name='preserve_conditions'
+                label="Preserve Conditions"
+                fullWidth
+                variant="standard"
+            />
+             <TextField
+                autoFocus
+                margin="dense"
+                id="prod_firm"
+				name='prod_firm'
+                label="Producing firm"
+                fullWidth
+                variant="standard"
+            />
+             <TextField
+                autoFocus
+                margin="dense"
+                id="price"
+				name='price'
+                label="Price"
+                type='number'
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="medtype"
+				name='medtype'
+                label="Medication Type"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                margin="dense"
+                id="minage"
+				name='minage'
+                label="Minimum Age"
+                type='number'
+                fullWidth
+                variant="standard"
+            />
+            </form>
+            </DialogContent>
+                <DialogActions>
+                <Button onClick={handleCloseNewMedicine}>Cancel</Button>
+                <Button type='submit' onClick={formik.handleSubmit}>Submit</Button>
+                </DialogActions>
+            </Dialog>
+
+            //add amount dialog
+            <Dialog open={openMedicineStockDialog} onClose={handleCloseMedicineStock}>
+            <DialogTitle>Add medicine to stock</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                You can add a medicine to stock by selecting the name and selecting an amount.
             </DialogContentText>
+			<form onSubmit={formik.handleSubmit}>
             <TextField
                 autoFocus
                 margin="dense"
@@ -184,32 +379,24 @@ const PharmacistStock = (props) => {
             </option>
             ))}
             </TextField>
+      
             <TextField
                 autoFocus
                 margin="dense"
-                id="name"
-                label="Email Address"
-                type="email"
+                id="amount"
+                label="Amount"
+                type='number'
                 fullWidth
                 variant="standard"
             />
-            <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Email Address"
-                type="email"
-                fullWidth
-                variant="standard"
-            />
+			</form>
             </DialogContent>
                 <DialogActions>
-                <Button onClick={handleCloseNewMedicine}>Cancel</Button>
-                <Button>Submit</Button>
+                <Button onClick={handleCloseMedicineStock}>Cancel</Button>
+                <Button onClick={formik.handleSubmit}>Submit</Button>
                 </DialogActions>
             </Dialog>
 
-        </Dialog>
 				<Tooltip>
 					<IconButton onClick={handleOpenPopover}>
 						<FilterAltIcon />
@@ -333,10 +520,10 @@ const PharmacistStock = (props) => {
 										<>
 											<Tooltip>
 												<IconButton
-													onClick={() => {props.addToShoppingCart(medicine)}}
-													disabled={medicine.prescriptionStatus === 'Not Prescribed'}
+													
+													disabled= 'false'
 												>
-													<AddShoppingCartIcon />
+													<EditIcon />
 												</IconButton>
 											</Tooltip>
 										</>

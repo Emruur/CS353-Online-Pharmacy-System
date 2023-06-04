@@ -22,7 +22,7 @@ const Medicine = () => {
 	const [successMessage, setSuccessMessage] = useState('');
 
 	const navigate = useNavigate('');
-
+	console.log(token);
 	useEffect(() => {
 		const getAllPrescription = async () => {
             await axios.get('/prescription/', {
@@ -62,7 +62,7 @@ const Medicine = () => {
 						}
 						setCartItems(arr);
 						setMedicineList(arr1);
-						//console.log(list)
+						console.log(list)
 					}
 				})
 				.catch((err) => {
