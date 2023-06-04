@@ -33,30 +33,27 @@ const Purchase = () => {
 	const token= "Bearer " + sessionStorage.getItem("token")
 	
 	useEffect(() => {
+		let datas= []
 		axios.get('purchase/',{
 			headers:{
 				Authorization: token
 			}
 		})
 		  .then(response => {
-			console.log("RES:", response.data)
-			for (let row in response.data){
-				setData(data.push({
-					name: row[0],
-					quantity: row[1],
-					total: row[2],
-					date: row[3],
-					balance: row[4]
-				}));
+			console.log(response.data)
+			for (let entry of response.data){
+				console.log("ROW:",entry)
+				datas.push({
+					name: entry[0],
+					quantity: entry[1],
+					total: Number(entry[2]),
+					date: entry[3],
+					balance: entry[4]})
 			}
-			setData(data.push({
-				name: response.data[0],
-				quantity: response.data[1],
-				total: response.data[2],
-				date: response.data[3],
-				balance: response.data[4]
-			}));
+			setData(datas)
+			console.log(data)
 		  })
+
 		  .catch(error => {
 			console.error('Error fetching data: ', error);
 		  });
@@ -67,7 +64,7 @@ const Purchase = () => {
 			<Container maxWidth="md">
 				<Grid container spacing={3}>
 					<Grid item lg={12} md={12} xl={15} xs={12}>
-						<PurchaseList items={shoppingList} />
+						<PurchaseList items={data} />
 					</Grid>
 				</Grid>
 			</Container>
