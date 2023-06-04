@@ -226,7 +226,7 @@ def purchase():
         try:
             # Execute the query
             cursor.execute("""
-                SELECT Medicine.name as name, PrescribedMedication.med_count as quantity, (PrescribedMedication.med_count * Medicine.price) as total, date as date, 0 as balance, 
+                SELECT name as name, purchase_count as quantity, (purchase_count * Medicine.price) as total, date as date, 0 as balance
                 FROM Purchase
                 INNER JOIN PurchasedMedicine ON Purchase.purchase_id = PurchasedMedicine.purchase_id
                 INNER JOIN Medicine ON PurchasedMedicine.med_id = Medicine.med_id;

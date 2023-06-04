@@ -51,7 +51,7 @@ If no query parameters are used, the route will return all medicines in the data
 def get_medicines():
     conn = get_conn()
     cursor = conn.cursor(dictionary=True)
-    sql = "SELECT * FROM Medicine NATURAL JOIN storedIn WHERE 1=1 "
+    sql = "SELECT * FROM Medicine NATURAL LEFT JOIN storedIn WHERE 1=1 "
     query_parameters = []
 
     # filtering according to name

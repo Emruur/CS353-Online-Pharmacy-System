@@ -40,7 +40,22 @@ const Purchase = () => {
 		})
 		  .then(response => {
 			console.log("RES:", response.data)
-			setData(response.data);
+			for (let row in response.data){
+				setData(data.push({
+					name: row[0],
+					quantity: row[1],
+					total: row[2],
+					date: row[3],
+					balance: row[4]
+				}));
+			}
+			setData(data.push({
+				name: response.data[0],
+				quantity: response.data[1],
+				total: response.data[2],
+				date: response.data[3],
+				balance: response.data[4]
+			}));
 		  })
 		  .catch(error => {
 			console.error('Error fetching data: ', error);
