@@ -127,6 +127,7 @@ const Medicine = () => {
                                 arr[res.data[i].pres_id] = [res.data[i]];
                             }
                         }
+						//console.log(arr)
 						setPrescribedMeds(arr)
 						getAllMedicine(arr);
                     }
@@ -145,7 +146,7 @@ const Medicine = () => {
 						for (let i = 0; i < res.data.length; i++) {
 							arr.push(res.data[i])
 						}
-						console.log(arr)
+						//console.log(arr)
 						setPharmacies(arr)
 					}
 				})
@@ -157,7 +158,7 @@ const Medicine = () => {
 		}
         getAllPrescription();
 		getAllPharmacies()
-	}, [])
+	}, [pharmacy])
 
 	const addToShoppingCart = (medicine) => {
 		for (let i = 0; i < list.length; i++) {

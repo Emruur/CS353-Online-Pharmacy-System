@@ -80,7 +80,12 @@ const MedicineList = (props) => {
 				}}
 			>
 				<CardHeader title="Medicine List" />
-				<Box>
+				<Box
+					sx={{
+						py: 1.5,
+						px: 2,
+					}}
+				>
 					<TextField
 						select
 						value={pharmacy}
