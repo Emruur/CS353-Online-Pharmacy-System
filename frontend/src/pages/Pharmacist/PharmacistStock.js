@@ -31,6 +31,7 @@ import {
 	Typography,
 } from '@mui/material';
 import axios from 'axios_config';
+import defaultpic from 'assets/images/default.png'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -39,13 +40,13 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 import * as Yup from 'yup';
 
 const PharmacistStock = (props) => {
-    const navigate = useNavigate();
-
-    const [errorMessage, setErrorMessage] = useState('');
-	//console.log("Bearer ");
-
 	const { medicines } = props;
-	console.log(medicines);
+
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
+	console.log("Bearer ");
+
+	console.log('anan',medicines);
 
 	const [type, setType] = useState('none');
 
@@ -487,13 +488,13 @@ const PharmacistStock = (props) => {
 								<TableCell align="right">Usage Purpose</TableCell>
 								<TableCell align="right">Side Effects</TableCell>
 								<TableCell align="right">Prescribed</TableCell>
+								<TableCell align="right">Amount</TableCell>
 								<TableCell align="right">Operation</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
                             
-							{filteredMedinices?
-                            filteredMedinices.map((medicine, index) => (
+							{medicines.map((medicine, index) => (
 								<TableRow
 									key={index}
 									sx={{
@@ -501,26 +502,28 @@ const PharmacistStock = (props) => {
 									}}
 								>
 									<TableCell>
-										<img alt={medicine.name} src={medicine.image}/>
+										<img  alt={defaultpic} src={defaultpic} width="100" height="100"/>
 									</TableCell>
 									<TableCell>{medicine.name}</TableCell>
 									<TableCell align="right">
-										<SeverityPill color={`${medicine.requiredProspectus}`}>
-											{medicine.requiredProspectus}
+										<SeverityPill color={`${medicine.prescription_type}`}>
+											{medicine.prescription_type}
 										</SeverityPill>
 									</TableCell>
 									<TableCell align="right">
-										{medicine.type}
+										{medicine.med_type}
 									</TableCell>
-									<TableCell align="right">{medicine.sideEffect}</TableCell>
+									<TableCell align="right">{medicine.side_effects}</TableCell>
 									<TableCell align="right">
-										{medicine.prescriptionStatus}
+										{medicine.price}
+									</TableCell>
+									<TableCell align="right">
+										{medicine.amount}
 									</TableCell>
 									<TableCell align="right">
 										<>
 											<Tooltip>
 												<IconButton
-													
 													disabled= 'false'
 												>
 													<EditIcon />
@@ -529,7 +532,8 @@ const PharmacistStock = (props) => {
 										</>
 									</TableCell>
 								</TableRow>
-							)):null}
+							))
+							}
 						</TableBody>
 					</Table>
 				</Box>
@@ -540,14 +544,6 @@ const PharmacistStock = (props) => {
 						p: 2,
 					}}
 				>
-						<Button
-							color="primary" 
-							size="large" 
-							variant="contained"
-							onClick={props.confirmOrder}
-						>
-							Confirm Order
-						</Button>
 				</Box>
 			</PerfectScrollbar>
 		</Card>

@@ -216,7 +216,7 @@ def requested_prescription():
                 conn.autocommit = False
                 pres_id = request.json.get("pres_id")
                 cursor.execute("INSERT INTO RequestedPrescription (doctor_id, patient_id, pres_id, status) "
-                               "SELECT (SELECT user_id from doctor d where d.user_id = p.prescribed_by) as doctor_id, prescribed_to, pres_id, 'pending' "
+                               "SELECT (SELECT user_id from Doctor d where d.user_id = p.prescribed_by) as doctor_id, prescribed_to, pres_id, 'pending' "
                                "FROM Prescription p "
                                "WHERE prescribed_to = %s AND pres_id = %s AND (status = 'used' or status = 'expired') ",
                                (current_user, pres_id))

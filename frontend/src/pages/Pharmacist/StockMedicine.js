@@ -8,7 +8,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const StockMedicine = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
-	const [pharmacistStock, setPharmacistStock] = useState([]);
 	const [medicineList, setMedicineList] = useState([]);
 	const navigate = useNavigate('');
 
@@ -25,13 +24,13 @@ const StockMedicine = () => {
 				}
 			})
 				.then((res) => {
-                    console.log(res);
+                    console.log('bu' ,res.data);
 					if (res && res.data) {
 						let arr = []
 						for (let i = 0; i < res.data.length; i++) {
 							arr.push(res.data[i])
 						}
-						setMedicineList(arr1);
+						setMedicineList(arr);
 					}
 				})
 				.catch((err) => {
