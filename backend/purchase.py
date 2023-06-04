@@ -74,14 +74,31 @@ def purchase():
                 medid_list= [med["id"] for med in med_list]
                 quantities= [med["quantity"] for med in med_list]
 
-                for med in med_list:
+                
+                invalidated= []
+                for med in medid_list:
                     print(med)
 
-                    query = "SELECT * FROM patient_prescription WHERE med_id = %s"
-                    cursor.execute(query, (med.get("id"),))
+                    query = """SELECT pres_id
+                        FROM Prescription NATURAL JOIN PrescribedMedication
+                        WHERE Prescription.status='valid and PrescribedMedication.med_id= %s'
+                    """
+                    print("i")
+                    cursor.execute(query,(med,))
+                    print("f")
                     result = cursor.fetchone()
+                    print("s")
+                    
+                    print(result)
                     if not result:
                         return jsonify({"msg": "Cant buy medicine not allowed"}), 400
+                    
+                    invalidated.append(result[0])
+                
+                print("--0")
+                #Invalidate Prescription
+                update_query = "UPDATE Prescription SET status='used' WHERE pres_id in ({}) %s"
+                cursor.execute(update_query, (",".join(map(str, invalidated,))))
                     
                 # Fetch the prices
                 query = "SELECT med_id, price FROM Medicine WHERE med_id in ({})".format(','.join(map(str, medid_list)))
@@ -123,12 +140,6 @@ def purchase():
                     """,(p_id, datetime.now().date().strftime('%Y-%m-%d'), total_price, w_id, current_user))
                 
 
-                #Invalidate Prescription
-                update_query = "UPDATE Prescription SET status='used' WHERE pres_id = %s"
-                print("STS ",cursor.lastrowid)
-                cursor.execute(update_query, (cursor.lastrowid,))
-                
-
                 print("--4")
 
                 purchase_id = cursor.lastrowid
@@ -140,6 +151,8 @@ def purchase():
                         VALUES (%s, %s, %s);
                     """,(purchase_id,med["quantity"],med["id"],))
                 print("--5")
+
+                
 
                 conn.commit()
                 return jsonify({"msg": "Purchase created successfully"}), 200
