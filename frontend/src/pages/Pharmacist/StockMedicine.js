@@ -1,100 +1,36 @@
-import { Button, Container, Grid } from '@mui/material';
+import { Alert, AlertTitle, Button, Container, Grid } from '@mui/material';
 import { PharmacistStock } from './PharmacistStock';
-import Minoset from 'assets/images/minoset.png'
-import Parol from 'assets/images/parol.png'
-import Arveles from 'assets/images/arveles.png'
-import Codeine from 'assets/images/codeine.png'
-import Augmentin from 'assets/images/augmentin.png'
-import Concerta from 'assets/images/concerta.png'
 import axios from 'axios_config';
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const PharmacistStock = [
-	{
-		name: 'Parol',
-		type: 'Paracetamol',
-		requiredProspectus: 'white',
-		sideEffect: 'Dryness in mouth, Dizziness, Tremors, Insomnia',
-		prescriptionStatus: 'Over the Counter',
-		image: Parol,
-		price: 10
-	},
-	{
-		name: 'Augmentin',
-		type: 'Antibiotic',
-		requiredProspectus: 'white',
-		sideEffect: 'Nausea, Vomiting, Headache, Diarrhea',
-		prescriptionStatus: 'Not Prescribed',
-		image: Augmentin,
-		price: 30
-	},
-	{
-		name: 'Minoset Plus',
-		type: 'Paracetamol',
-		requiredProspectus: 'white',
-		sideEffect: 'Severe nausea, Vomiting, Stomach pain',
-		prescriptionStatus: 'Over the Counter',
-		image: Minoset,
-		price: 10
-	},
-	{
-		name: 'Arveles',
-		type: 'Anti-inflammatory',
-		requiredProspectus: 'white',
-		sideEffect: 'Heartburn, Nausea and vomiting, Diarrhea',
-		prescriptionStatus: 'Over the Counter',
-		image: Arveles,
-		price: 40
-	},
-	{
-		name: 'Concerta',
-		type: 'Nervous System Stimulant',
-		requiredProspectus: 'red',
-		sideEffect: 'Nervousness, Trouble sleeping, Loss of appetite, Weight loss',
-		prescriptionStatus: 'Not Prescribed',
-		image: Concerta,
-		price: 100
-	},
-	{
-		name: 'Codeine Phosphate',
-		type: 'Pain Killer',
-		requiredProspectus: 'red',
-		sideEffect: 'Constipation, Nausea and Stomach cramps, Mood changes, Dizziness',
-		prescriptionStatus: 'Prescribed',
-		image: Codeine,
-		price: 1000
-	},
-];
+
 const StockMedicine = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
-
-	const [cart, setCart] = useState([]);
-
+	const [medicineList, setMedicineList] = useState([]);
 	const navigate = useNavigate('');
 
 	const location = useLocation()
+	console.log("Bearer ");
 
+	console.log(token);
 	useEffect(() => {
+		console.log("Bearer ");
 		const getAllMedicine = async () => {
-			await axios.get('/mypharmacy/', {
+			await axios.get('/pharmacy/mypharmacy', {
 				headers: {
 					"Authorization": token
 				}
 			})
 				.then((res) => {
-                    console.log(res);
+                    console.log('bu' ,res.data);
 					if (res && res.data) {
-						if (location.state !== null) {
-							console.log(location.state)
-							setCart(location.state)
-						} else {
-							for (let i = 0; i < medicineList.length; i++) {
-								setCart((oldArray) => [...oldArray, {medicine: medicineList[i], quantity: 0, total: 0}])
-							}
+						let arr = []
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push(res.data[i])
 						}
-						console.log(cart)
+						setMedicineList(arr);
 					}
 				})
 				.catch((err) => {
@@ -106,21 +42,6 @@ const StockMedicine = () => {
 		getAllMedicine();
 	}, [])
 
-	const addToShoppingCart = (medicine) => {
-		for (let i = 0; i < cart.length; i++) {
-			if (cart[i].medicine.name === medicine.name) {
-				cart[i].quantity++;
-			}
-		}
-		console.log(cart);
-	}
-
-	const confirmOrder = () => {
-		for (let i = 0; i < cart.length; i++) {
-			cart[i].total = cart[i].medicine.price * cart[i].quantity
-		}
-		navigate('/cart', {state: cart})
-	}
 
 	return (
 		<>
@@ -129,9 +50,7 @@ const StockMedicine = () => {
 				<Grid container spacing={3}>
 					<Grid item lg={12} md={12} xl={15} xs={12}>
 						<PharmacistStock 
-							medicines={PharmacistStock}
-							addToShoppingCart={addToShoppingCart}
-							confirmOrder={confirmOrder}
+							medicines={medicineList}
 						/>
 					</Grid>
 				</Grid>

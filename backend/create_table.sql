@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS Pharmacy;
 DROP TABLE IF EXISTS Hospital;
 DROP TABLE IF EXISTS Address;
 DROP VIEW IF EXISTS patient_prescription;
+DROP VIEW IF EXISTS patient_prescription_all;
 DROP EVENT IF EXISTS check_presc_valid;
 
 CREATE TABLE Address(
@@ -256,6 +257,7 @@ VALUES
 
 -- Doctors can not be pharmacists
 DELIMITER //
+
 CREATE TRIGGER doctor_not_pharmacists
 BEFORE INSERT ON Pharmacist
 FOR EACH ROW
@@ -267,11 +269,12 @@ BEGIN
     FROM Doctor
     WHERE user_id = NEW.user_id;
 
-    IF is_doctor > 0 THEN 
+    IF is_doctor > 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Error: A doctor can not be a pharmacist!';
+        SET MESSAGE_TEXT = 'Error: A doctor cannot be a pharmacist!';
     END IF;
 END; //
+
 DELIMITER ;
 
 -- Pharmacists can not be doctor
@@ -385,29 +388,12 @@ BEGIN
 END; //
 DELIMITER ;
 
--- views
-
-CREATE VIEW patient_prescription AS
-SELECT u.user_id, p.pres_id,p2.med_id
-FROM user u
-    join prescription p on u.user_id = p.prescribed_to
-    join prescribedmedication p2 on p.pres_id = p2.pres_id
-WHERE p.status='valid';
-
-
-CREATE VIEW patient_prescription_all AS
-SELECT u.user_id, p.pres_id, p2.med_id, p2.med_count, name,prescription_type,used_for,side_effects
-FROM user u
-    join prescription p on u.user_id = p.prescribed_to
-    join prescribedmedication p2 on p.pres_id = p2.pres_id
-    join medicine on p2.med_id = medicine.med_id;
-
-
 DELIMITER //
+
 CREATE TRIGGER balance_check BEFORE UPDATE ON Wallet
-FOR EACH ROW 
+FOR EACH ROW
 BEGIN
-   IF NEW.balance < 0 THEN 
+   IF NEW.balance < 0 THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Balance cannot be negative';
    END IF;
 END;//
@@ -415,9 +401,9 @@ DELIMITER ;
 
 DELIMITER //
 CREATE TRIGGER check_amount BEFORE UPDATE ON StoredIn
-FOR EACH ROW 
+FOR EACH ROW
 BEGIN
-   IF NEW.amount < 0 THEN 
+   IF NEW.amount < 0 THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Amount cannot be negative';
    END IF;
 END;//
@@ -435,3 +421,23 @@ BEGIN
     WHERE DATEDIFF(NOW(), p.date) >= 4;
 END;//
 DELIMITER ;
+
+-- views
+
+CREATE VIEW patient_prescription AS
+SELECT u.user_id, p.pres_id,p2.med_id
+FROM user u
+    join prescription p on u.user_id = p.prescribed_to
+    join prescribedmedication p2 on p.pres_id = p2.pres_id
+WHERE p.status='valid';
+
+
+CREATE VIEW patient_prescription_all AS
+SELECT doc.first_name as doctor_name, doc.middle_name as doctor_middle_name,
+       doc.surname as doctor_surname, u.user_id, p.pres_id, p2.med_id,
+       p2.med_count, name, prescription_type, used_for, side_effects, date, status
+FROM User u
+    JOIN Prescription p ON u.user_id = p.prescribed_to
+    JOIN PrescribedMedication p2 ON p.pres_id = p2.pres_id
+    JOIN Medicine ON p2.med_id = Medicine.med_id
+    JOIN User doc on p.prescribed_by = doc.user_id;

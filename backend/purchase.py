@@ -71,49 +71,88 @@ def purchase():
                 
                 ##check if medicine can be purchased(prescription check)
                 med_list= request.json.get("medicine")
+                medid_list= [med["id"] for med in med_list]
+                quantities= [med["quantity"] for med in med_list]
 
-                medid_list= [str(med["id"]) for med in med_list]
-                for med in med_list:
-                    query = "SELECT * FROM patient_prescription WHERE med_id = %s"
-                    cursor.execute(query, (p_id,))
+                
+                invalidated= []
+                for med in medid_list:
+                    print(med)
+
+                    query = """SELECT pres_id
+                        FROM Prescription NATURAL JOIN PrescribedMedication
+                        WHERE Prescription.status='valid and PrescribedMedication.med_id= %s'
+                    """
+                    print("i")
+                    cursor.execute(query,(med,))
+                    print("f")
                     result = cursor.fetchone()
+                    print("s")
+                    
+                    print(result)
                     if not result:
                         return jsonify({"msg": "Cant buy medicine not allowed"}), 400
+                    
+                    invalidated.append(result[0])
                 
-                ##balance deduction
-                query = "SELECT SUM(price) as total_price FROM Medicine WHERE med_id in %s"
-                cursor.execute(query, (tuple(medid_list)),)
-                total_price = cursor.fetchone()
+                print("--0")
+                #Invalidate Prescription
+                update_query = "UPDATE Prescription SET status='used' WHERE pres_id in ({}) %s"
+                cursor.execute(update_query, (",".join(map(str, invalidated,))))
+                    
+                # Fetch the prices
+                query = "SELECT med_id, price FROM Medicine WHERE med_id in ({})".format(','.join(map(str, medid_list)))
+                cursor.execute(query)
 
-                cursor.execute("""
-                    UPDATE Wallet 
-                    SET balance = balance - ?
-                    WHERE id = ((SELECT wallet_id FROM Patient WHERE user_id = ?))
-                    """, (total_price["total_price"], current_user))
+                # Calculate the total price
+                total_price = 0
+                for med_id, price in cursor:
+                    index = medid_list.index(med_id)
+                    total_price += price * quantities[index]
+                print(total_price)
+                print("--1")
                 
+                sql = f"""
+                    UPDATE Wallet
+                    SET balance = balance - {total_price}
+                    WHERE wallet_id = (SELECT wallet_id FROM Patient WHERE user_id = {current_user})
+                """
+                cursor.execute(sql)
+                print("--2")
+
                 #deduct medicines from the storage of pharmacies
                 for med in med_list:
                     cursor.execute("""
-                    UPDATE StoredIn 
-                    SET amount = amount - ? 
-                    WHERE pharmacy_id = ? AND med_id = ?;
-                    """, (med["quantity"],p_id,med["id"]))
+                    UPDATE StoredIn
+                    SET amount = amount - %s
+                    WHERE pharmacy_id = %s AND med_id = %s;
+                    """, (med["quantity"], p_id, med["id"]))
+
+                print("--3")
 
                 ## create a purchase object
-                cursor.execute("SELECT wallet_id FROM Patient WHERE user_id = %s",(current_user))
-                w_id= cursor.fetchone()
+                cursor.execute("SELECT wallet_id FROM Patient WHERE user_id = %s",(current_user,))
+                w_id= cursor.fetchone()[0]
+                print(w_id)
                 cursor.execute("""
-                    INSERT INTO Purchase (pharmacy_id, date, deduction, wallet_id, user_id) 
-                    VALUES (?, ?, ?, ?, ?);
-                    """,(p_id,datetime.now().date().strftime('%Y-%m-%d'),total_price["total_price"],w_id["wallet_id"],current_user))
+                    INSERT INTO Purchase (pharmacy_id, date, deduction, wallet_id, user_id)
+                    VALUES (%s, %s, %s, %s, %s);
+                    """,(p_id, datetime.now().date().strftime('%Y-%m-%d'), total_price, w_id, current_user))
                 
+
+                print("--4")
+
                 purchase_id = cursor.lastrowid
+                print("PR",purchase_id)
                 ## create purchased medicine objects
                 for med in med_list:
                     cursor.execute("""
-                        INSERT INTO PurchasedMedicine (purchase_id, purchase_count, med_id) 
-                        VALUES (?, ?, ?);           
-                    """,(purchase_id,med["quentity"],med["id"]))
+                        INSERT INTO PurchasedMedicine (purchase_id, purchase_count, med_id)
+                        VALUES (%s, %s, %s);
+                    """,(purchase_id,med["quantity"],med["id"],))
+                print("--5")
+
+                
 
                 conn.commit()
                 return jsonify({"msg": "Purchase created successfully"}), 200
