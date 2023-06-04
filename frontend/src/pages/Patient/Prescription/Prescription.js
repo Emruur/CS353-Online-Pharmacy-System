@@ -1,4 +1,4 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import { Collapsable } from './Collapsable';
 import { useEffect, useState } from 'react';
 import axios from 'axios_config';
@@ -6,6 +6,7 @@ import axios from 'axios_config';
 const Prescription = () => {
 
     const [prescriptions, setPrescriptions] = useState([]);
+    const [reqPrescriptions, setReqPrescriptions] = useState([]);
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 
@@ -37,13 +38,41 @@ const Prescription = () => {
                     }
                 })
         }
+        const getReqPrescription = async () => {
+            await axios.get('/prescription/request', {
+                headers: {
+                    "Authorization": token
+                }
+            })
+                .then((res) => {
+                    if (res && res.data) {
+                        console.log(res.data)
+                        let arr = []
+                        for (let i = 0; i < res.data.length; i++) {
+                            if (arr[res.data[i].pres_id]) {
+                                arr[res.data[i].pres_id].push(res.data[i]);
+                            } else {
+                                arr[res.data[i].pres_id] = [res.data[i]];
+                            }
+                        }
+                        setPrescriptions(arr);
+                        console.log(arr)
+                    }
+                })
+                .catch((err) => {
+                    if (err && err.response) {
+                        console.log(err.response.data)
+                    }
+                })
+        }
         getAllPrescription();
     }, []);
 
-    const requestPrescription = async (medicine) => {
+    const requestPrescription = async (id) => {
         const values = {
-            pres_id: medicine.pres_id
+            pres_id: id
         }
+        console.log(values)
         await axios.post('/prescription/request', values,{
             headers: {
                 "Authorization": token
@@ -65,20 +94,39 @@ const Prescription = () => {
         <>
             <title>Prescriptions</title>
             <Container maxWidth="md">
-				<Box sx={{ my: 3 }}>
-					<Typography color="textPrimary" variant="h4">
-						Previous Prescriptions
-					</Typography>
-				</Box>
+                <Grid container justifyContent="center" direction="row" spacing={3}>
+                    <Grid item md={6} xs={12}>
+                        <Box sx={{ my: 3 }}>
+                            <Typography color="textPrimary" variant="h4">
+                                Previous Prescriptions
+                            </Typography>
+                        </Box>
+                        {prescriptions.map((prescription, index) => (
+                            <Box key={index}>
+                                <Collapsable 
+                                    prescription={prescription}
+                                    requestPrescription={requestPrescription}    
+                                />
+                            </Box>
+                        ))}
+                    </Grid>
+                    <Grid item md={6} xs={12}>
+                        <Box sx={{ my: 3 }}>
+                            <Typography color="textPrimary" variant="h4">
+                                Requested Prescriptions
+                            </Typography>
+                        </Box>
+                        {prescriptions.map((prescription, index) => (
+                            <Box key={index}>
+                                <Collapsable 
+                                    prescription={prescription}
+                                    requestPrescription={requestPrescription}    
+                                />
+                            </Box>
+                        ))}
+                    </Grid>
+                </Grid>
                 
-                {prescriptions.map((prescription, index) => (
-                    <Box key={index}>
-                        <Collapsable 
-                            prescription={prescription}
-                            requestPrescription={requestPrescription}    
-                        />
-                    </Box>
-                ))}
 			</Container>
         </>
     );
