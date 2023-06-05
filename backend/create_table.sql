@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS Address;
 DROP VIEW IF EXISTS patient_prescription;
 DROP VIEW IF EXISTS patient_prescription_all;
 DROP EVENT IF EXISTS check_presc_valid;
+DROP VIEW IF EXISTS requested_presc_doctor;
 
 CREATE TABLE Address(
     address_id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -454,3 +455,14 @@ FROM User u
     JOIN PrescribedMedication p2 ON p.pres_id = p2.pres_id
     JOIN Medicine ON p2.med_id = Medicine.med_id
     JOIN User doc on p.prescribed_by = doc.user_id;
+
+
+create view requested_presc_doctor as
+select u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
+       m.side_effects,
+       prescribed_by,prescribed_to,m.name, rp.status, type, notes, p.pres_id, date
+from RequestedPrescription rp join Prescription p on rp.pres_id = p.pres_id
+join PrescribedMedication pm on pm.pres_id = p.pres_id
+join Medicine m on m.med_id = pm.med_id
+join User u on u.user_id=prescribed_to
+where rp.status = 'pending'

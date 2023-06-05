@@ -307,10 +307,11 @@ def requested_prescription_doctor():
     cursor = conn.cursor()
     if request.method == 'GET':
         try:
-            keys = ["prescribed_by", "prescribed_to", "status", "type", "notes", "pres_id", "date"]
+            keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
+                    "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
             cursor.execute(
-                "select prescribed_by,prescribed_to, rp.status, type, notes, p.pres_id, date "
-                "from RequestedPrescription rp join Prescription p on rp.pres_id = p.pres_id where prescribed_by = %s",
+                "select * from requested_presc_doctor where prescribed_by = %s",
+
                 (current_user,)
             )
             prescriptions = cursor.fetchall()
