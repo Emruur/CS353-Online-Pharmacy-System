@@ -22,7 +22,7 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 const Collapsable = (props) => {
     const {prescription} = props;
 
-    console.log(prescription[0].status)
+    console.log(props.prescriptions)
 
     const [expand, setExpand] = useState(false);
 
@@ -92,7 +92,7 @@ const Collapsable = (props) => {
                                 </Table>
                             </Box>
                         </PerfectScrollbar>
-                        <Box
+                        {prescription[0].status === "expired" &&<Box
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'flex-end',
@@ -107,7 +107,7 @@ const Collapsable = (props) => {
 							>
 								Re-request Prescription
 							</Button>
-						</Box>
+						</Box>}
 					</CardContent>
 				</Box>
 			</Collapse>

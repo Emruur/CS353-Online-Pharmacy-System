@@ -19,7 +19,7 @@ const Prescription = () => {
             })
                 .then((res) => {
                     if (res && res.data) {
-                        console.log(res.data)
+                        //console.log(res.data)
                         let arr = []
                         for (let i = 0; i < res.data.length; i++) {
                             if (arr[res.data[i].pres_id]) {
@@ -29,7 +29,8 @@ const Prescription = () => {
                             }
                         }
                         setPrescriptions(arr);
-                        console.log(arr)
+                        getReqPrescription(arr);
+                        //console.log(arr)
                     }
                 })
                 .catch((err) => {
@@ -38,7 +39,7 @@ const Prescription = () => {
                     }
                 })
         }
-        const getReqPrescription = async () => {
+        const getReqPrescription = async (arrAll) => {
             await axios.get('/prescription/request', {
                 headers: {
                     "Authorization": token
@@ -46,13 +47,37 @@ const Prescription = () => {
             })
                 .then((res) => {
                     if (res && res.data) {
-                        //console.log(res.data)
+                        //console.log(arrAll)
                         let arr = []
-                        for (let i = 0; i < res.data.length; i++) {
-                            if (arr[res.data[i].pres_id]) {
-                                arr[res.data[i].pres_id].push(res.data[i]);
+                        for (let i = 0; i < arrAll[10].length; i++) {
+                            if (arr[arrAll[10][i].pres_id]) {
+                                arr[arrAll[10][i].pres_id].push(
+                                    {
+                                        med_count: arrAll[10][i].med_count,
+                                        prescription_type: arrAll[10][i].prescription_type,
+                                        name: arrAll[10][i].name,
+                                        used_for: arrAll[10][i].used_for,
+                                        side_effects: arrAll[10][i].side_effects,
+                                        date: arrAll[10][i].date,
+                                        doctor_name: arrAll[10][i].doctor_name,
+                                        doctor_middle_name: arrAll[10][i].doctor_middle_name,
+                                        doctor_surname: arrAll[10][i].doctor_surname,
+                                        pres_id: arrAll[10][i].pres_id
+                                    }
+                                );
                             } else {
-                                arr[res.data[i].pres_id] = [res.data[i]];
+                                arr[arrAll[10][i].pres_id] = [{
+                                    med_count: arrAll[10][i].med_count,
+                                    prescription_type: arrAll[10][i].prescription_type,
+                                    name: arrAll[10][i].name,
+                                    used_for: arrAll[10][i].used_for,
+                                    side_effects: arrAll[10][i].side_effects,
+                                    date: arrAll[10][i].date,
+                                    doctor_name: arrAll[10][i].doctor_name,
+                                    doctor_middle_name: arrAll[10][i].doctor_middle_name,
+                                    doctor_surname: arrAll[10][i].doctor_surname,
+                                    pres_id: arrAll[10][i].pres_id
+                                }];
                             }
                         }
                         setReqPrescriptions(arr);
@@ -65,7 +90,6 @@ const Prescription = () => {
                     }
                 })
         }
-        getReqPrescription();
         getAllPrescription();
     }, []);
 
@@ -121,6 +145,7 @@ const Prescription = () => {
                             <Box key={index}>
                                 <Collapsable 
                                     prescription={prescription}
+                                    prescriptions={prescriptions}
                                     requestPrescription={requestPrescription}    
                                 />
                             </Box>
