@@ -55,7 +55,7 @@ def getProfile():
     current_user = get_jwt_identity()
     conn = get_conn()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Patient NATURAL JOIN User WHERE user_id = %s", (current_user,))
+    cursor.execute("SELECT email, first_name, middle_name, surname, phone_number FROM Patient NATURAL JOIN User WHERE user_id = %s", (current_user,))
     patient = cursor.fetchone()
 
     try:
