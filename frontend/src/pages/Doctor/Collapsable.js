@@ -34,7 +34,7 @@ const Collapsable = (props) => {
 		arrow = <ArrowDropUp />;
 	}
 
-	let title = `#${prescription[0].pres_id} Prescribed To: ${prescription[0].prescribed_to}`;
+	let title = `#${prescription[0].pres_id} Prescribed To: ${prescription[0].first_name} ${prescription[0].middle_name} ${prescription[0].surname}`;
     let subheader = `Prescription Date: ${prescription[0].date.substring(5, 16)}`
 
     return(
@@ -76,10 +76,10 @@ const Collapsable = (props) => {
                                                 }}
                                             >
                                                 <TableCell>{medicine.med_count}</TableCell>
-                                                <TableCell align='left'>{medicine.name}</TableCell>
+                                                <TableCell align='left'>{medicine.med_name}</TableCell>
                                                 <TableCell align="right">
-                                                    <SeverityPill color={`${medicine.prescription_type}`}>
-                                                        {medicine.prescription_type}
+                                                    <SeverityPill color={`${medicine.pres_type}`}>
+                                                        {medicine.pres_type}
                                                     </SeverityPill>
                                                 </TableCell>
                                                 <TableCell align="right">
@@ -95,7 +95,7 @@ const Collapsable = (props) => {
                         <Box
                             sx={{
                                 display: 'flex',
-                                justifyContent: 'flex-end',
+                                justifyContent: 'space-between',
                                 p: 2,
                             }}
                         >
