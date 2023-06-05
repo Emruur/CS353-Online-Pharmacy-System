@@ -326,7 +326,7 @@ def requested_prescription_doctor():
     cursor = conn.cursor()
     if request.method == 'GET':
         try:
-            keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
+            keys = ["request_id","first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
                     "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
             cursor.execute(
                 "select * from requested_presc_doctor where prescribed_by = %s",

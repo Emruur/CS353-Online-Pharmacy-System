@@ -459,7 +459,7 @@ FROM User u
 
 
 create view requested_presc_doctor as
-select u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
+select rp.request_id, u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
        m.side_effects,
        prescribed_by,prescribed_to,m.name, rp.status, type, notes, p.pres_id, date
 from RequestedPrescription rp join Prescription p on rp.pres_id = p.pres_id
