@@ -237,7 +237,7 @@ def requested_prescription():
             keys = ["prescribed_by", "prescribed_to", "status", "type", "notes", "pres_id","date"]
             cursor.execute(
                 "select prescribed_by,prescribed_to, rp.status, type, notes, p.pres_id, date "
-                "from requestedprescription rp join prescription p on rp.pres_id = p.pres_id where prescribed_to = %s",
+                "from RequestedPrescription rp join Prescription p on rp.pres_id = p.pres_id where prescribed_to = %s",
                 (current_user,)
             )
             prescriptions = cursor.fetchall()
@@ -311,6 +311,7 @@ def requested_prescription_doctor():
                     "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
             cursor.execute(
                 "select * from requested_presc_doctor where prescribed_by = %s",
+
                 (current_user,)
             )
             prescriptions = cursor.fetchall()
