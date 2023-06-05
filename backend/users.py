@@ -1,4 +1,8 @@
 from flask import Blueprint, request, jsonify, g
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity
+)
 import mysql.connector
 from mysql.connector import pooling
 from config import db_config
@@ -44,3 +48,21 @@ def delete_user(id):
     cursor.execute("DELETE FROM users WHERE id = %s", (id,))
     conn.commit()
     return jsonify({'message': 'User deleted successfully'}), 200
+
+@users_blueprint.route('/getProfile', methods=['GET'])
+@jwt_required()
+def getProfile():
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Patient NATURAL JOIN User WHERE user_id = %s", (current_user,))
+    patient = cursor.fetchone()
+
+    try:
+        keys = ["email", "first_name", "middle_name", "surname", "phone_number"]
+        
+        return [dict(zip(keys, patient))], 200
+    
+    except Exception as e:
+        conn.rollback()
+        return f'Transaction failed: {str(e)}', 500
