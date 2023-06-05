@@ -1,8 +1,8 @@
-import { Alert, AlertTitle, Button, Container, Grid } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import { PharmacistStock } from './PharmacistStock';
 import axios from 'axios_config';
 import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+
 
 
 const StockMedicine = () => {
@@ -11,9 +11,6 @@ const StockMedicine = () => {
 	const [medicineList, setMedicineList] = useState([]);
 	const [medicineNameList, setMedicineNameList] = useState([]);
 
-	const navigate = useNavigate('');
-
-	const location = useLocation()
 	console.log("Bearer ");
 
 	console.log(token);
