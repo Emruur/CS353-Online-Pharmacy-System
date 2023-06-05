@@ -11,8 +11,6 @@ const StockMedicine = () => {
 	const [medicineList, setMedicineList] = useState([]);
 	const [medicineNameList, setMedicineNameList] = useState([]);
 
-	console.log("Bearer ");
-
 	console.log(token);
 	useEffect(() => {
 		console.log("Bearer ");
@@ -50,8 +48,9 @@ const StockMedicine = () => {
                     console.log('bu' ,res.data);
 					if (res && res.data) {
 						let arr1 = []
+						let arr2 = []
 						for (let i = 0; i < res.data.length; i++) {
-							arr1.push(res.data[i].name)
+							arr1.push(res.data[i])
 						}
 						setMedicineNameList(arr1);
 					}

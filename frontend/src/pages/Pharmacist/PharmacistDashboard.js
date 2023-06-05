@@ -27,7 +27,7 @@ const PharmacistDashboard = () => {
 	const datestart2= useRef();
 	const dateend2= useRef();
 
-	const token = "Bearer " + sessionStorage.getItem("token");
+	const token =  "Bearer " +sessionStorage.getItem("token");
 
 	const [soldMeds, setSoldMeds] = useState(null);
 	const [displaySoldMeds, setDisplaySoldMeds] = useState(false);
@@ -224,7 +224,7 @@ const PharmacistDashboard = () => {
 			})
 			.catch((err) => {
 				if (err && err.response) {
-					console.log("Error:",err.response.data)
+					console.log("Error:",err.response)
 				}
 			})
 		setDisplaySoldMeds(true);

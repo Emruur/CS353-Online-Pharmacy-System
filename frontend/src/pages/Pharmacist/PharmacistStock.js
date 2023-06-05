@@ -66,6 +66,7 @@ const PharmacistStock = (props) => {
 
 	const [updateClickable, setUpdateClickable] = useState(false);
 	const lineRefs = useRef([]);
+	const amountRef = useRef(null);
 
 	lineRefs.current = medicines.map((_, i) => lineRefs.current[i] ?? createRef());
 
@@ -100,6 +101,38 @@ const PharmacistStock = (props) => {
 		redirect('/pharmacystock');
 
 	  console.log(lineRefs.current[index].current.value);
+	}
+
+	async function handleStockUpdate( id) {
+		const request= {med_id: id,
+						med_no: amountRef.current.value};
+			await axios
+				.post('/pharmacy/mypharmacy', request, {
+					headers: {
+                    	"Authorization": token
+                	}
+			})
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data);
+						navigate('/pharmacystock');
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log("Error:", err.response.data);
+						if (err.response.status === 401) {
+							setErrorMessage('Invalid TCKN or password');
+						} else if (err.response.status === 400) {
+							setErrorMessage(err.response.data.msg);
+						}
+					} else {
+						setErrorMessage('Connection error');
+					}
+			});
+		redirect('/pharmacystock');
+
+	  console.log();
 	}
 
 	useEffect(() => {
@@ -441,9 +474,9 @@ const PharmacistStock = (props) => {
                 helperText="Please select medication name"
                 variant="standard"
             >
-            {medicinenames.map((value) => (
-            <option key={value} value={value}>
-              {value}
+            {medicinenames.map((medicine,index) => (
+            <option key={medicine.name} value={medicine.med}>
+              {medicine.name}
             </option>
             ))}
             </TextField>
@@ -452,6 +485,7 @@ const PharmacistStock = (props) => {
                 autoFocus
                 margin="dense"
                 id="amount"
+				inputRef={amountRef}
                 label="Amount"
                 type='number'
                 fullWidth
@@ -461,7 +495,7 @@ const PharmacistStock = (props) => {
             </DialogContent>
                 <DialogActions>
                 <Button onClick={handleCloseMedicineStock}>Cancel</Button>
-                <Button onClick={formik.handleSubmit}>Submit</Button>
+                <Button onClick={handleStockUpdate}>Submit</Button>
                 </DialogActions>
             </Dialog>
 
