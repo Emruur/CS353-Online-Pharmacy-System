@@ -205,7 +205,7 @@ const PharmacistDashboard = () => {
 			end_date: dateend1.current.value};
 			
 			console.log(token);
-		await axios.get('/reports/sold-medicine', dates, {
+		await axios.post('/reports/sold-medicine', dates, {
 			headers: {
 				"Authorization": token
 			}

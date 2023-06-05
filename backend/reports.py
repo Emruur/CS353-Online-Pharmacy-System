@@ -27,7 +27,7 @@ def close_conn(e):
 
 
 
-@reports_blueprint.route('/sold-medicine', methods=['GET'])
+@reports_blueprint.route('/sold-medicine', methods=['POST'])
 @jwt_required()
 def sold_med_report():
     """
