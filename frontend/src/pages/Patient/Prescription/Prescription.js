@@ -62,7 +62,8 @@ const Prescription = () => {
                                         doctor_name: arrAll[10][i].doctor_name,
                                         doctor_middle_name: arrAll[10][i].doctor_middle_name,
                                         doctor_surname: arrAll[10][i].doctor_surname,
-                                        pres_id: arrAll[10][i].pres_id
+                                        pres_id: arrAll[10][i].pres_id,
+                                        status: "pending"
                                     }
                                 );
                             } else {
@@ -76,7 +77,8 @@ const Prescription = () => {
                                     doctor_name: arrAll[10][i].doctor_name,
                                     doctor_middle_name: arrAll[10][i].doctor_middle_name,
                                     doctor_surname: arrAll[10][i].doctor_surname,
-                                    pres_id: arrAll[10][i].pres_id
+                                    pres_id: arrAll[10][i].pres_id,
+                                    status: "pending"
                                 }];
                             }
                         }
