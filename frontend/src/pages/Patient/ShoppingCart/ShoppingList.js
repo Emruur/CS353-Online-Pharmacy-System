@@ -24,7 +24,7 @@ const ShoppingList = (props) => {
 		props.calculateTotal();
 	}, []);
 
-	console.log(items);
+	//console.log(items);
 
 	return (
 		<Card>

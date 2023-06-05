@@ -83,7 +83,7 @@ const Medicine = () => {
 					let arr2 = []
 					let arr1 = []
 					for (let i = 0; i < res.data.length; i++) {
-						arr2.push({medicine: res.data[i], quantity: 0, total: 0})
+						arr2.push({medicine: res.data[i], quantity: 0, total: 0, id: res.data[i].med_id})
 						arr1.push({
 							name: res.data[i].name,
 							prescription_type: res.data[i].prescription_type, 
@@ -100,7 +100,7 @@ const Medicine = () => {
 					}
 					setCartItems(arr2);
 					setMedicineList(arr1);
-					console.log(arr1)
+					//console.log(res.data)
 				}
 			})
 			.catch((err) => {
@@ -177,6 +177,10 @@ const Medicine = () => {
 			"literalcartting",
 			JSON.stringify(list)
 		);
+		window.sessionStorage.setItem(
+			"phar_id",
+			JSON.stringify(pharmacy)
+		)
 		navigate('/cart')
 	}
 

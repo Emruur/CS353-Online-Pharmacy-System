@@ -5,6 +5,7 @@ import Augmentin from 'assets/images/augmentin.png'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useGlobalState } from 'GlobalCart';
+import axios from 'axios_config';
 
 const shoppingList = [
 	{
@@ -24,7 +25,11 @@ const shoppingList = [
 
 const Cart = () => {
 
+	const token = "Bearer " + sessionStorage.getItem("token");
+
 	const [total, setTotal] = useState(0);
+	const [balance, setBalance] = useState(0);
+	const [pharmacy_id, setID] = useState(0);
 	
 	const [errorMessage, setErrorMessage] = useState('');
 	const [successMessage, setSuccessMessage] = useState('');
@@ -34,14 +39,19 @@ const Cart = () => {
 	const [list, setCartItems] = useGlobalState("cartItems");
 
 	useEffect(() => {
+		getBalance();
 		const data = window.sessionStorage.getItem("literalcartting");
+		const data1 = window.sessionStorage.getItem("phar_id")
+		if (data1 !== null) {
+			setID(data1)
+		}
 		if (data !== null) {
 		  setCartItems(JSON.parse(data));
 		  calculateTotal();
 		}
 	}, []);
 
-	console.log(list);
+	//console.log(list);
 
 	useEffect(() => {
 		window.sessionStorage.setItem(
@@ -60,12 +70,41 @@ const Cart = () => {
 		navigate('/medication');
 	}
 
-	const checkout = () => {
-		let balance = sessionStorage.getItem("balance");
-		if (balance < total) {
+	const checkout = async () => {
+		console.log(balance, total)
+		if (balance < total || balance === 0) {
 			setErrorMessage('Not enough money on balance for transaction! Please make payment and come back again.');
 		} else {
-			sessionStorage.setItem("balance", balance - total);
+			const values = {
+				medicine : list.filter((medicine) => medicine.quantity !== 0),
+				pharmacy_id: parseInt(pharmacy_id)
+			}
+			console.log(values)
+			await axios.post('/purchase/', values, {
+				headers: {
+					"Authorization": token
+				}
+			})
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data)
+						let copy = [...list];
+						for (let i = 0; i < copy.length; i++) {
+							copy[i].quantity = 0;
+							copy[i].total = 0;
+						}
+						setCartItems(copy);
+						calculateTotal()
+						window.sessionStorage.setItem("literalcartting", JSON.stringify(list));
+						setSuccessMessage(`Checkout complete. New balance ${sessionStorage.getItem("balance")}`);
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log(err.response)
+					}
+				})
+			/*sessionStorage.setItem("balance", balance - total);
 			let copy = [...list];
 			for (let i = 0; i < copy.length; i++) {
 				copy[i].quantity = 0;
@@ -74,9 +113,29 @@ const Cart = () => {
 			setCartItems(copy);
 			calculateTotal()
 			window.sessionStorage.setItem("literalcartting", list);
-			balance = sessionStorage.getItem("balance");
-			setSuccessMessage(`Checkout complete. New balance ${balance}`);
+			setBalance(sessionStorage.getItem("balance"));
+			setSuccessMessage(`Checkout complete. New balance ${balance}`);*/
 		}
+	}
+
+	const getBalance = async () => {
+		await axios.get('/purchase/wallet', {
+			headers: {
+				"Authorization": token
+			}
+		})
+			.then((res) => {
+				if (res && res.data) {
+					console.log(res.data.balance[0]);
+					window.sessionStorage.setItem("balance", res.data.balance[0]);
+					setBalance(res.data.balance[0]);
+				}
+			})
+			.catch((err) => {
+				if (err && err.response) {
+					console.log(err.response)
+				}
+			})
 	}
 
 	const calculateTotal = () => {
