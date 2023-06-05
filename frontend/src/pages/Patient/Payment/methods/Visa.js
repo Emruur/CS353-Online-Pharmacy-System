@@ -1,4 +1,5 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import axios from 'axios_config';
 import {
 	Box,
 	Button,
@@ -22,6 +23,7 @@ import {
 } from '../utils';
 
 export const Visa = () => {
+	const token= "Bearer " + sessionStorage.getItem("token")
 	const [expand, setExpand] = useState(false);
 
 	const [amount, setAmount] = useState(0);
@@ -67,6 +69,21 @@ export const Visa = () => {
 	const handleSubmit = () => {
 		if (amount !== 0) {
 			const balance = parseInt(sessionStorage.getItem("balance")) + parseInt(amount)
+			const data = {
+				amount: parseInt(amount)
+			};
+			const headers= {
+				Authorization: token
+			}
+			
+			  
+			  axios.put('purchase/wallet', data, {headers})
+				.then((response) => {
+				  console.log(response.data);
+				})
+				.catch((error) => {
+				  console.error(error);
+				});
 			console.log(balance)
 			sessionStorage.setItem("balance", balance)
 		} else {
