@@ -1,6 +1,10 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import axios from 'axios_config';
 import {
+	Alert,
+	AlertTitle,
+} from '@mui/material';
+import {
 	Box,
 	Button,
 	Card,
@@ -25,6 +29,8 @@ import {
 export const Visa = () => {
 	const token= "Bearer " + sessionStorage.getItem("token")
 	const [expand, setExpand] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
+	const [successMessage, setSuccessMessage] = useState('');
 
 	const [amount, setAmount] = useState(0);
 
@@ -80,8 +86,10 @@ export const Visa = () => {
 			  axios.put('purchase/wallet', data, {headers})
 				.then((response) => {
 				  console.log(response.data);
+				  setSuccessMessage("Transaction Succesfull");
 				})
 				.catch((error) => {
+				  setErrorMessage("Transaction failed")
 				  console.error(error);
 				});
 			console.log(balance)
@@ -95,6 +103,28 @@ export const Visa = () => {
 	return (
 		<>
 			<title>Visa</title>
+			{successMessage.trim().length !== 0 && (
+                    <Alert
+                        severity="success"
+                        onClose={() => {
+                            setSuccessMessage('');
+                        }}
+                    >
+                        <AlertTitle>Success</AlertTitle>
+                        {successMessage}
+                    </Alert>
+                )}
+                {errorMessage.trim().length !== 0 && (
+                    <Alert
+                        severity="error"
+                        onClose={() => {
+                            setErrorMessage('');
+                        }}
+                    >
+                        <AlertTitle>Error</AlertTitle>
+                        {errorMessage}
+                    </Alert>
+                )}
 			<Card></Card>
 			<CardActions>
 				<Grid container>
