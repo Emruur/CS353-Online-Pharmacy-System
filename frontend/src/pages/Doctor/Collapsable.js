@@ -22,7 +22,7 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 const Collapsable = (props) => {
     const {prescription} = props;
 
-    console.log(prescription[0].status)
+    //console.log(prescription[0].pres_id)
 
     const [expand, setExpand] = useState(false);
 
@@ -34,7 +34,7 @@ const Collapsable = (props) => {
 		arrow = <ArrowDropUp />;
 	}
 
-	let title = `#${prescription[0].pres_id} Prescribed By: Dr. ${prescription[0].doctor_name} ${prescription[0].doctor_middle_name} ${prescription[0].doctor_surname}`;
+	let title = `#${prescription[0].pres_id} Prescribed To: ${prescription[0].prescribed_to}`;
     let subheader = `Prescription Date: ${prescription[0].date.substring(5, 16)}`
 
     return(
@@ -99,14 +99,26 @@ const Collapsable = (props) => {
                                 p: 2,
                             }}
                         >
-							<Button
-								color="primary"
-								size="large"
-								variant="contained"
-                                onClick={() => props.requestPrescription(prescription[0].pres_id)}
-							>
-								Re-request Prescription
-							</Button>
+                            <Box>
+                                <Button
+                                    color="primary"
+                                    size="large"
+                                    variant="contained"
+                                    onClick={() => props.requestPrescription(prescription[0].pres_id)}
+                                >
+                                    Accept Prescription
+                                </Button>
+                            </Box>
+                            <Box>
+                                <Button
+                                    color="primary"
+                                    size="large"
+                                    variant="contained"
+                                    onClick={() => props.requestPrescription(prescription[0].pres_id)}
+                                >
+                                    Reject Prescription
+                                </Button>
+                            </Box>
 						</Box>
 					</CardContent>
 				</Box>
