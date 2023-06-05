@@ -6,19 +6,33 @@ import { Button,Box,
 	TableHead,
 	TableRow,
     TextField,
-Tooltip,
-IconButton, 
-Card, CardHeader} from "@mui/material";
+	Tooltip,
+	IconButton, 
+	Card, 
+	CardHeader} from "@mui/material";
+import axios from 'axios_config';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import { useRef,createRef, useEffect, useState } from 'react';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
 const PharmacistDashboard = () => {
+	const datestart1= useRef();
+	const dateend1= useRef();
+	const datestart2= useRef();
+	const dateend2= useRef();
+
+	const token = "Bearer " + sessionStorage.getItem("token");
+
+	const [soldMeds, setSoldMeds] = useState(null);
+	const [displaySoldMeds, setDisplaySoldMeds] = useState(false);
+
+	
 	const medicines=[
 			{
 			"name": 'Aspirin',
@@ -185,6 +199,37 @@ const PharmacistDashboard = () => {
 			"revenue": '38000'
 		},
 	];
+	/* useEffect(() => {	}, [getsoldMeds]) */
+	async function getSoldMeds()  {
+		const dates= {start_date: datestart1.current.value,
+			end_date: dateend1.current.value};
+			
+			console.log(token);
+		await axios.get('/reports/sold-medicine', dates, {
+			headers: {
+				"Authorization": token
+			}
+		})
+			.then((res) => {
+				if (res && res.data) {
+					console.log(res.data)
+					let arr = []
+					for (let i = 0; i < res.data.length; i++) {
+							arr[i].push(res.data[i]);
+							
+					}
+					//console.log(arr)
+					setSoldMeds(arr)
+				}
+			})
+			.catch((err) => {
+				if (err && err.response) {
+					console.log("Error:",err.response.data)
+				}
+			})
+		setDisplaySoldMeds(true);
+	}
+		
 
 
 	return (
@@ -212,59 +257,65 @@ const PharmacistDashboard = () => {
         	</AccordionSummary>
 			<AccordionDetails>
 				<Box>
-				<TableRow>
-					<TableCell align="center">
-						<TextField
-						fullWidth
-						label="Start Date"
-						margin="normal"
-						name="startdate"
-						type="date"
-						variant="outlined"
-						required
-						/>
-
-					</TableCell>
-					<TableCell align="center">
-						<TextField
-						fullWidth
-						label="End Date"
-						margin="normal"
-						name="startdate"
-						type="date"
-						variant="outlined"
-						required
-						/>
-
-					</TableCell>
-					<TableCell align="right">
-						<Button>Generate</Button>
-
-					</TableCell>
-				</TableRow>
+					<Table>
+						<TableBody>
+									<TableRow>
+								<TableCell align="center">
+									<TextField
+									fullWidth
+									label="Start Date"
+									margin="normal"
+									name="startdate"
+									inputRef= {datestart1}
+									type="date"
+									variant="outlined"
+									required
+									/>
+								</TableCell>
+								<TableCell align="center">
+									<TextField
+									fullWidth
+									label="End Date"
+									margin="normal"
+									name="enddate"
+									inputRef= {dateend1}
+									type="date"
+									variant="outlined"
+									required
+									/>
+								</TableCell>
+								<TableCell align="right">
+									<Button onClick={() =>getSoldMeds()}>Generate</Button>
+								</TableCell>
+							</TableRow>
+						</TableBody>
+					</Table>
+				
 				</Box>
 				<Box>
-				<Table >
-					<TableHead sx={{ display: 'table-header-group' }}>
-					<TableRow>
+				<Table>
+					<TableHead>
+						<TableRow>
 						<TableCell align="center">Medicine Name</TableCell>
 						<TableCell align="center">Amount</TableCell>
-					</TableRow>
+						</TableRow>
 					</TableHead>
 					<TableBody>
-					{medicines.map((medicine, index) => (
-						<TableRow
-						key={index}
-						sx={{
-							border: 0,
-						}}
-						>
-						<TableCell align="center">{medicine.name}</TableCell>
-						<TableCell align="center">{medicine.med_cnt}</TableCell>
+						{soldMeds ? (
+						soldMeds.map((medicine, index) => (
+							<TableRow key={index}>
+							<TableCell align="center">{medicine.name}</TableCell>
+							<TableCell align="center">{medicine.med_cnt}</TableCell>
+							</TableRow>
+						))
+						) : (
+						<TableRow>
+							<TableCell align="center">-</TableCell>
+							<TableCell align="center">-</TableCell>
 						</TableRow>
-					))}
+						)}
 					</TableBody>
-				</Table>
+					</Table>
 				</Box>
 				<Box
 				sx={{
@@ -287,36 +338,40 @@ const PharmacistDashboard = () => {
         	</AccordionSummary>
 			<AccordionDetails>
 				<Box>
-				<TableRow>
-					<TableCell align="center">
-						<TextField
-						fullWidth
-						label="Start Date"
-						margin="normal"
-						name="startdate"
-						type="date"
-						variant="outlined"
-						required
-						/>
+					<Table>  
+						<TableBody>
+							<TableRow>
+						<TableCell align="center">
+							<TextField
+							fullWidth
+							label="Start Date"
+							margin="normal"
+							name="startdate"
+							type="date"
+							variant="outlined"
+							required
+							/>
+						</TableCell>
+						<TableCell align="center">
+							<TextField
+							fullWidth
+							label="End Date"
+							margin="normal"
+							name="startdate"
+							type="date"
+							variant="outlined"
+							required
+							/>
 
-					</TableCell>
-					<TableCell align="center">
-						<TextField
-						fullWidth
-						label="End Date"
-						margin="normal"
-						name="startdate"
-						type="date"
-						variant="outlined"
-						required
-						/>
+						</TableCell>
+						<TableCell align="right">
+							<Button>Generate</Button>
 
-					</TableCell>
-					<TableCell align="right">
-						<Button>Generate</Button>
-
-					</TableCell>
-				</TableRow>
+						</TableCell>
+					</TableRow>
+						</TableBody>
+					</Table>
+				
 				</Box>
 				<Box>
 				<Table title='1-)Purchased medicine between time frame'>
@@ -396,35 +451,35 @@ const PharmacistDashboard = () => {
 				</TableRow>
 				</Box>
 				<Box>
-				<Table title='1-)Purchased medicine between time frame'>
-					<TableHead sx={{ display: 'table-header-group' }}>
-					<TableRow>
-						<TableCell align="center">Company name</TableCell>
-						<TableCell align="center">Revenue</TableCell>
-					</TableRow>
-					</TableHead>
-					<TableBody>
-					{companyRevenues.map((company, index) => (
-						<TableRow
-						key={index}
-						sx={{
-							border: 0,
-						}}
-						>
-						<TableCell align="center">{company.name}</TableCell>
-						<TableCell align="center">{company.revenue}</TableCell>
+					<Table title='1-)Purchased medicine between time frame'>
+						<TableHead sx={{ display: 'table-header-group' }}>
+						<TableRow>
+							<TableCell align="center">Company name</TableCell>
+							<TableCell align="center">Revenue</TableCell>
 						</TableRow>
-					))}
-					</TableBody>
-				</Table>
-				</Box>
-				<Box
-				sx={{
-					display: 'flex',
-					justifyContent: 'flex-end',
-					p: 2,
-				}}
-				></Box>
+						</TableHead>
+						<TableBody>
+						{companyRevenues.map((company, index) => (
+							<TableRow
+							key={index}
+							sx={{
+								border: 0,
+							}}
+							>
+							<TableCell align="center">{company.name}</TableCell>
+							<TableCell align="center">{company.revenue}</TableCell>
+							</TableRow>
+						))}
+						</TableBody>
+					</Table>
+					</Box>
+					<Box
+					sx={{
+						display: 'flex',
+						justifyContent: 'flex-end',
+						p: 2,
+					}}
+					></Box>
 				</AccordionDetails>
 			</Accordion>
 
@@ -559,11 +614,6 @@ const PharmacistDashboard = () => {
 				></Box>
 				</AccordionDetails>
 			</Accordion>
-
-
-
-
-
 
           </PerfectScrollbar>
         </Card>
