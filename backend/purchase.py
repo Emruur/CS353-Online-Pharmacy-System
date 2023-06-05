@@ -122,8 +122,8 @@ def purchase():
                     print("med:",med)
 
                     query = """SELECT pres_id
-                        FROM Prescription NATURAL JOIN PrescribedMedication NATURAL JOIN Medicine
-                        WHERE Prescription.status='valid' and PrescribedMedication.med_id= '%s' or Medicine.prescription_type= 'white'
+                        FROM PrescribedMedication NATURAL JOIN Prescription
+                        WHERE Prescription.status='valid' and PrescribedMedication.med_id= '%s'
                     """
                     print("i")
                     cursor.execute(query,(med,))
@@ -132,15 +132,24 @@ def purchase():
                     print("s")
                     print("r:",result)
                     if not result:
-                        return jsonify({"msg": "Cant buy medicine not allowed"}), 400
-                    
-                    invalidated.append(result[0])
+                        query = """SELECT prescription_type
+                        FROM Medicine
+                        WHERE med_id= '%s'
+                        """
+                        cursor.execute(query,(med,))
+                        result = cursor.fetchone()
+                        print( "RESULT: ",result[0])
+                        if result[0]!="white":
+                            return jsonify({"msg": "Cant buy medicine not allowed"}), 400
+                    else:
+                        invalidated.append(result[0])
                 
                 print("--0")
                 #Invalidate Prescription
-                invalidated_str = ','.join(map(str, invalidated))
-                update_query = "UPDATE Prescription SET status='used' WHERE pres_id IN ({})".format(invalidated_str)
-                cursor.execute(update_query)
+                if(len(invalidated)):
+                    invalidated_str = ','.join(map(str, invalidated))
+                    update_query = "UPDATE Prescription SET status='used' WHERE pres_id IN ({})".format(invalidated_str)
+                    cursor.execute(update_query)
                     
                 
 
@@ -166,12 +175,17 @@ def purchase():
                 print("--2")
 
                 #deduct medicines from the storage of pharmacies
+
+                
                 for med in med_list:
                     cursor.execute("""
                     UPDATE StoredIn
                     SET amount = amount - %s
                     WHERE pharmacy_id = %s AND med_id = %s;
+
                     """, (med["quantity"], p_id, med["id"]))
+                    if cursor.rowcount == 0:
+                        return jsonify({"msg": "Phamacy does not hold the medicine"}), 400
 
                 print("--3")
 
