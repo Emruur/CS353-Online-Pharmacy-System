@@ -122,8 +122,8 @@ def purchase():
                     print("med:",med)
 
                     query = """SELECT pres_id
-                        FROM Prescription NATURAL JOIN PrescribedMedication
-                        WHERE Prescription.status='valid' and PrescribedMedication.med_id= '%s'
+                        FROM Prescription NATURAL JOIN PrescribedMedication NATURAL JOIN Medicine
+                        WHERE Prescription.status='valid' and PrescribedMedication.med_id= '%s' or Medicine.prescription_type= 'white'
                     """
                     print("i")
                     cursor.execute(query,(med,))
