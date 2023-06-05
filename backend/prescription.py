@@ -271,13 +271,32 @@ def requested_prescription_detail(request_id):
                 return jsonify({"msg": "Missing JSON in request"}), 400
             try:
                 conn.autocommit = False
-                pres_id = request.json.get("pres_id")
                 cursor.execute(f"""
                                 UPDATE requestedprescription
                                 SET status = '{status}'
                                 WHERE request_id = {request_id} AND doctor_id = {current_user};
                                 """)
+                if status == "accepted":
+                    cursor.execute(f""" SELECT * FROM Prescription p join RequestedPrescription rp on p.pres_id =
+                                    rp.pres_id where rp.request_id = {request_id}""")
+                    pres_data = cursor.fetchone()
+                    pres_id = pres_data[0]
 
+                    cursor.execute(f""" SELECT * FROM PrescribedMedication where pres_id = {pres_id}""")
+                    med_data = cursor.fetchall()
+                    print(med_data, pres_data)
+                    status_value = "valid"
+                    cursor.execute(
+                        "INSERT INTO Prescription (prescribed_by, prescribed_to, `date`, `type`, notes, status) VALUES (%s, %s, %s, %s, %s, %s)",
+                        (pres_data[1], pres_data[2],datetime.today().strftime('%Y-%m-%d') , pres_data[4], pres_data[5],
+                         status_value)
+                    )
+                    last_inserted_id = cursor.lastrowid
+
+                    for med in med_data:
+                        cursor.execute(
+                            "insert into PrescribedMedication (pres_id,med_id,med_count) VALUES (%s,%s, %s)",
+                            (last_inserted_id, med[2], med[1]))
                 conn.commit()
                 return jsonify({"msg": "Prescription updated successfully"}), 200
             except Exception as e:
