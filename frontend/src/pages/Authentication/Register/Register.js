@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import axios from 'axios_config/index';
 import { useFormik } from 'formik';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormPatientRegister } from 'components/RegisterForms/form-patient-register';
 import { FormDoctorRegister } from 'components/RegisterForms/form-doctor-register';
@@ -84,90 +84,22 @@ const specialityList = [
 	}
 ]
 
-const hospitalList = [
-	{
-		name: "Not chosen",
-		disabled: true,
-		id: -1
-	},
-	{
-		name: 'Ankara Şehir Hastanesi',
-		location: 'Çankaya',
-		id: 0
-	},
-	{
-		name: 'Ankara Etlik Şehir Hastanesi',
-		location: 'Keçiören',
-		id: 1
-	},
-	{
-		name: 'Gülhane Eğitim ve Araştırma Hastanesi',
-		location: 'Keçiören',
-		id: 2
-	},
-	{
-		name: 'Beytepe Murat Erdi Eker Devlet Hastanesi',
-		location: 'Çankaya',
-		id: 3
-	},
-	{
-		name: 'Haymana Devlet Hastanesi',
-		location: 'Haymana',
-		id: 4
-	},
-	{
-		name: 'Ankara Atatürk Sanatoryum Eğitim ve Araştırma Hastanesi',
-		location: 'Keçiören',
-		id: 5
-	},
-	{
-		name: 'Gazi Üniversitesi Tıp Fakültesi Gazi Hastanesi',
-		location: 'Yenimahalle',
-		id: 6
-	},
-	{
-		name: 'Hacettepe Üniversitesi İhsan Doğramacı Çocuk Hastanesi',
-		location: 'Çankaya',
-		id: 7
-	},
-];
-
-const pharList = [
+const educationList = [
 	{
 		name: "Not chosen",
 		disabled: true
 	},
 	{
-		name: 'Beyazıt Eczanesi',
-		location: 'Akyurt',
+		name: "Highschool"
 	},
 	{
-		name: 'Nur Eczanesi',
-		location: 'Akyurt',
+		name: "Bachelor's Degree"
 	},
 	{
-		name: 'Hayat Eczanesi',
-		location: 'Akyurt',
+		name: "Master's Degree"
 	},
 	{
-		name: 'Bahar Eczanesi',
-		location: 'Altındağ ',
-	},
-	{
-		name: 'Kaçkar Eczanesi',
-		location: 'Akyurt',
-	},
-	{
-		name: 'Nimet Eczanesi',
-		location: 'Keçiören ',
-	},
-	{
-		name: 'Birsen Eczanesi',
-		location: 'Keçiören',
-	},
-	{
-		name: 'Hazar Eczanesi',
-		location: 'Sincan',
+		name: "Doctoral Degree"
 	},
 ];
 
@@ -179,6 +111,9 @@ const Register = () => {
 	const [isCustomer, setIsCustomer] = useState(true);
 	const [isDoctor, setIsDoctor] = useState(false);
 	const [isPhar, setIsPhar] = useState(false);
+
+	const [hospitalList, setHospitalList] = useState([{name: "Not chosen", id: -1, disabled: true}]);
+	const [pharList, setPharList] = useState([{name: "Not chosen", id: -1, disabled: true}]);
 
 	const today = format(new Date(), "yyyy-MM-dd");
 
@@ -197,7 +132,9 @@ const Register = () => {
 				weight: '80',
 				birthday: today,
 				hospital_id: hospitalList[0].id,
-				speciality: specialityList[0].name
+				pharmacy_id: pharList[0].id,
+				speciality: specialityList[0].name,
+				education: educationList[0].name
 			},
 		},
 		validationSchema: Yup.object({
@@ -220,9 +157,11 @@ const Register = () => {
 					.number(),
 				birthday: Yup
 					.date(""),
-				hospital_id: Yup.string(),//.required('Name of hospital required'),
-				specialityList: Yup.string()
-			}).required()
+				hospital_id: Yup.string(),
+				pharmacy_id: Yup.string(),
+				specialityList: Yup.string(),
+				education: Yup.string()
+			})
 		}),
 		onSubmit: async (values) => {
 			const newValues = {
@@ -259,6 +198,57 @@ const Register = () => {
 				});
 		},
 	});
+
+	useEffect(() => {
+		const getHospitals = async () => {
+			await axios.get('/hospital/')
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data)
+						let arr = [{name: "Not chosen", id: -1}]
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push(
+								{
+									name: res.data[i].name,
+									id: res.data[i].hospital_id
+								}
+							);
+						}
+						setHospitalList(arr);
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log(err.response)
+					}
+				})
+		}
+		const getPharmacies = async () => {
+			await axios.get('/pharmacy/allPharmacies')
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data)
+						let arr = [{name: "Not chosen", id: -1}]
+						for (let i = 0; i < res.data.length; i++) {
+							arr.push(
+								{
+									name: res.data[i].name,
+									id: res.data[i].pharmacy_id
+								}
+							);
+						}
+						setPharList(arr);
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log(err.response)
+					}
+				})
+		}
+		getHospitals();
+		getPharmacies();
+	}, [])
 
 	return (
 		<>
@@ -346,6 +336,7 @@ const Register = () => {
 							<FormPharmacistRegister
 								formik={formik}
 								pharList={pharList}
+								educationList={educationList}
 							/>
 						)}
 						</Box>

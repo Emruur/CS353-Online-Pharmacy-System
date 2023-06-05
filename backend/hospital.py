@@ -31,7 +31,7 @@ def getAllHospitals():
     cursor = conn.cursor()
 
     try:
-        keys = ["hospital_id", "address_id", "name"]
+        keys = ["hospital_id", "name", "address_id"]
         cursor.execute(
             "SELECT * FROM Hospital"
         )

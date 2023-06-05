@@ -181,13 +181,48 @@ export const FormDoctorRegister = (props) => {
                 <CardContent>
                     <Grid container justifyContent="center" direction="row" spacing={3}>
                         <Grid item md={6} xs={12}>
+                            <TextField
+                                fullWidth
+                                label="Height"
+                                margin="normal"
+                                name="typeSpecific.height"
+                                onBlur={props.formik.handleBlur}
+                                onChange={props.formik.handleChange}
+                                type="number"
+                                value={props.formik.values.typeSpecific.height}
+                                variant="outlined"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">cm</InputAdornment>,
+                                }}
+                                required
+                            />
+                        </Grid>
+                        <Grid item md={6} xs={12}>     
+                            <TextField
+                                fullWidth
+                                label="Weight"
+                                margin="normal"
+                                name="typeSpecific.weight"
+                                onBlur={props.formik.handleBlur}
+                                onChange={props.formik.handleChange}
+                                type="number"
+                                value={props.formik.values.typeSpecific.weight}
+                                variant="outlined"
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">kg</InputAdornment>,
+                                }}
+                                required
+                            />
+                        </Grid>
+                    </Grid>
+                </CardContent>
+                <Divider/>
+                <CardHeader title="Occupation Information" subheader="Required fields are indicated as *" />
+                <Divider/>
+                <CardContent>
+                    <Grid container justifyContent="center" direction="row" spacing={3}>
+                        <Grid item md={6} xs={12}>
                           <TextField
-                                error={Boolean(
-                                    props.formik.touched.hospital && props.formik.errors.hospital
-                                )}
-                                helperText={
-                                    props.formik.touched.hospital && props.formik.errors.hospital
-                                }
                                 select
                                 fullWidth
                                 defaultValue={""}
