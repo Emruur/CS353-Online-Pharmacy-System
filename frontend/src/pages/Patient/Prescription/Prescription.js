@@ -46,7 +46,7 @@ const Prescription = () => {
             })
                 .then((res) => {
                     if (res && res.data) {
-                        console.log(res.data)
+                        //console.log(res.data)
                         let arr = []
                         for (let i = 0; i < res.data.length; i++) {
                             if (arr[res.data[i].pres_id]) {
@@ -55,7 +55,7 @@ const Prescription = () => {
                                 arr[res.data[i].pres_id] = [res.data[i]];
                             }
                         }
-                        setPrescriptions(arr);
+                        setReqPrescriptions(arr);
                         console.log(arr)
                     }
                 })
@@ -65,6 +65,7 @@ const Prescription = () => {
                     }
                 })
         }
+        getReqPrescription();
         getAllPrescription();
     }, []);
 
@@ -93,8 +94,8 @@ const Prescription = () => {
     return(
         <>
             <title>Prescriptions</title>
-            <Container maxWidth="md">
-                <Grid container justifyContent="center" direction="row" spacing={3}>
+            <Container maxWidth="lg">
+                <Grid container justifyContent="center" direction="row" spacing={6}>
                     <Grid item md={6} xs={12}>
                         <Box sx={{ my: 3 }}>
                             <Typography color="textPrimary" variant="h4">
@@ -116,7 +117,7 @@ const Prescription = () => {
                                 Requested Prescriptions
                             </Typography>
                         </Box>
-                        {prescriptions.map((prescription, index) => (
+                        {reqPrescriptions.map((prescription, index) => (
                             <Box key={index}>
                                 <Collapsable 
                                     prescription={prescription}
@@ -125,8 +126,7 @@ const Prescription = () => {
                             </Box>
                         ))}
                     </Grid>
-                </Grid>
-                
+                </Grid>  
 			</Container>
         </>
     );
