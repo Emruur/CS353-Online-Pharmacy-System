@@ -419,7 +419,7 @@ const MedicineList = (props) => {
 											<Tooltip>
 												<IconButton
 													onClick={() => {props.addToShoppingCart(medicine)}}
-													disabled={medicine.prescribed === "No"}
+													disabled={medicine.prescribed === "No" && medicine.prescription_type !== "white"}
 												>
 													<AddShoppingCartIcon />
 												</IconButton>

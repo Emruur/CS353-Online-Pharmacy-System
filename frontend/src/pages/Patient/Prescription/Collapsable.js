@@ -22,7 +22,7 @@ import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 const Collapsable = (props) => {
     const {prescription} = props;
 
-    console.log(props.prescriptions)
+    //console.log(props.prescriptions)
 
     const [expand, setExpand] = useState(false);
 
@@ -35,7 +35,7 @@ const Collapsable = (props) => {
 	}
 
 	let title = `#${prescription[0].pres_id} Prescribed By: Dr. ${prescription[0].doctor_name} ${prescription[0].doctor_middle_name} ${prescription[0].doctor_surname}`;
-    let subheader = `Prescription Date: ${prescription[0].date.substring(5, 16)}`
+    let subheader = `Prescription Date: ${prescription[0].date.substring(5, 16)} Status: ${prescription[0].status}`
 
     return(
         <>
@@ -92,7 +92,7 @@ const Collapsable = (props) => {
                                 </Table>
                             </Box>
                         </PerfectScrollbar>
-                        {prescription[0].status === "expired" &&<Box
+                        {(prescription[0].status === "expired" || prescription[0].status === "used") &&<Box
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'flex-end',
