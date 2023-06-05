@@ -99,27 +99,6 @@ export const FormPharmacistRegister = (props) => {
                                 required
                             />
                         </Grid>
-                        <Grid item md={6} xs={12}>
-                            <TextField
-                                select
-                                fullWidth
-                                label="Pharmacy"
-                                margin="normal"
-                                name="pharmacy"
-                                onBlur={props.formik.handleBlur}
-                                onChange={props.formik.handleChange}
-                                type="text"
-                                variant="outlined"
-                                required
-                                value={props.formik.values.pharmacy}
-                            >
-                                {props.pharList.map((pharmacy, index) => (
-                                    <MenuItem key={index} value={pharmacy.name} disabled={pharmacy.disabled}>
-                                        {pharmacy.name}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
                     </Grid>
                 </CardContent>
                 <Divider/>
@@ -234,6 +213,55 @@ export const FormPharmacistRegister = (props) => {
                                 }}
                                 required
                             />
+                        </Grid>
+                    </Grid>
+                </CardContent>
+                <Divider/>
+                <CardHeader title="Occupation Information" subheader="Required fields are indicated as *" />
+                <Divider/>
+                <CardContent>
+                    <Grid container justifyContent="center" direction="row" spacing={3}>
+                        <Grid item md={6} xs={12}>
+                            <TextField
+                                select
+                                fullWidth
+                                label="Pharmacy"
+                                margin="normal"
+                                name="typeSpecific.pharmacy_id"
+                                onBlur={props.formik.handleBlur}
+                                onChange={props.formik.handleChange}
+                                type="text"
+                                variant="outlined"
+                                required
+                                value={props.formik.values.typeSpecific.pharmacy_id}
+                            >
+                                {props.pharList.map((pharmacy, index) => (
+                                    <MenuItem key={index} value={pharmacy.id} disabled={pharmacy.disabled}>
+                                        {pharmacy.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        </Grid>
+                        <Grid item md={6} xs={12}>
+                            <TextField
+                                select
+                                fullWidth
+                                label="Education"
+                                margin="normal"
+                                name="typeSpecific.education"
+                                onBlur={props.formik.handleBlur}
+                                onChange={props.formik.handleChange}
+                                type="text"
+                                variant="outlined"
+                                required
+                                value={props.formik.values.typeSpecific.education}
+                            >
+                                {props.educationList.map((education, index) => (
+                                    <MenuItem key={index} value={education.name} disabled={education.disabled}>
+                                        {education.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
                         </Grid>
                     </Grid>
                 </CardContent>
