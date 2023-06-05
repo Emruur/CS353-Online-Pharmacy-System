@@ -1,18 +1,38 @@
 import { Box, MenuItem, MenuList, Popover, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import React from 'react';
+import {React,useEffect,useLayoutEffect,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios_config';
 
 export const AccountPopover = (props) => {
 	const { anchorEl, onClose, open, ...other } = props;
-
+	const token= "Bearer " + sessionStorage.getItem("token")
 	const navigate = useNavigate();
 
 	const name =
 		sessionStorage.getItem('firstName') +
 		' ' +
 		sessionStorage.getItem('lastName');
-	const balance = sessionStorage.getItem('balance');
+
+	const [balance,setBalance]= useState(0);
+
+	useEffect((
+	)=>{
+		axios.get('purchase/wallet',{
+			headers:{
+				Authorization: token
+			}
+		})
+		  .then(response => {
+			console.log(response.data)
+			setBalance(response.data["balance"])
+		  })
+
+		  .catch(error => {
+			console.error('Error fetching data: ', error);
+		  });
+	},[])
+	
 
 	const handleSignOut = async () => {
 		sessionStorage.clear();

@@ -1,4 +1,9 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import axios from 'axios_config';
+import {
+	Alert,
+	AlertTitle,
+} from '@mui/material';
 import {
 	Box,
 	Button,
@@ -22,7 +27,10 @@ import {
 } from '../utils';
 
 export const Visa = () => {
+	const token= "Bearer " + sessionStorage.getItem("token")
 	const [expand, setExpand] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
+	const [successMessage, setSuccessMessage] = useState('');
 
 	const [amount, setAmount] = useState(0);
 
@@ -67,6 +75,23 @@ export const Visa = () => {
 	const handleSubmit = () => {
 		if (amount !== 0) {
 			const balance = parseInt(sessionStorage.getItem("balance")) + parseInt(amount)
+			const data = {
+				amount: parseInt(amount)
+			};
+			const headers= {
+				Authorization: token
+			}
+			
+			  
+			  axios.put('purchase/wallet', data, {headers})
+				.then((response) => {
+				  console.log(response.data);
+				  setSuccessMessage("Transaction Succesfull");
+				})
+				.catch((error) => {
+				  setErrorMessage("Transaction failed")
+				  console.error(error);
+				});
 			console.log(balance)
 			sessionStorage.setItem("balance", balance)
 		} else {
@@ -78,6 +103,28 @@ export const Visa = () => {
 	return (
 		<>
 			<title>Visa</title>
+			{successMessage.trim().length !== 0 && (
+                    <Alert
+                        severity="success"
+                        onClose={() => {
+                            setSuccessMessage('');
+                        }}
+                    >
+                        <AlertTitle>Success</AlertTitle>
+                        {successMessage}
+                    </Alert>
+                )}
+                {errorMessage.trim().length !== 0 && (
+                    <Alert
+                        severity="error"
+                        onClose={() => {
+                            setErrorMessage('');
+                        }}
+                    >
+                        <AlertTitle>Error</AlertTitle>
+                        {errorMessage}
+                    </Alert>
+                )}
 			<Card></Card>
 			<CardActions>
 				<Grid container>
