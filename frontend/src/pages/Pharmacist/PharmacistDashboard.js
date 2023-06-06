@@ -32,6 +32,9 @@ const PharmacistDashboard = () => {
 	const [soldMeds, setSoldMeds] = useState(null);
 	const [displaySoldMeds, setDisplaySoldMeds] = useState(false);
 
+	const [ageRange, setAgeRange] = useState(null);
+	const [displayAgeRange, setDisplayAgeRange] = useState(false);
+
 	
 	const medicines=[
 			{
@@ -215,7 +218,6 @@ const PharmacistDashboard = () => {
 					console.log(res.data)
 					let arr = []
 							arr.push(res.data.result);
-					console.log("Bunlar:",arr)
 					setSoldMeds(arr)
 				}
 			})
@@ -225,6 +227,33 @@ const PharmacistDashboard = () => {
 				}
 			})
 		setDisplaySoldMeds(true);
+	}
+
+	async function getAgeRange()  {
+		const dates= {start_date: datestart2.current.value,
+			end_date: dateend2.current.value};
+			
+			console.log(token);
+		await axios.post('/reports/min-max-age', dates, {
+			headers: {
+				"Authorization": token
+			}
+		})
+			.then((res) => {
+				if (res && res.data) {
+					console.log(res.data)
+					let arr = []
+							arr.push(res.data.result);
+					console.log("Bunlar:",arr)
+					setAgeRange(arr)
+				}
+			})
+			.catch((err) => {
+				if (err && err.response) {
+					console.log("Error:",err.response)
+				}
+			})
+		setDisplayAgeRange(true);
 	}
 		
 
@@ -344,6 +373,7 @@ const PharmacistDashboard = () => {
 							label="Start Date"
 							margin="normal"
 							name="startdate"
+							inputRef={datestart2}
 							type="date"
 							variant="outlined"
 							required
@@ -354,7 +384,8 @@ const PharmacistDashboard = () => {
 							fullWidth
 							label="End Date"
 							margin="normal"
-							name="startdate"
+							inputRef={dateend2}
+							name="enddate"
 							type="date"
 							variant="outlined"
 							required
@@ -362,7 +393,7 @@ const PharmacistDashboard = () => {
 
 						</TableCell>
 						<TableCell align="right">
-							<Button>Generate</Button>
+							<Button onClick={() =>getAgeRange()}>Generate</Button>
 
 						</TableCell>
 					</TableRow>
@@ -381,7 +412,8 @@ const PharmacistDashboard = () => {
 					</TableRow>
 					</TableHead>
 					<TableBody>
-					{medicines.map((medicine, index) => (
+					{ageRange&& displayAgeRange ? (
+						ageRange[0].map((medicine, index) => (
 						<TableRow
 						key={index}
 						sx={{
@@ -389,11 +421,17 @@ const PharmacistDashboard = () => {
 						}}
 						>
 						<TableCell align="center">{medicine.name}</TableCell>
-						<TableCell align="center">{medicine.min_age}</TableCell>
-						<TableCell align="center">{medicine.max_age}</TableCell>
+						<TableCell align="center">{medicine.min}</TableCell>
+						<TableCell align="center">{medicine.max}</TableCell>
 
 						</TableRow>
-					))}
+					))):
+					<TableRow>
+							<TableCell align="center">-</TableCell>
+							<TableCell align="center">-</TableCell>
+							<TableCell align="center">-</TableCell>
+						</TableRow>
+					}
 					</TableBody>
 				</Table>
 				</Box>
