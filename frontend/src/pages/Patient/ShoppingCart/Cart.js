@@ -132,7 +132,7 @@ const Cart = () => {
 		let tempTotal = 0;
 		for (let i = 0; i < list.length; i++) {
 			console.log(list[i].total);
-			tempTotal = list[i].total + tempTotal;
+			tempTotal = list[i].total + parseFloat(tempTotal);
 			setTotal(tempTotal);
 		}
 	}
@@ -142,7 +142,7 @@ const Cart = () => {
 		for (let i = 0; i < copy.length; i++) {
 			if (copy[i].medicine.name === medicine.name) {
 				copy[i].quantity++;
-				copy[i].total += copy[i].medicine.price;
+				copy[i].total += parseFloat(copy[i].medicine.price);
 			}
 		}
 		setCartItems(copy);
@@ -155,7 +155,7 @@ const Cart = () => {
 		for (let i = 0; i < copy.length; i++) {
 			if (copy[i].medicine.name === medicine.name) {
 				copy[i].quantity--;
-				copy[i].total -= copy[i].medicine.price;
+				copy[i].total -= parseFloat(copy[i].medicine.price);
 			}
 		}
 		setCartItems(copy);
