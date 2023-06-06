@@ -49,7 +49,6 @@ const PharmacistStock = (props) => {
 	//console.log('anan',medicines);
 	//console.log('anan',medicinenames);
 
-
 	const [type, setType] = useState('none');
 
 	const [filteredMedinices, setFilteredMedinices] = useState(medicines);
@@ -101,7 +100,6 @@ const PharmacistStock = (props) => {
 
 	  console.log(lineRefs.current[index].current.value);
 	}
-<<<<<<< Updated upstream
 
 	async function handleStockUpdate( id) {
 		const request= {med_id: id,
@@ -134,16 +132,6 @@ const PharmacistStock = (props) => {
 
 	  console.log();
 	}
-
-	useEffect(() => {
-
-
-
-
-
-	},[])
-=======
->>>>>>> Stashed changes
   
     const prescription_type = [
         {

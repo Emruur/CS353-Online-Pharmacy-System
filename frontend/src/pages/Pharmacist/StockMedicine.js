@@ -3,8 +3,6 @@ import { PharmacistStock } from './PharmacistStock';
 import axios from 'axios_config';
 import { useEffect, useState } from 'react';
 
-
-
 const StockMedicine = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
