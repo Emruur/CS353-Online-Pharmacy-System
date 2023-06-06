@@ -57,12 +57,11 @@ def sold_med_report():
                                 SELECT m.name, SUM(pm.purchase_count) AS count
                                 FROM Medicine m
                                 JOIN (
-                                    SELECT pm.med_id, SUM(pm.purchase_count) AS purchase_count
+                                    SELECT pm.med_id, pm.purchase_count
                                     FROM PurchasedMedicine pm
                                     JOIN Purchase p ON p.purchase_id = pm.purchase_id
                                     WHERE p.date BETWEEN %s AND %s
                                     AND p.pharmacy_id = %s
-                                    GROUP BY pm.med_id
                                 ) pm ON pm.med_id = m.med_id
                                 GROUP BY m.name;
                 """,
