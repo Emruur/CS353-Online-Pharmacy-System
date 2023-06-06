@@ -50,6 +50,11 @@ const PharmacistStock = (props) => {
 	//console.log('anan',medicinenames);
 
 	const [type, setType] = useState('none');
+	const [med_id, setMedID] = useState(1);
+
+	const handleMedChange = (event) => {
+		setMedID(event.target.value)
+	}
 
 	const [filteredMedinices, setFilteredMedinices] = useState(medicines);
 
@@ -101,11 +106,12 @@ const PharmacistStock = (props) => {
 	  console.log(lineRefs.current[index].current.value);
 	}
 
-	async function handleStockUpdate( id) {
-		const request= {med_id: id,
+	async function handleStockUpdate() {
+		const request= {med_id: med_id,
 						med_no: amountRef.current.value};
+			console.log(request);
 			await axios
-				.post('/pharmacy/mypharmacy', request, {
+				.put('/pharmacy/mypharmacy', request, {
 					headers: {
                     	"Authorization": token
                 	}
@@ -120,7 +126,7 @@ const PharmacistStock = (props) => {
 					if (err && err.response) {
 						console.log("Error:", err.response.data);
 						if (err.response.status === 401) {
-							setErrorMessage('Invalid TCKN or password');
+							//setErrorMessage('Invalid TCKN or password');
 						} else if (err.response.status === 400) {
 							setErrorMessage(err.response.data.msg);
 						}
@@ -130,7 +136,6 @@ const PharmacistStock = (props) => {
 			});
 		redirect('/pharmacystock');
 
-	  console.log();
 	}
   
     const prescription_type = [
@@ -449,13 +454,14 @@ const PharmacistStock = (props) => {
                 <DialogContentText>
                 You can add a medicine to stock by selecting the name and selecting an amount.
             </DialogContentText>
-			<form onSubmit={formik.handleSubmit}>
             <TextField
 				autoFocus
 				margin="dense"
                 id="medicinename"
                 select
                 label="Name"
+				value={med_id}
+				onChange={handleMedChange}
                 fullWidth
                 SelectProps={{
                     native: true,
@@ -464,7 +470,7 @@ const PharmacistStock = (props) => {
                 variant="standard"
             >
             {medicinenames.map((medicine,index) => (
-            <option key={medicine.name} value={medicine.med}>
+            <option key={medicine.name} value={medicine.med_id}>
               {medicine.name}
             </option>
             ))}
@@ -480,7 +486,6 @@ const PharmacistStock = (props) => {
                 fullWidth
                 variant="standard"
             />
-			</form>
             </DialogContent>
                 <DialogActions>
                 <Button onClick={handleCloseMedicineStock}>Cancel</Button>
