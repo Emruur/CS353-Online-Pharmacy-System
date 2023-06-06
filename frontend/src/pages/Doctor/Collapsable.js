@@ -16,6 +16,7 @@ import {
     TableRow,
 } from '@mui/material';
 import { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 import axios from 'axios_config';
@@ -135,56 +136,76 @@ const Collapsable = (props) => {
                                 </Table>
                             </Box>
                         </PerfectScrollbar>
-                        <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            p: 2,
-                        }}
-                        >
-                        <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            p: 2,
-                        }}
-                        >
-                        {isAccepted || isRejected ? (
-                            <Box>
-                            {isAccepted ? (
-                                <p>Prescription accepted successfully!</p>
+                        { props.type === "req" &&
+                        <>
+                            <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                p: 2,
+                            }}
+                            >
+                            {isAccepted || isRejected ? (
+                                <Box>
+                                {isAccepted ? (
+                                    <p>Prescription accepted successfully!</p>
+                                ) : (
+                                    <p>Prescription rejected successfully!</p>
+                                )}
+                                </Box>
                             ) : (
-                                <p>Prescription rejected successfully!</p>
+                                <>
+                                <Box>
+                                    <Button
+                                    color="primary"
+                                    size="large"
+                                    variant="contained"
+                                    onClick={handleAcceptPrescription}
+                                    disabled={isAccepted || isRejected}
+                                    >
+                                    Accept Prescription
+                                    </Button>
+                                </Box>
+                                <Box>
+                                    <Button
+                                    color="primary"
+                                    size="large"
+                                    variant="contained"
+                                    onClick={handleRejectPrescription}
+                                    disabled={isAccepted || isRejected}
+                                    >
+                                    Reject Prescription
+                                    </Button>
+                                </Box>
+                                </>
                             )}
                             </Box>
-                        ) : (
-                            <>
-                            <Box>
-                                <Button
-                                color="primary"
-                                size="large"
-                                variant="contained"
-                                onClick={handleAcceptPrescription}
-                                disabled={isAccepted || isRejected}
-                                >
-                                Accept Prescription
-                                </Button>
-                            </Box>
-                            <Box>
-                                <Button
-                                color="primary"
-                                size="large"
-                                variant="contained"
-                                onClick={handleRejectPrescription}
-                                disabled={isAccepted || isRejected}
-                                >
-                                Reject Prescription
-                                </Button>
-                            </Box>
                             </>
-                        )}
-                        </Box>
-                        </Box>
+                        }
+                        { props.type === "all" &&
+                            <>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'flex-end',
+                                        p: 2,
+                                    }}
+                                >
+                                    <Box>
+                                        <Button
+                                            color="primary"
+                                            size="large"
+                                            variant="contained"
+                                            onClick={() => props.deletePres(prescription[0].pres_id)}
+                                            disabled={isAccepted || isRejected}
+                                        >
+                                            Delete Prescription
+                                        </Button>
+                                    </Box>
+                                </Box>
+                            </>
+                        }
+                        
 					</CardContent>
 				</Box>
 			</Collapse>
