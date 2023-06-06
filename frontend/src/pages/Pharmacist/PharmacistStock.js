@@ -47,9 +47,6 @@ const PharmacistStock = (props) => {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
 
-	//console.log('anan',medicines);
-	//console.log('anan',medicinenames);
-
 	const [type, setType] = useState('none');
 	const [med_id, setMedID] = useState(1);
 
@@ -105,7 +102,7 @@ const PharmacistStock = (props) => {
 			})
 				.then((res) => {
 					if (res && res.data) {
-						console.log(res.data);
+						//console.log(res.data);
 						navigate('/pharmacystock');
 					}
 				})
@@ -123,13 +120,13 @@ const PharmacistStock = (props) => {
 			});
 		redirect('/pharmacystock');
 
-	  console.log(lineRefs.current[index].current.value);
+	  //console.log(lineRefs.current[index].current.value);
 	}
 
 	async function handleStockUpdate() {
 		const request= {med_id: med_id,
 						med_no: amountRef.current.value};
-			console.log(request);
+			//console.log(request);
 			await axios
 				.put('/pharmacy/mypharmacy', request, {
 					headers: {
@@ -138,7 +135,7 @@ const PharmacistStock = (props) => {
 			})
 				.then((res) => {
 					if (res && res.data) {
-						console.log(res.data);
+						//console.log(res.data);
 						navigate('/pharmacystock');
 					}
 				})
@@ -154,8 +151,9 @@ const PharmacistStock = (props) => {
 						setErrorMessage('Connection error');
 					}
 			});
-		redirect('/pharmacystock');
-
+			window.location.reload();
+			handleCloseMedicineStock();
+			handleClose();
 	}
 
 	async function handleNewMedicineSubmit() {
@@ -178,7 +176,7 @@ const PharmacistStock = (props) => {
 			})
 				.then((res) => {
 					if (res && res.data) {
-						console.log(res.data);
+						//console.log(res.data);
 						props.displayMessage(formMedName.current.value,0);
 						navigate('/pharmacystock');
 					}
@@ -202,6 +200,7 @@ const PharmacistStock = (props) => {
 						setErrorMessage('Connection error');
 					}
 			});
+			window.location.reload();
 			handleCloseNewMedicine();
 			handleClose();
 		}
@@ -454,7 +453,7 @@ const PharmacistStock = (props) => {
             </DialogContent>
                 <DialogActions>
                 <Button onClick={handleCloseNewMedicine}>Cancel</Button>
-				<Button onClick={()=> handleNewMedicineSubmit()} disabled= {submitButtonDisable}>Submit</Button>
+				<Button onClick={()=> handleNewMedicineSubmit()} >Submit</Button>
                 </DialogActions>
             </Dialog>
 
