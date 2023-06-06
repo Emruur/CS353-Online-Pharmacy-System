@@ -82,7 +82,7 @@ def sold_med_report():
         return jsonify({"msg": "error"}), 500
 
 
-@reports_blueprint.route('/min-max-age', methods=['GET'])
+@reports_blueprint.route('/min-max-age', methods=['POST'])
 @jwt_required()
 def max_min_rep():
     """
@@ -135,7 +135,7 @@ def max_min_rep():
         return jsonify({"msg": "error"}), 500
 
 
-@reports_blueprint.route('/avg-revenue', methods=['GET'])
+@reports_blueprint.route('/avg-revenue', methods=['POST'])
 @jwt_required()
 def avg_revenue():
     """
@@ -181,7 +181,7 @@ def avg_revenue():
         return jsonify({"msg": "error"}), 500
 
 
-@reports_blueprint.route('/max-purchased', methods=['GET'])
+@reports_blueprint.route('/max-purchased', methods=['POST'])
 @jwt_required()
 def max_purchased():
     """
@@ -242,7 +242,7 @@ def max_purchased():
         return jsonify({"msg": "error"}), 500
 
 
-@reports_blueprint.route('/monthly-revenue', methods=['GET'])
+@reports_blueprint.route('/monthly-revenue', methods=['POST'])
 @jwt_required()
 def monthly_revenue():
     """

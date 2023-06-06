@@ -214,11 +214,8 @@ const PharmacistDashboard = () => {
 				if (res && res.data) {
 					console.log(res.data)
 					let arr = []
-					for (let i = 0; i < res.data.length; i++) {
-							arr[i].push(res.data[i]);
-							
-					}
-					//console.log(arr)
+							arr.push(res.data.result);
+					console.log("Bunlar:",arr)
 					setSoldMeds(arr)
 				}
 			})
@@ -301,11 +298,11 @@ const PharmacistDashboard = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{soldMeds ? (
-						soldMeds.map((medicine, index) => (
+						{soldMeds&& displaySoldMeds ? (
+						soldMeds[0].map((medicine, index) => (
 							<TableRow key={index}>
 							<TableCell align="center">{medicine.name}</TableCell>
-							<TableCell align="center">{medicine.med_cnt}</TableCell>
+							<TableCell align="center">{medicine.count}</TableCell>
 							</TableRow>
 						))
 						) : (
