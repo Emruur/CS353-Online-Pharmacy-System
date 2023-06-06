@@ -71,7 +71,6 @@ const Cart = () => {
 	}
 
 	const checkout = async () => {
-		console.log(balance, total)
 		if (balance < total || balance === 0) {
 			setErrorMessage('Not enough money on balance for transaction! Please make payment and come back again.');
 		} else {
@@ -95,8 +94,10 @@ const Cart = () => {
 						}
 						setCartItems(copy);
 						calculateTotal()
+						window.sessionStorage.setItem("balance", balance-total)
 						window.sessionStorage.setItem("literalcartting", JSON.stringify(list));
-						setSuccessMessage(`Checkout complete. New balance ${sessionStorage.getItem("balance")}`);
+						getBalance();
+						setSuccessMessage("Checkout complete!");
 					}
 				})
 				.catch((err) => {
@@ -104,17 +105,6 @@ const Cart = () => {
 						console.log(err.response)
 					}
 				})
-			/*sessionStorage.setItem("balance", balance - total);
-			let copy = [...list];
-			for (let i = 0; i < copy.length; i++) {
-				copy[i].quantity = 0;
-				copy[i].total = 0;
-			}
-			setCartItems(copy);
-			calculateTotal()
-			window.sessionStorage.setItem("literalcartting", list);
-			setBalance(sessionStorage.getItem("balance"));
-			setSuccessMessage(`Checkout complete. New balance ${balance}`);*/
 		}
 	}
 
