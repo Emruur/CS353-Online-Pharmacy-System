@@ -381,8 +381,8 @@ def requested_by_patient():
     cursor = conn.cursor()
     if request.method == 'GET':
         try:
-            keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
-                    "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
+            keys = ["doctor_name", "doctor_middle_name", "doctor_surname", "med_count", "med_id", "used_for", "side_effects",
+                    "prescribed_by", "prescribed_to" ,"name", "status", "prescription_type", "notes", "pres_id", "date"]
             cursor.execute(
                 """select first_name, middle_name, surname, med_count, med_id, used_for, side_effects, prescribed_by, prescribed_to,
                 name, status, type, notes, pres_id, date from requested_presc_user where prescribed_to = %s""",
