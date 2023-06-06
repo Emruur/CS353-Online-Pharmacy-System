@@ -54,16 +54,16 @@ def sold_med_report():
             if pharmacist is not None:
                 pharmacy_id = pharmacist[2]
                 cursor.execute("""
-                                SELECT name, COUNT(*) 
-                                FROM Medicine 
-                                WHERE med_id IN (
-                                    SELECT med_id 
-                                    FROM PurchasedMedicine 
-                                    JOIN Purchase p ON p.purchase_id = PurchasedMedicine.purchase_id 
-                                    WHERE date BETWEEN %s AND %s 
-                                    AND pharmacy_id = %s
-                                )
-                                GROUP BY name;
+                                SELECT m.name, SUM(pm.purchase_count) AS count
+                                FROM Medicine m
+                                JOIN (
+                                    SELECT pm.med_id, pm.purchase_count
+                                    FROM PurchasedMedicine pm
+                                    JOIN Purchase p ON p.purchase_id = pm.purchase_id
+                                    WHERE p.date BETWEEN %s AND %s
+                                    AND p.pharmacy_id = %s
+                                ) pm ON pm.med_id = m.med_id
+                                GROUP BY m.name;
                 """,
                                (start_date, end_date, pharmacy_id))
 

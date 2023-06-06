@@ -31,7 +31,6 @@ import {
 	Typography,
 } from '@mui/material';
 import axios from 'axios_config';
-import defaultpic from 'assets/images/default.png'
 import { useRef,createRef, useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
@@ -47,8 +46,8 @@ const PharmacistStock = (props) => {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState('');
 
-	console.log('anan',medicines);
-	console.log('anan',medicinenames);
+	//console.log('anan',medicines);
+	//console.log('anan',medicinenames);
 
 
 	const [type, setType] = useState('none');
@@ -102,6 +101,7 @@ const PharmacistStock = (props) => {
 
 	  console.log(lineRefs.current[index].current.value);
 	}
+<<<<<<< Updated upstream
 
 	async function handleStockUpdate( id) {
 		const request= {med_id: id,
@@ -142,9 +142,9 @@ const PharmacistStock = (props) => {
 
 
 	},[])
+=======
+>>>>>>> Stashed changes
   
-
-
     const prescription_type = [
         {
           value: 'white',
@@ -207,38 +207,40 @@ const PharmacistStock = (props) => {
 
 	const open = Boolean(anchorEl);
 	const id = open ? 'simple-popover' : undefined;
+	const initialValues = {
+		medicinename: '',
+		prescriptiontype: 'White',
+		usedfor: '',
+		dosage: '',
+		side_effects: '',
+		risk_factors: '',
+		preserve_conditions: '',
+		prod_firm: '',
+		price: '',
+		medtype: '',
+		minage: '',
+	  };
 
-
+	const validationSchema = Yup.object({
+		medicinename: Yup.string().max(50).required('Medicine name is required'),
+		prescriptiontype: Yup.string().max(50).required('Prescription type is required'),
+		usedfor: Yup.string().max(50).required('Used for is required'),
+		dosage: Yup.string().max(50).required('Dosage is required'),
+		side_effects: Yup.string().required('Side effect is required'),
+		risk_factors: Yup.string().required('Risk factor is required'),
+		preserve_conditions: Yup.string().required('Preserve condition is required'),
+		prod_firm: Yup.string(),//.required('Name of pharmacy is required'),
+		price: Yup.number().min(1,'Price cannot be zero').required('Price is required'),
+		medtype: Yup.string().required('Medicine type is required'),
+		minage: Yup.number().required('Minimum age is required'),
+	});
 
     const formik = useFormik({
-		initialValues: {
-			medicinename: 'anan',
-			prescriptiontype: '',
-			usedfor: '',
-			dosage: '',
-			side_effects: '',
-			risk_factors: '',
-			preserve_conditions: '',
-			prod_firm: '',
-            price: '',
-            medtype: '',
-            minage: '',
-		},
-		validationSchema: Yup.object({
-			medicinename: Yup.string().max(50).required('Medicine name is required'),
-			prescriptiontype: Yup.string().max(50).required('Prescription type is required'),
-			usedfor: Yup.string().max(50).required('Used for is required'),
-			dosage: Yup.string().max(50).required('Dosage is required'),
-			side_effects: Yup.string().required('Side effect is required'),
-            risk_factors: Yup.string().required('Risk factor is required'),
-			preserve_conditions: Yup.string().required('Preserve condition is required'),
-            prod_firm: Yup.string(),//.required('Name of pharmacy is required'),
-            price: Yup.number().min(1,'Price cannot be zero').required('Price is required'),
-            medtype: Yup.string().required('Medicine type is required'),
-            minage: Yup.number().required('Minimum age is required'),
-		}),
+		initialValues,
+ 	 	validationSchema,
 		onSubmit: async (values) => {
-			const newValues = {
+			console.log("SUBMIT GELDI")
+			/* const newValues = {
 				medicinename: values.medicinename,
 				prescriptiontype: values.prescriptiontype,
 				usedfor:  values.usedfor,
@@ -251,7 +253,6 @@ const PharmacistStock = (props) => {
                 medtype: values.medtype,
                 minage: values.minage,
 			}
-			console.log(newValues);
 			await axios
 				.post('/register_drug', newValues)
 				.then((res) => {
@@ -271,9 +272,9 @@ const PharmacistStock = (props) => {
 					} else {
 						setErrorMessage('Connection error');
 					}
-				});
+				}); */
 			},
-			onUpdate: async (values) => {
+			/* onUpdate: async (values) => {
 				const newValues = {
 					medicinename: values.medicinename,
 					
@@ -299,7 +300,7 @@ const PharmacistStock = (props) => {
 							setErrorMessage('Connection error');
 						}
 					});
-				},
+				}, */
 		});
 		
 		return (
