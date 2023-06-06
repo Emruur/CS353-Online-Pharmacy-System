@@ -326,10 +326,64 @@ def requested_prescription_doctor():
     cursor = conn.cursor()
     if request.method == 'GET':
         try:
-            keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
+            keys = ["request_id","first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
                     "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
             cursor.execute(
                 "select * from requested_presc_doctor where prescribed_by = %s",
+
+                (current_user,)
+            )
+            prescriptions = cursor.fetchall()
+            return [dict(zip(keys, row)) for row in prescriptions], 200
+        except Exception as e:
+            print(e)
+
+
+
+@prescription_blueprint.route('/doctor', methods=['GET'])
+@jwt_required()
+def requested_prescription_doctor():
+    """
+    get all presc writen by current doc
+    http://localhost:5000/prescription/doctor
+    post request data format:
+
+    """
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    if request.method == 'GET':
+        try:
+            keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
+                    "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
+            cursor.execute(
+                "select * from written_presc_doctor where prescribed_by = %s",
+
+                (current_user,)
+            )
+            prescriptions = cursor.fetchall()
+            return [dict(zip(keys, row)) for row in prescriptions], 200
+        except Exception as e:
+            print(e)
+
+
+@prescription_blueprint.route('/user', methods=['GET'])
+@jwt_required()
+def requested_prescription_doctor():
+    """
+    get all requested by current user
+    http://localhost:5000/prescription/user
+
+    """
+    current_user = get_jwt_identity()
+    conn = get_conn()
+    cursor = conn.cursor()
+    if request.method == 'GET':
+        try:
+            keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
+                    "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
+            cursor.execute(
+                "select * from requested_presc_user where prescribed_by = %s",
 
                 (current_user,)
             )

@@ -41,7 +41,7 @@ const Collapsable = (props) => {
     let subheader = `Prescription Date: ${prescription[0].date.substring(5, 16)}`
 
     const handleAcceptPrescription = () => {
-        const requestUrl = `/prescription/request/${prescription[0].pres_id}`;
+        const requestUrl = `/prescription/request/${prescription[0].request_id}`;
         const payload = {
           status: 'accepted',
         };

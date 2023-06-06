@@ -76,7 +76,7 @@ def sold_med_report():
 
                 return jsonify({"msg": "Report generated!", "result": result_with_keys}), 200
             return jsonify({"msg": "Only pharmacists can view reports!"}), 401
-
+        return jsonify({"msg": "Enter dates!"}), 400
     except Exception as e:
         print(e)
         return jsonify({"msg": "error"}), 500

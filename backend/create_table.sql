@@ -459,11 +459,31 @@ FROM User u
 
 
 create view requested_presc_doctor as
-select u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
+select rp.request_id, u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
        m.side_effects,
        prescribed_by,prescribed_to,m.name, rp.status, type, notes, p.pres_id, date
 from RequestedPrescription rp join Prescription p on rp.pres_id = p.pres_id
 join PrescribedMedication pm on pm.pres_id = p.pres_id
 join Medicine m on m.med_id = pm.med_id
 join User u on u.user_id=prescribed_to
-where rp.status = 'pending'
+where rp.status = 'pending';
+
+create view written_presc_doctor as
+select u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
+       m.side_effects,
+       prescribed_by,prescribed_to,m.name, type, notes, p.pres_id, date
+from Prescription p
+join PrescribedMedication pm on pm.pres_id = p.pres_id
+join Medicine m on m.med_id = pm.med_id
+join User u on u.user_id=prescribed_to;
+
+
+create view requested_presc_user as
+select u.first_name, u.middle_name, u.surname, pm.med_count, pm.med_id, m.used_for,
+       m.side_effects,
+       prescribed_by,prescribed_to,m.name, type, notes, p.pres_id, date, p.status
+from RequestedPrescription p
+join Prescription P2 on p.pres_id = P2.pres_id
+join PrescribedMedication pm on pm.pres_id = p.pres_id
+join Medicine m on m.med_id = pm.med_id
+join User u on u.user_id=prescribed_by
