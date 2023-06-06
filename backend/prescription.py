@@ -141,11 +141,12 @@ def prescription_detail(id):
             return jsonify({"msg": "Couldn't get prescription"}), 500
     if request.method == 'DELETE':
         try:
+            print(id)
             cursor.execute(
                 "delete from Prescription where pres_id = %s",
                 (id,)
             )
-            cursor.commit()
+            conn.commit()
             return jsonify({"msg": "Successfully deleted"}), 200
         except Exception as e:
             print(e)
