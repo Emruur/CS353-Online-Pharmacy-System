@@ -127,9 +127,9 @@ CREATE TABLE Prescription (
 CREATE TABLE PrescribedMedication (
     pres_id INTEGER,
     med_count INTEGER,
-    FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id),
+    FOREIGN KEY (pres_id) REFERENCES Prescription(pres_id) ON DELETE CASCADE,
     med_id INTEGER,
-    FOREIGN KEY (med_id) REFERENCES Medicine(med_id),
+    FOREIGN KEY (med_id) REFERENCES Medicine(med_id) ON DELETE CASCADE ,
     PRIMARY KEY (pres_id, med_id)
 );
 
