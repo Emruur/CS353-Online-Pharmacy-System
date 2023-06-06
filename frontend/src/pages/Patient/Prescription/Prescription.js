@@ -40,7 +40,7 @@ const Prescription = () => {
                 })
         }
         const getReqPrescription = async (arrAll) => {
-            await axios.get('/prescription/request', {
+            await axios.get('/prescription/user', {
                 headers: {
                     "Authorization": token
                 }
@@ -49,8 +49,9 @@ const Prescription = () => {
                     if (res && res.data) {
                         //console.log(arrAll)
                         let arr = []
-                        for (let i = 0; i < arrAll[10].length; i++) {
-                            if (arr[arrAll[10][i].pres_id]) {
+                        console.log(res.data)
+                        for (let i = 0; i < res.data.length; i++) {
+                            /*if (arr[arrAll[10][i].pres_id]) {
                                 arr[arrAll[10][i].pres_id].push(
                                     {
                                         med_count: arrAll[10][i].med_count,
@@ -67,7 +68,7 @@ const Prescription = () => {
                                     }
                                 );
                             } else {
-                                arr[arrAll[10][i].pres_id] = [{
+                                /*arr[arrAll[10][i].pres_id] = [{
                                     med_count: arrAll[10][i].med_count,
                                     prescription_type: arrAll[10][i].prescription_type,
                                     name: arrAll[10][i].name,
@@ -80,7 +81,7 @@ const Prescription = () => {
                                     pres_id: arrAll[10][i].pres_id,
                                     status: "pending"
                                 }];
-                            }
+                            }*/
                         }
                         setReqPrescriptions(arr);
                         console.log(arr)
