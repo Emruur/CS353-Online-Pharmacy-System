@@ -342,7 +342,7 @@ def requested_prescription_doctor():
 
 @prescription_blueprint.route('/doctor', methods=['GET'])
 @jwt_required()
-def requested_prescription_doctor():
+def written_by_doctor():
     """
     get all presc writen by current doc
     http://localhost:5000/prescription/doctor
@@ -369,7 +369,7 @@ def requested_prescription_doctor():
 
 @prescription_blueprint.route('/user', methods=['GET'])
 @jwt_required()
-def requested_prescription_doctor():
+def requested_by_patient():
     """
     get all requested by current user
     http://localhost:5000/prescription/user
@@ -383,7 +383,7 @@ def requested_prescription_doctor():
             keys = ["first_name", "middle_name", "surname", "med_count", "med_id", "used_for", "side_effects",
                     "prescribed_by", "prescribed_to" ,"med_name", "status", "pres_type", "notes", "pres_id", "date"]
             cursor.execute(
-                "select * from requested_presc_user where prescribed_by = %s",
+                "select * from requested_presc_user where prescribed_to = %s",
 
                 (current_user,)
             )
