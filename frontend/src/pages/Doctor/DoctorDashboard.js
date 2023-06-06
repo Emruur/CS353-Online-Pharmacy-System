@@ -10,6 +10,25 @@ const DoctorDashboard = () => {
 
 	const token = "Bearer " + sessionStorage.getItem("token");
 
+    const deletePres = async (id) => {
+        console.log(id)
+        await axios.delete('/prescription/' + id, {
+            headers: {
+                "Authorization": token
+            }
+        })
+            .then((res) => {
+                if (res && res.data) {
+                    console.log(res.data.msg)
+                }   
+            })
+            .catch((err) => {
+                if (err && err.response) {
+                    console.log(err.response)
+                }
+            })
+    }
+
 	useEffect(() => {
 		const getReqPrescription = async () => {
             await axios.get('/prescription/request/doctor', {
@@ -82,7 +101,8 @@ const DoctorDashboard = () => {
                         </Box>
                         {reqPrescriptions.map((prescription, index) => (
                             <Box key={index}>
-                                <Collapsable 
+                                <Collapsable
+                                    type="req" 
                                     prescription={prescription}
                                     //requestPrescription={requestPrescription}    
                                 />
@@ -98,6 +118,8 @@ const DoctorDashboard = () => {
                         {allPrescriptions.map((prescription, index) => (
                             <Box key={index}>
                                 <Collapsable 
+                                    type="all"
+                                    deletePres={deletePres}
                                     prescription={prescription}
                                     //requestPrescription={requestPrescription}    
                                 />

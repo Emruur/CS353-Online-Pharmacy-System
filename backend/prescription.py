@@ -142,7 +142,7 @@ def prescription_detail(id):
     if request.method == 'DELETE':
         try:
             cursor.execute(
-                "delete from prescription where pres_id = %s",
+                "delete from Prescription where pres_id = %s",
                 (id,)
             )
             cursor.commit()
