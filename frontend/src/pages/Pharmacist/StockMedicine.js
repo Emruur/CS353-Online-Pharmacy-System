@@ -47,7 +47,7 @@ const StockMedicine = () => {
 				}
 			})
 				.then((res) => {
-                    console.log('bu' ,res.data);
+                    //console.log('bu' ,res.data);
 					if (res && res.data) {
 						let arr1 = []
 						let arr2 = []
