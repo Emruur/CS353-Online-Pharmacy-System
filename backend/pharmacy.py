@@ -63,10 +63,10 @@ def register():
             )
             pharmacy_id = cursor.fetchone()[0]
 
-            cursor.execute(
-                "INSERT INTO StoredIn (pharmacy_id, med_id, amount) VALUES (%s, %s, %s)",
-                (pharmacy_id, last_inserted_id, 1)
-            )
+            #cursor.execute(
+            #    "INSERT INTO StoredIn (pharmacy_id, med_id, amount) VALUES (%s, %s, %s)",
+            #    (pharmacy_id, last_inserted_id, 1)
+            #)
             conn.commit()
 
             return jsonify({"msg": "Medicine is registered successfully"}), 200
