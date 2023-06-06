@@ -2,6 +2,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import AddIcon from '@mui/icons-material/Add';
 import {
+	Alert,
+	AlertTitle,
 	Box,
 	Button,
 	Card,
@@ -33,7 +35,6 @@ import {
 import axios from 'axios_config';
 import { useRef,createRef, useEffect, useState } from 'react';
 import { redirect, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { SeverityPill } from 'components/SeverityPill/SeverityPill';
 import * as Yup from 'yup';
@@ -51,6 +52,25 @@ const PharmacistStock = (props) => {
 
 	const [type, setType] = useState('none');
 	const [med_id, setMedID] = useState(1);
+
+	const formMedName = useRef();
+	const formPrescType = useRef();
+	const formUsedFor = useRef();
+	const formDosage = useRef();
+	const formSideEffect = useRef();
+	const formRiskFactor = useRef();
+	const formPreserveConditions = useRef();
+	const formProducingFirm = useRef();
+	const formPrice = useRef();
+	const formMedType = useRef();
+	const formMinAge = useRef();
+
+
+	const submitButtonDisable = formMedName.current & formPrescType.current & 
+						formUsedFor.current & formDosage.current & formSideEffect.current &
+						formRiskFactor.current & formPreserveConditions.current &
+						formProducingFirm.current & formPrice.current & formMedType.current &
+						formMinAge.current;
 
 	const handleMedChange = (event) => {
 		setMedID(event.target.value)
@@ -137,6 +157,54 @@ const PharmacistStock = (props) => {
 		redirect('/pharmacystock');
 
 	}
+
+	async function handleNewMedicineSubmit() {
+		const request= {med_name: formMedName.current.value,
+					med_dosage: formDosage.current.value,
+					med_type: formMedType.current.value,
+					med_used_for: formUsedFor.current.value,
+					med_age: formMinAge.current.value,
+					med_presc_type: formPrescType.current.value,
+					med_side_effects: formSideEffect.current.value,
+					med_risk_factors: formRiskFactor.current.value,
+					med_preserve_cond: formPreserveConditions.current.value,
+					med_prod_firm: formProducingFirm.current.value,
+					med_price: formPrice.current.value};
+			await axios
+				.post('/pharmacy/register_drug', request, {
+					headers: {
+                    	"Authorization": token
+                	}
+			})
+				.then((res) => {
+					if (res && res.data) {
+						console.log(res.data);
+						props.displayMessage(formMedName.current.value,0);
+						navigate('/pharmacystock');
+					}
+				})
+				.catch((err) => {
+					if (err && err.response) {
+						console.log("Error:", err.response.data);
+						if (err.response.status === 401) {
+							setErrorMessage('Authorization error');
+						} else if (err.response.status === 400) {
+							setErrorMessage(err.response.data.msg);
+						}
+						else if (err.response.status === 500) {
+							if(err.response.data.includes('Duplicate'))
+							props.displayMessage(formMedName.current.value,2)
+							else
+							props.displayMessage(formMedName.current.value,1)
+
+						}
+					} else {
+						setErrorMessage('Connection error');
+					}
+			});
+			handleCloseNewMedicine();
+			handleClose();
+		}
   
     const prescription_type = [
         {
@@ -228,73 +296,7 @@ const PharmacistStock = (props) => {
 		minage: Yup.number().required('Minimum age is required'),
 	});
 
-    const formik = useFormik({
-		initialValues,
- 	 	validationSchema,
-		onSubmit: async (values) => {
-			console.log("SUBMIT GELDI")
-			/* const newValues = {
-				medicinename: values.medicinename,
-				prescriptiontype: values.prescriptiontype,
-				usedfor:  values.usedfor,
-				dosage: values.dosage,
-				side_effects: values.side_effects,
-				risk_factors: values.risk_factors,
-                preserve_conditions: values.preserve_conditions,
-                prod_firm: values.prod_firm,
-                price: values.price,
-                medtype: values.medtype,
-                minage: values.minage,
-			}
-			await axios
-				.post('/register_drug', newValues)
-				.then((res) => {
-					if (res && res.data) {
-						console.log(res.data);
-						navigate('/pharmacystock');
-					}
-				})
-				.catch((err) => {
-					if (err && err.response) {
-						console.log("Error:", err.response.data);
-						if (err.response.status === 401) {
-							setErrorMessage('Invalid TCKN or password');
-						} else if (err.response.status === 400) {
-							setErrorMessage(err.response.data.msg);
-						}
-					} else {
-						setErrorMessage('Connection error');
-					}
-				}); */
-			},
-			/* onUpdate: async (values) => {
-				const newValues = {
-					medicinename: values.medicinename,
-					
-				}
-				console.log(newValues);
-				await axios
-					.put('/pharmacy/mypharmacy', newValues)
-					.then((res) => {
-						if (res && res.data) {
-							console.log(res.data);
-							navigate('/pharmacystock');
-						}
-					})
-					.catch((err) => {
-						if (err && err.response) {
-							console.log("Error:", err.response.data);
-							if (err.response.status === 401) {
-								setErrorMessage('Invalid TCKN or password');
-							} else if (err.response.status === 400) {
-								setErrorMessage(err.response.data.msg);
-							}
-						} else {
-							setErrorMessage('Connection error');
-						}
-					});
-				}, */
-		});
+   
 		
 		return (
 			<Card>
@@ -322,7 +324,7 @@ const PharmacistStock = (props) => {
 		</Dialog>
             <Dialog open={openNewMedicineDialog} onClose={handleCloseNewMedicine}>
             <DialogTitle>Register New Medicine</DialogTitle>
-            <form onSubmit={formik.handleSubmit}>
+    
             <DialogContent>
                 <DialogContentText>
                 Register a new medicine to the database by filling the form.
@@ -333,7 +335,7 @@ const PharmacistStock = (props) => {
                 id="medicinename"
 				name='medicinename'
                 label="Name"
-                type="email"
+				inputRef={formMedName}
                 fullWidth
                 variant="standard"
             />
@@ -342,8 +344,8 @@ const PharmacistStock = (props) => {
 				name='prescriptiontype'
                 select
                 label="Prescription Type"
+				inputRef={formPrescType}
                 defaultValue="White"
-                onBlur={formik.handleBlur}
                 SelectProps={{
                     native: true,
                   }}
@@ -363,6 +365,7 @@ const PharmacistStock = (props) => {
                 id="usedfor"
 				name='usedfor'
                 label="Used For"
+				inputRef={formUsedFor}
                 fullWidth
                 variant="standard"
             />
@@ -371,6 +374,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="dosage"
 				name='dosage'
+				inputRef={formDosage}
                 label="Dosages"
                 fullWidth
                 variant="standard"
@@ -380,6 +384,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="side_effects"
 				name='side_effects'
+				inputRef={formSideEffect}
                 label="Side effects"
                 fullWidth
                 variant="standard"
@@ -389,6 +394,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="risk_factors"
 				name='risk_factors'
+				inputRef={formRiskFactor}
                 label="Risk Factors"
                 fullWidth
                 variant="standard"
@@ -398,6 +404,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="preserve_conditions"
 				name='preserve_conditions'
+				inputRef={formPreserveConditions}
                 label="Preserve Conditions"
                 fullWidth
                 variant="standard"
@@ -407,6 +414,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="prod_firm"
 				name='prod_firm'
+				inputRef={formProducingFirm}
                 label="Producing firm"
                 fullWidth
                 variant="standard"
@@ -417,6 +425,7 @@ const PharmacistStock = (props) => {
                 id="price"
 				name='price'
                 label="Price"
+				inputRef={formPrice}
                 type='number'
                 fullWidth
                 variant="standard"
@@ -426,6 +435,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="medtype"
 				name='medtype'
+				inputRef={formMedType}
                 label="Medication Type"
                 fullWidth
                 variant="standard"
@@ -435,6 +445,7 @@ const PharmacistStock = (props) => {
                 margin="dense"
                 id="minage"
 				name='minage'
+				inputRef={formMinAge}
                 label="Minimum Age"
                 type='number'
                 fullWidth
@@ -443,9 +454,8 @@ const PharmacistStock = (props) => {
             </DialogContent>
                 <DialogActions>
                 <Button onClick={handleCloseNewMedicine}>Cancel</Button>
-                <Button type='submit'>Submit</Button>
+				<Button onClick={()=> handleNewMedicineSubmit()} disabled= {submitButtonDisable}>Submit</Button>
                 </DialogActions>
-            </form>
             </Dialog>
 
             <Dialog open={openMedicineStockDialog} onClose={handleCloseMedicineStock}>
