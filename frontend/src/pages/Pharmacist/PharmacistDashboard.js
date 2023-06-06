@@ -27,6 +27,12 @@ const PharmacistDashboard = () => {
 	const datestart2= useRef();
 	const dateend2= useRef();
 
+	const reportType1= useRef();
+	const reportType2= useRef();
+
+	const year1= useRef(null);
+
+
 	const token =  "Bearer " +sessionStorage.getItem("token");
 
 	const [soldMeds, setSoldMeds] = useState(null);
@@ -35,179 +41,44 @@ const PharmacistDashboard = () => {
 	const [ageRange, setAgeRange] = useState(null);
 	const [displayAgeRange, setDisplayAgeRange] = useState(false);
 
-	
-	const medicines=[
-			{
-			"name": 'Aspirin',
-			"prescription_type": "white",
-			"used_for": "Pain, Fever",
-			"dosages": "1-2 tablets every 4-6 hours",
-			"side_effects": "Stomach irritation",
-			"risk_factors": "Bleeding disorders",
-			"preserve_conditions": "Store at room temperature",
-			"prod_firm": "ABC Pharmaceuticals",
-			"price": 4.99,
-			"med_type": "Tablet",
-			"med_age": "18",
-			"med_cnt": "150",
-			"min_age": "18",
-			"max_age": "65",						
-			},
-		
-			{
-				
-				"name": 'Parol',
-				"prescription_type": "white",
-				"used_for": "Pain",
-				"dosages": "1-2 tablets every 4-6 hours",
-				"side_effects": "Stomach irritation",
-				"risk_factors": "Bleeding disorders",
-				"preserve_conditions": "Store at room temperature",
-				"prod_firm": "ABC Pharmaceuticals",
-				"price": 4.99,
-				"med_type": "Tablet",
-				"med_age": "18",
-				"med_cnt": "100",
-				"min_age": "18",
-				"max_age": "45",	
-			},
-			
-			
-			{
-				
-				"name": 'Arveles',
-				"prescription_type": "white",
-				"used_for": "Pain, Fever",
-				"dosages": "1-2 tablets every 4-6 hours",
-				"side_effects": "Stomach irritation",
-				"risk_factors": "Bleeding disorders",
-				"preserve_conditions": "Store at room temperature",
-				"prod_firm": "ABC Pharmaceuticals",
-				"price": 4.99,
-				"med_type": "Tablet",
-				"med_age": "18",
-				"med_cnt": "35",
-				"min_age": "21",
-				"max_age": "37",	
-			},
-			{
-				"name": 'Metformin',
-				"prescription_type": "white",
-				"used_for": "Type 2 Diabetes",
-				"dosages": "1-2 tablets with meals",
-				"side_effects": "Nausea, Diarrhea",
-				"risk_factors": "Kidney disease",
-				"preserve_conditions": "Store at room temperature",
-				"prod_firm": "DEF Pharmaceuticals",
-				"price": 7.50,
-				"med_type": "Tablet",
-				"med_age": "18",
-				"med_cnt": "3",
-				"min_age": "31",
-				"max_age": "67",
-			},
+	const [drugRevenue, setDrugRevenue] = useState(null);
+	const [displayDrugRevenue, setDisplayDrugRevenue] = useState(false);
 
-			{
-				"name": 'Lisinopril',
-				"prescription_type": "green",
-				"used_for": "High blood pressure",
-				"dosages": "1 tablet daily",
-				"side_effects": "Stomach irritation",
-				"risk_factors": "Pregnancy, Kidney problems",
-				"preserve_conditions": "Keep in a dry place",
-				"prod_firm": "XYZ Pharmaceuticals",
-				"price": 9.99,
-				"med_type": "Tablet",
-				"med_age": "18",
-				"med_cnt": "2",
-				"min_age": "22",
-				"max_age": "22",
-				},
-			
-	];
+	const [drugVolume, setDrugVolume] = useState(null);
+	const [displayDrugVolume, setDisplayDrugVolume] = useState(false);
+
+	const [monthlyRevenue, setMonthlyRevenue] = useState(null);
+	const [displayMonthlyRevenue, setDisplayMonthlyRevenue] = useState(false);
 
 	const filtertypes=[{
-		"name": 'Use Purpose'
+		"name": 'Use Purpose',
+		"value": 'used_for'
 
 		},
 		{
-		"name": 'Producing firm'
+		"name": 'Producing firm',
+		"value": 'prod_firm'
 		}
 	];
-
-	const companyRevenues=[{
-		"name": 'Pfizer',
-		"revenue": '50000'
-		},
-		{
-		"name": "Bayer",
-		"revenue": '120000'
-		},
-		{
-			"name": "Novartis",
-			"revenue": '100000'
-			},
-		{
-			"name": "AbbVie",
-			"revenue": '75000'
-		},
-
-	];
-	const monthlyRevenues=[{
-		"name": 'January',
-		"revenue": '25000'
-		},
-		{
-		"name": "February",
-		"revenue": '37000'
-		},
-		{
-		"name": "March",
-		"revenue": '35000'
-		},
-		{
-			"name": "April",
-			"revenue": '26500'
-		},
-		{
-			"name": "May",
-			"revenue": '294500'
-		},
-		{
-			"name": "June",
-			"revenue": '28780'
-		},
-		{
-			"name": "July",
-			"revenue": '25500'
-		},
-		{
-			"name": "August",
-			"revenue": '30500'
-		},
-		{
-			"name": "September",
-			"revenue": '31250'
-		},
-		{
-			"name": "October",
-			"revenue": '32500'
-		},
-		{
-			"name": "November",
-			"revenue": '36450'
-		},
-		{
-			"name": "December",
-			"revenue": '38000'
-		},
-	];
-	/* useEffect(() => {	}, [getsoldMeds]) */
+	const allMonths = [
+		'January',
+		'February',
+		'March',
+		'April',
+		'May',
+		'June',
+		'July',
+		'August',
+		'September',
+		'October',
+		'November',
+		'December'
+	  ];
+	
 	async function getSoldMeds()  {
 		const dates= {start_date: datestart1.current.value,
 			end_date: dateend1.current.value};
 			
-			console.log(token);
 		await axios.post('/reports/sold-medicine', dates, {
 			headers: {
 				"Authorization": token
@@ -215,7 +86,6 @@ const PharmacistDashboard = () => {
 		})
 			.then((res) => {
 				if (res && res.data) {
-					console.log(res.data)
 					let arr = []
 							arr.push(res.data.result);
 					setSoldMeds(arr)
@@ -233,7 +103,6 @@ const PharmacistDashboard = () => {
 		const dates= {start_date: datestart2.current.value,
 			end_date: dateend2.current.value};
 			
-			console.log(token);
 		await axios.post('/reports/min-max-age', dates, {
 			headers: {
 				"Authorization": token
@@ -241,10 +110,8 @@ const PharmacistDashboard = () => {
 		})
 			.then((res) => {
 				if (res && res.data) {
-					console.log(res.data)
 					let arr = []
 							arr.push(res.data.result);
-					console.log("Bunlar:",arr)
 					setAgeRange(arr)
 				}
 			})
@@ -254,6 +121,74 @@ const PharmacistDashboard = () => {
 				}
 			})
 		setDisplayAgeRange(true);
+	}
+
+	async function getDrugRevenue()  {
+		const reportType= {type: reportType1.current.value};
+			
+		await axios.post('/reports/avg-revenue', reportType, {
+			headers: {
+				"Authorization": token
+			}
+		})
+			.then((res) => {
+				if (res && res.data) {
+					let arr = []
+							arr.push(res.data.result);
+					setDrugRevenue(arr)
+				}
+			})
+			.catch((err) => {
+				if (err && err.response) {
+					console.log("Error:",err.response)
+				}
+			})
+		setDisplayDrugRevenue(true);
+	}
+
+	async function getDrugVolume()  {
+		const reportType= {type: reportType2.current.value};
+			
+		await axios.post('/reports/max-purchased', reportType, {
+			headers: {
+				"Authorization": token
+			}
+		})
+			.then((res) => {
+				if (res && res.data) {
+					let arr = []
+							arr.push(res.data.result);
+					setDrugVolume(arr)
+				}
+			})
+			.catch((err) => {
+				if (err && err.response) {
+					console.log("Error:",err.response)
+				}
+			})
+		setDisplayDrugVolume(true);
+	}
+	async function getMonthlyRevenue()  {
+		const yearmsg = {year: year1.current.value};
+			
+		await axios.post('/reports/monthly-revenue', yearmsg, {
+			headers: {
+				"Authorization": token
+			}
+		})
+			.then((res) => {
+				if (res && res.data) {
+					let arr = []
+							arr.push(res.data.result);
+					setMonthlyRevenue(arr)
+				}
+			})
+			.catch((err) => {
+				if (err && err.response) {
+					console.log("Error:",err.response)
+				}
+			})
+		setDisplayMonthlyRevenue(true);
 	}
 		
 
@@ -451,7 +386,7 @@ const PharmacistDashboard = () => {
 				aria-controls="panel1a-content"
 				id="panel1a-header"
         >
-			<Typography>Yearly Total Revenue of a Drug Type</Typography>
+			<Typography>Monthly Average Revenue of a Drug Type</Typography>
         	</AccordionSummary>
 			<AccordionDetails>
 				<Box>
@@ -463,6 +398,7 @@ const PharmacistDashboard = () => {
 				name='grouptype'
                 select
                 label="Group Type"
+				inputRef={reportType1}
                 defaultValue="Use purpose"
                 SelectProps={{
                     native: true,
@@ -472,7 +408,7 @@ const PharmacistDashboard = () => {
                 variant="standard"
             >
             {filtertypes.map((option) => (
-            <option key={option.name} value={option.name}>
+            <option key={option.name} value={option.value}>
               {option.name}
             </option>
             ))}
@@ -480,7 +416,7 @@ const PharmacistDashboard = () => {
 
 					</TableCell>
 					<TableCell align="right">
-						<Button>Generate</Button>
+						<Button onClick={() =>getDrugRevenue()}>Generate</Button>
 
 					</TableCell>
 				</TableRow>
@@ -489,22 +425,27 @@ const PharmacistDashboard = () => {
 					<Table title='1-)Purchased medicine between time frame'>
 						<TableHead sx={{ display: 'table-header-group' }}>
 						<TableRow>
-							<TableCell align="center">Company name</TableCell>
+							<TableCell align="center">{reportType1.current ? reportType1.current.value: 'Used For' }</TableCell>
 							<TableCell align="center">Revenue</TableCell>
 						</TableRow>
 						</TableHead>
 						<TableBody>
-						{companyRevenues.map((company, index) => (
+						{drugRevenue && displayDrugRevenue ? (
+						drugRevenue[0].map((company, index) => (
 							<TableRow
 							key={index}
 							sx={{
 								border: 0,
 							}}
 							>
-							<TableCell align="center">{company.name}</TableCell>
-							<TableCell align="center">{company.revenue}</TableCell>
+							<TableCell align="center">{company.prod_firm? company.prod_firm: company.used_for}</TableCell>
+							<TableCell align="center">{company.avg_revenue}</TableCell>
 							</TableRow>
-						))}
+						))):<TableRow>
+						<TableCell align="center">-</TableCell>
+						<TableCell align="center">-</TableCell>
+					</TableRow>
+						}
 						</TableBody>
 					</Table>
 					</Box>
@@ -536,6 +477,7 @@ const PharmacistDashboard = () => {
 							name='grouptype'
 							select
 							label="Group Type"
+							inputRef={reportType2}
 							defaultValue="Use purpose"
 							SelectProps={{
 								native: true,
@@ -545,7 +487,7 @@ const PharmacistDashboard = () => {
 							variant="standard"
 						>
 							{filtertypes.map((option) => (
-							<option key={option.name} value={option.name}>
+							<option key={option.name} value={option.value}>
 							{option.name}
 							</option>
 							))}
@@ -553,7 +495,7 @@ const PharmacistDashboard = () => {
 
 					</TableCell>
 					<TableCell align="right">
-						<Button>Generate</Button>
+						<Button onClick={()=>getDrugVolume()}>Generate</Button>
 
 					</TableCell>
 				</TableRow>
@@ -569,7 +511,8 @@ const PharmacistDashboard = () => {
 					</TableRow>
 					</TableHead>
 					<TableBody>
-					{medicines.map((medicine, index) => (
+					{drugVolume && displayDrugVolume ? (
+					drugVolume[0].map((medicine, index) => (
 						<TableRow
 						key={index}
 						sx={{
@@ -577,10 +520,15 @@ const PharmacistDashboard = () => {
 						}}
 						>
 						<TableCell align="center">{medicine.name}</TableCell>
-						<TableCell align="center">{medicine.med_cnt}</TableCell>
-						<TableCell align="center">{medicine.used_for}</TableCell>
+						<TableCell align="center">{medicine.count}</TableCell>
+						<TableCell align="center">{medicine.used_for?medicine.used_for: medicine.prod_firm}</TableCell>
 						</TableRow>
-					))}
+					))):
+					<TableRow>
+						<TableCell align="center">-</TableCell>
+						<TableCell align="center">-</TableCell>
+					</TableRow>
+					}
 					</TableBody>
 				</Table>
 				</Box>
@@ -609,10 +557,10 @@ const PharmacistDashboard = () => {
 				<TableRow>
 				
 					<TableCell align="center">
-					<input type="number" min="1980" max="2023" step="1" defaultValue="2023"/>
+					<TextField type="number" min="1980" max="2023" step="1" defaultValue="2023" inputRef={year1} />
 					</TableCell>
 					<TableCell align="right">
-						<Button>Generate</Button>
+						<Button onClick={() => getMonthlyRevenue()}>Generate</Button>
 
 					</TableCell>
 				</TableRow>
@@ -626,17 +574,23 @@ const PharmacistDashboard = () => {
 					</TableRow>
 					</TableHead>
 					<TableBody>
-					{monthlyRevenues.map((month, index) => (
+					{monthlyRevenue && displayMonthlyRevenue ? (
+					monthlyRevenue[0].map((month, index) => (
 						<TableRow
 						key={index}
 						sx={{
 							border: 0,
 						}}
 						>
-						<TableCell align="center">{month.name}</TableCell>
+						<TableCell align="center">{allMonths[month.month-1]}</TableCell>
 						<TableCell align="center">{month.revenue}</TableCell>
 						</TableRow>
-					))}
+					))):
+					<TableRow>
+					<TableCell align="center">-</TableCell>
+					<TableCell align="center">-</TableCell>
+					</TableRow>
+				}
 					</TableBody>
 				</Table>
 				</Box>
