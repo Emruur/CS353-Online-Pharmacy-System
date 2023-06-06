@@ -119,6 +119,7 @@ const PharmacistStock = (props) => {
 					}
 			});
 		redirect('/pharmacystock');
+		window.location.reload();
 
 	  //console.log(lineRefs.current[index].current.value);
 	}
@@ -151,7 +152,6 @@ const PharmacistStock = (props) => {
 						setErrorMessage('Connection error');
 					}
 			});
-			window.location.reload();
 			handleCloseMedicineStock();
 			handleClose();
 	}
@@ -200,7 +200,7 @@ const PharmacistStock = (props) => {
 						setErrorMessage('Connection error');
 					}
 			});
-			window.location.reload();
+			//window.location.reload();
 			handleCloseNewMedicine();
 			handleClose();
 		}
