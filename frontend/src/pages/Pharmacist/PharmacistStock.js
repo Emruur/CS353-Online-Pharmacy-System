@@ -317,11 +317,11 @@ const PharmacistStock = (props) => {
 		</Dialog>
             <Dialog open={openNewMedicineDialog} onClose={handleCloseNewMedicine}>
             <DialogTitle>Register New Medicine</DialogTitle>
+            <form onSubmit={formik.handleSubmit}>
             <DialogContent>
                 <DialogContentText>
                 Register a new medicine to the database by filling the form.
             	</DialogContentText>
-            <form onSubmit={formik.handleSubmit}>
             <TextField
                 autoFocus
                 margin="dense"
@@ -435,12 +435,12 @@ const PharmacistStock = (props) => {
                 fullWidth
                 variant="standard"
             />
-            </form>
             </DialogContent>
                 <DialogActions>
                 <Button onClick={handleCloseNewMedicine}>Cancel</Button>
-                <Button type='submit' onClick={formik.handleSubmit}>Submit</Button>
+                <Button type='submit'>Submit</Button>
                 </DialogActions>
+            </form>
             </Dialog>
 
             <Dialog open={openMedicineStockDialog} onClose={handleCloseMedicineStock}>

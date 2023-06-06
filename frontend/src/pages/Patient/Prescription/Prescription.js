@@ -51,37 +51,11 @@ const Prescription = () => {
                         let arr = []
                         console.log(res.data)
                         for (let i = 0; i < res.data.length; i++) {
-                            /*if (arr[arrAll[10][i].pres_id]) {
-                                arr[arrAll[10][i].pres_id].push(
-                                    {
-                                        med_count: arrAll[10][i].med_count,
-                                        prescription_type: arrAll[10][i].prescription_type,
-                                        name: arrAll[10][i].name,
-                                        used_for: arrAll[10][i].used_for,
-                                        side_effects: arrAll[10][i].side_effects,
-                                        date: arrAll[10][i].date,
-                                        doctor_name: arrAll[10][i].doctor_name,
-                                        doctor_middle_name: arrAll[10][i].doctor_middle_name,
-                                        doctor_surname: arrAll[10][i].doctor_surname,
-                                        pres_id: arrAll[10][i].pres_id,
-                                        status: "pending"
-                                    }
-                                );
+                            if (arr[res.data[i].pres_id]) {
+                                arr[res.data[i].pres_id].push(res.data[i]);
                             } else {
-                                /*arr[arrAll[10][i].pres_id] = [{
-                                    med_count: arrAll[10][i].med_count,
-                                    prescription_type: arrAll[10][i].prescription_type,
-                                    name: arrAll[10][i].name,
-                                    used_for: arrAll[10][i].used_for,
-                                    side_effects: arrAll[10][i].side_effects,
-                                    date: arrAll[10][i].date,
-                                    doctor_name: arrAll[10][i].doctor_name,
-                                    doctor_middle_name: arrAll[10][i].doctor_middle_name,
-                                    doctor_surname: arrAll[10][i].doctor_surname,
-                                    pres_id: arrAll[10][i].pres_id,
-                                    status: "pending"
-                                }];
-                            }*/
+                                arr[res.data[i].pres_id] = [res.data[i]];
+                            }
                         }
                         setReqPrescriptions(arr);
                         console.log(arr)
