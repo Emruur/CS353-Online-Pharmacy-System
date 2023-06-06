@@ -180,7 +180,7 @@ def getMedicines():
                 pharmacy_id = cursor.fetchone()[0]
 
                 cursor.execute(
-                    "UPDATE StoredIn SET amount = %s WHERE pharmacy_id = %s AND med_id = %s",
+                    "UPDATE StoredIn SET amount = amount + %s WHERE pharmacy_id = %s AND med_id = %s",
                     (med_no, pharmacy_id, med_id)
                 )
                 conn.commit()
